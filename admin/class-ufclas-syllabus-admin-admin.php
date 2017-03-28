@@ -99,5 +99,29 @@ class Ufclas_Syllabus_Admin_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-admin-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
+	/**
+	 * Add a menu page 'Syllabus Admin'
+	 * 
+	 * @since 1.0.0
+	 */
+	public function add_menu_page(){
+		$this->plugin_screen_hook_suffix = add_menu_page(
+			__('Syllabus Admin', 'ufclas-syllabus-admin'),
+			__('Syllabus Admin', 'ufclas-syllabus-admin'),
+			'manage_options',
+			$this->plugin_name,
+			array( $this, 'display_menu_page' )
+		);
+	}
+	
+	/** 
+	 * Render the menu page for the plugin
+	 *
+	 * @since 1.0.0
+	 */
+	public function display_menu_page(){
+		include_once 'partials/ufclas-syllabus-admin-admin-display.php';
+	}
 
 }

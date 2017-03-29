@@ -1,5 +1,5 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== UFCLAS Syllabus Admin ===
+Contributors: priscillamc
 Donate link: https://it.clas.ufl.edu/
 Tags: comments, spam
 Requires at least: 3.0.1

@@ -39,6 +39,15 @@ class Ufclas_Syllabus_Admin_Admin {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	
+	/**
+	 * The option prefix to be used in this plugin
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $option_name    The option prefix
+	 */
+	private $option_name = 'ufclas_syllabus';
 
 	/**
 	 * Initialize the class and set its properties.
@@ -101,17 +110,44 @@ class Ufclas_Syllabus_Admin_Admin {
 	}
 	
 	/**
+	 * Remove default widgets from the dashboard
+	 * 
+	 * @since 1.0.0
+	 */
+	public function disable_dashboard_widgets(){
+		$dashboard_widgets = array(
+			'dashboard_right_now' => 'normal',
+			'dashboard_primary' => 'side',
+			'dashboard_activity' => 'side',
+			'dashboard_quick_press' => 'side',
+		);
+		
+		foreach ( $dashboard_widgets as $widget => $position ){
+			remove_meta_box( $widget , 'dashboard', $position ); 
+		}
+	}
+
+	/**
+	 * Replace the dashboard welcome panel
+	 * 
+	 * @since 1.0.0
+	 */
+	public function welcome_panel(){
+		include_once 'partials/ufclas-syllabus-admin-welcome-display.php';
+	}
+	
+	/**
 	 * Add a menu page 'Syllabus Admin'
 	 * 
 	 * @since 1.0.0
 	 */
-	public function add_menu_page(){
-		$this->plugin_screen_hook_suffix = add_menu_page(
-			__('Syllabus Admin', 'ufclas-syllabus-admin'),
-			__('Syllabus Admin', 'ufclas-syllabus-admin'),
+	public function add_options_page(){
+		$this->plugin_screen_hook_suffix = add_options_page(
+			__('UFCLAS Syllabus Settings', 'ufclas-syllabus-admin'),
+			__('UFCLAS Syllabus Admin', 'ufclas-syllabus-admin'),
 			'manage_options',
 			$this->plugin_name,
-			array( $this, 'display_menu_page' )
+			array( $this, 'display_options_page' )
 		);
 	}
 	
@@ -120,8 +156,103 @@ class Ufclas_Syllabus_Admin_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function display_menu_page(){
+	public function display_options_page(){
 		include_once 'partials/ufclas-syllabus-admin-admin-display.php';
+	}
+	
+	/**
+	 * Register settings
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_setting(){
+		
+		// Add a general section
+		add_settings_section(
+			$this->option_name . '_general',
+			__('General', 'ufclas-syllabus-admin'),
+			array( $this, $this->option_name . '_general_cb' ),
+			$this->plugin_name
+		);
+		
+		// Add field for the text position 
+		add_settings_field(
+			$this->option_name . '_position',
+			__('Text position', 'ufclas-syllabus-admin'),
+			array( $this, $this->option_name . '_position_cb' ),
+			$this->plugin_name,
+			$this->option_name . '_general',
+			array( 'label_for' => $this->option_name . '_position' )
+		);
+		
+		// Add a field for the 
+		add_settings_field(
+			$this->option_name . '_day',
+			__('Text position', 'ufclas-syllabus-admin'),
+			array( $this, $this->option_name . '_day_cb' ),
+			$this->plugin_name,
+			$this->option_name . '_general',
+			array( 'label_for' => $this->option_name . '_day' )
+		);
+		
+		register_setting( $this->plugin_name, $this->option_name . '_position', array( $this, $this->option_name . '_sanitize_position' ) );
+		register_setting( $this->plugin_name, $this->option_name . '_day', 'intval' );
+	}
+	
+	/**
+	 * Render the text for the general section 
+	 *
+	 * @since 1.0.0
+	 */
+	public function ufclas_syllabus_general_cb() {
+		echo '<p>' . __('Please change the settings accordingly.', 'ufclas-syllabus-admin') . '</p>';
+	}
+	
+	/**
+	 * Render the radio input field for position option
+	 *
+	 * @since  1.0.0
+	 */
+	public function ufclas_syllabus_position_cb() {
+		$position = get_option( $this->option_name . '_position' );
+
+		?>
+			<fieldset>
+				<label>
+					<input type="radio" name="<?php echo $this->option_name . '_position' ?>" id="<?php echo $this->option_name . '_position' ?>" value="before" <?php checked($position, 'before'); ?>>
+					<?php _e( 'Before the content', 'ufclas-syllabus-admin' ); ?>
+				</label>
+				<br>
+				<label>
+					<input type="radio" name="<?php echo $this->option_name . '_position' ?>" value="after" <?php checked($position, 'after'); ?>>
+					<?php _e( 'After the content', 'ufclas-syllabus-admin' ); ?>
+				</label>
+			</fieldset>
+		<?php
+	}
+	
+	/**
+	 * Render the treshold day input for this plugin
+	 *
+	 * @since  1.0.0
+	 */
+	public function ufclas_syllabus_day_cb() {
+		$day = get_option( $this->option_name . '_day' );
+		
+		echo '<input type="text" name="' . $this->option_name . '_day' . '" id="' . $this->option_name . '_day' . '" value="' . $day . '"> '. __( 'days', 'ufclas-syllabus-admin' );
+	}
+	
+	/**
+	 * Sanitize the text position value before being saved to database
+	 *
+	 * @param  string $position $_POST value
+	 * @since  1.0.0
+	 * @return string           Sanitized value
+	 */
+	public function ufclas_syllabus_sanitize_position( $position ) {
+		if ( in_array( $position, array( 'before', 'after' ), true ) ) {
+	        return $position;
+	    }
 	}
 
 }

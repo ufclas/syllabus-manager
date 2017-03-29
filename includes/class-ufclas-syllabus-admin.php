@@ -153,8 +153,11 @@ class Ufclas_Syllabus_Admin {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu_page' );
-
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'disable_dashboard_widgets' );
+		$this->loader->add_action( 'welcome_panel', $plugin_admin, 'welcome_panel' );
+		
+		// Remove default WP welcome panel from dashboard
+		remove_action( 'welcome_panel', 'wp_welcome_panel' );
 	}
 
 	/**
@@ -212,5 +215,4 @@ class Ufclas_Syllabus_Admin {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

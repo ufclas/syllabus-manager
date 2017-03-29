@@ -153,6 +153,7 @@ class Ufclas_Syllabus_Admin {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_menu' );
 		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'disable_dashboard_widgets' );
 		$this->loader->add_action( 'welcome_panel', $plugin_admin, 'welcome_panel' );
 		

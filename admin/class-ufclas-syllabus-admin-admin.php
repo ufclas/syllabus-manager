@@ -81,9 +81,9 @@ class Ufclas_Syllabus_Admin_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ufclas-syllabus-admin-admin.css', array(), $this->version, 'all' );
-
+		
+		wp_enqueue_style( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ufclas-syllabus-admin-admin.css', array('bootstrap'), $this->version, 'all' );
 	}
 
 	/**
@@ -104,9 +104,35 @@ class Ufclas_Syllabus_Admin_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+		
+		wp_enqueue_script( 'bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-admin-admin.js', array( 'jquery', 'bootstrap' ), $this->version, true );
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-admin-admin.js', array( 'jquery' ), $this->version, false );
-
+	}
+	
+	/**
+	 * Add Admin menu item
+	 * 
+	 * @since 1.0.0
+	 */
+	public function register_menu(){
+		$this->plugin_screen_hook_suffix = add_menu_page(
+			__('UF CLAS Course Syllabi', 'ufclas-syllabus-admin'),
+			__('Syllabus', 'ufclas-syllabus-admin'),
+			'manage_options',
+			$this->plugin_name,
+			array( $this, 'display_main_page' )
+		);
+		
+		dbgx_trace_var($this->plugin_screen_hook_suffix);
+	}
+	/** 
+	 * Render the menu page for the plugin
+	 *
+	 * @since 1.0.0
+	 */
+	public function display_main_page(){
+		include_once 'partials/ufclas-syllabus-admin-display.php';
 	}
 	
 	/**
@@ -157,7 +183,7 @@ class Ufclas_Syllabus_Admin_Admin {
 	 * @since 1.0.0
 	 */
 	public function display_options_page(){
-		include_once 'partials/ufclas-syllabus-admin-admin-display.php';
+		include_once 'partials/ufclas-syllabus-admin-settings-display.php';
 	}
 	
 	/**

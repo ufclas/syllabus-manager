@@ -9,8 +9,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      1.0.0
  *
- * @package    Ufclas_Syllabus_Admin
- * @subpackage Ufclas_Syllabus_Admin/includes
+ * @package    Ufclas_Syllabus_Manager
+ * @subpackage Ufclas_Syllabus_Manager/includes
  */
 
 /**
@@ -23,11 +23,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Ufclas_Syllabus_Admin
- * @subpackage Ufclas_Syllabus_Admin/includes
- * @author     Priscilla Chapman (CLAS IT) <wordpress@clas.ufl.edu>
+ * @package    Ufclas_Syllabus_Manager
+ * @subpackage Ufclas_Syllabus_Manager/includes
+ * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Ufclas_Syllabus_Admin {
+class Ufclas_Syllabus_Manager {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +35,7 @@ class Ufclas_Syllabus_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Ufclas_Syllabus_Admin_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Ufclas_Syllabus_Manager_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -68,7 +68,7 @@ class Ufclas_Syllabus_Admin {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'ufclas-syllabus-admin';
+		$this->plugin_name = 'ufclas-syllabus-manager';
 		$this->version = '1.0.0';
 
 		$this->load_dependencies();
@@ -83,10 +83,10 @@ class Ufclas_Syllabus_Admin {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Ufclas_Syllabus_Admin_Loader. Orchestrates the hooks of the plugin.
-	 * - Ufclas_Syllabus_Admin_i18n. Defines internationalization functionality.
-	 * - Ufclas_Syllabus_Admin_Admin. Defines all hooks for the admin area.
-	 * - Ufclas_Syllabus_Admin_Public. Defines all hooks for the public side of the site.
+	 * - Ufclas_Syllabus_Manager_Loader. Orchestrates the hooks of the plugin.
+	 * - Ufclas_Syllabus_Manager_i18n. Defines internationalization functionality.
+	 * - Ufclas_Syllabus_Manager_Admin. Defines all hooks for the admin area.
+	 * - Ufclas_Syllabus_Manager_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -100,33 +100,33 @@ class Ufclas_Syllabus_Admin {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ufclas-syllabus-admin-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ufclas-syllabus-manager-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ufclas-syllabus-admin-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ufclas-syllabus-manager-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ufclas-syllabus-admin-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ufclas-syllabus-manager-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ufclas-syllabus-admin-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ufclas-syllabus-manager-public.php';
 
-		$this->loader = new Ufclas_Syllabus_Admin_Loader();
+		$this->loader = new Ufclas_Syllabus_Manager_Loader();
 
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Ufclas_Syllabus_Admin_i18n class in order to set the domain and to register the hook
+	 * Uses the Ufclas_Syllabus_Manager_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -134,7 +134,7 @@ class Ufclas_Syllabus_Admin {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Ufclas_Syllabus_Admin_i18n();
+		$plugin_i18n = new Ufclas_Syllabus_Manager_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -149,16 +149,11 @@ class Ufclas_Syllabus_Admin {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Ufclas_Syllabus_Admin_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Ufclas_Syllabus_Manager_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_menu' );
-		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'disable_dashboard_widgets' );
-		$this->loader->add_action( 'welcome_panel', $plugin_admin, 'welcome_panel' );
-		
-		// Remove default WP welcome panel from dashboard
-		remove_action( 'welcome_panel', 'wp_welcome_panel' );
+
 	}
 
 	/**
@@ -170,7 +165,7 @@ class Ufclas_Syllabus_Admin {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Ufclas_Syllabus_Admin_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Ufclas_Syllabus_Manager_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -201,7 +196,7 @@ class Ufclas_Syllabus_Admin {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Ufclas_Syllabus_Admin_Loader    Orchestrates the hooks of the plugin.
+	 * @return    Ufclas_Syllabus_Manager_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;
@@ -216,4 +211,5 @@ class Ufclas_Syllabus_Admin {
 	public function get_version() {
 		return $this->version;
 	}
+
 }

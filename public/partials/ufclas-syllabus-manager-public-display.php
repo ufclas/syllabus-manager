@@ -8,8 +8,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      1.0.0
  *
- * @package    Ufclas_Syllabus_Admin
- * @subpackage Ufclas_Syllabus_Admin/public/partials
+ * @package    Ufclas_Syllabus_Manager
+ * @subpackage Ufclas_Syllabus_Manager/public/partials
  */
 ?>
 

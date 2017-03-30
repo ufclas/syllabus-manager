@@ -1,5 +1,5 @@
-UFCLAS Syllabus Admin
-=====================
+UFCLAS Syllabus Manager
+=======================
 
 WordPress plugin that manages course syllabi. 
 

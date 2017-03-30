@@ -9,8 +9,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      1.0.0
  *
- * @package    Ufclas_Syllabus_Admin
- * @subpackage Ufclas_Syllabus_Admin/includes
+ * @package    Ufclas_Syllabus_Manager
+ * @subpackage Ufclas_Syllabus_Manager/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Ufclas_Syllabus_Admin
- * @subpackage Ufclas_Syllabus_Admin/includes
- * @author     Priscilla Chapman (CLAS IT) <wordpress@clas.ufl.edu>
+ * @package    Ufclas_Syllabus_Manager
+ * @subpackage Ufclas_Syllabus_Manager/includes
+ * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Ufclas_Syllabus_Admin_i18n {
+class Ufclas_Syllabus_Manager_i18n {
 
 
 	/**
@@ -35,7 +35,7 @@ class Ufclas_Syllabus_Admin_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'ufclas-syllabus-admin',
+			'ufclas-syllabus-manager',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);

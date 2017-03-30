@@ -22,7 +22,7 @@
  * @link       https://it.clas.ufl.edu/
  * @since      1.0.0
  *
- * @package    Ufclas_Syllabus_Admin
+ * @package    Ufclas_Syllabus_Manager
  */
 
 // If uninstall not called from WordPress, then exit.

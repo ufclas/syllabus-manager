@@ -2,3 +2,14 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+.ufcsm-table .list-inline {
+	margin-bottom: 0;
+}
+.ufcsm-table .list-inline li {
+	text-transform: none;
+}
+.ufcsm-table .list-inline li:before {
+	content: none;
+	margin-right: 0;
+}

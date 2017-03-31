@@ -99,5 +99,26 @@ class Ufclas_Syllabus_Manager_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
+	/**
+	 * Use custom plugin or theme templates
+	 * 
+	 * @since 1.0.0
+	 * @param  string $template_path [[Description]]
+	 * @return string [[Description]]
+	 */
+	public function set_templates( $template_path ) {
+		$post_type = 'ufcsm_course';
+		
+		if ( is_singular( $post_type ) || is_post_type_archive( $post_type ) ){
+			$templates = new Ufclas_Syllabus_Manager_Template_Loader;
+			
+			if ( is_archive() ){
+				$template_path = $templates->locate_template( 'syllabus-archive.php', false );
+			}
+			
+		}
+		return $template_path;
+	}
 
 }

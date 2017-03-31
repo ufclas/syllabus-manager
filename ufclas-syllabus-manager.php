@@ -30,6 +30,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+define( 'UFCLAS_SYLLABUS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-ufclas-syllabus-manager-activator.php

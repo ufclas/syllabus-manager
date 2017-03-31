@@ -112,13 +112,19 @@ class Ufclas_Syllabus_Manager {
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ufclas-syllabus-manager-admin.php';
-
+		
+		/**
+		 * Template loader classes
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ufclas-syllabus-manager-template-loader.php';
+		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ufclas-syllabus-manager-public.php';
-
+		
 		$this->loader = new Ufclas_Syllabus_Manager_Loader();
 
 	}
@@ -169,6 +175,7 @@ class Ufclas_Syllabus_Manager {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'template_include', $plugin_public, 'set_templates' );
 
 	}
 

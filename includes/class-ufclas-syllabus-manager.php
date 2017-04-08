@@ -57,7 +57,7 @@ class Ufclas_Syllabus_Manager {
 	 */
 	protected $version;
 
-	/**
+	/** 
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -175,7 +175,12 @@ class Ufclas_Syllabus_Manager {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		
+		$this->loader->add_action( 'pre_get_posts', $plugin_public, 'set_courses_query' );
 		$this->loader->add_action( 'template_include', $plugin_public, 'set_templates' );
+		$this->loader->add_action( 'ufcsm_content', $plugin_public, 'display_content' );
+		$this->loader->add_action( 'ufcsm_content_before', $plugin_public, 'display_content_header' );
+		$this->loader->add_action( 'ufcsm_content_after', $plugin_public, 'display_content_footer' );
 
 	}
 

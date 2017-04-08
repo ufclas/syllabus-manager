@@ -73,6 +73,7 @@ class Ufclas_Syllabus_Manager_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->plugin_name, '//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css', array('bootstrap'), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ufclas-syllabus-manager-admin.css', array(), $this->version, 'all' );
 
 	}
@@ -96,6 +97,7 @@ class Ufclas_Syllabus_Manager_Admin {
 		 * class.
 		 */
 
+		wp_enqueue_script( '//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js', array( 'jquery', 'bootstrap' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-manager-admin.js', array( 'jquery' ), $this->version, false );
 
 	}

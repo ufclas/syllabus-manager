@@ -39,6 +39,12 @@ class Ufclas_Syllabus_Manager_Public {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	
+	public $templates;
+	
+	public $post_type;
+	public $taxonomies;
+	public $post_page_id;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -51,6 +57,11 @@ class Ufclas_Syllabus_Manager_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->templates = new Ufclas_Syllabus_Manager_Template_Loader;
+		
+		$this->post_type = 'ufcsm_course';
+		$this->taxonomies = array('ufcsm_instructor', 'ufcsm_department', 'ufcsm_level', 'ufcsm_semester');
+		$this->post_page_id = 90;
 
 	}
 
@@ -108,17 +119,55 @@ class Ufclas_Syllabus_Manager_Public {
 	 * @return string [[Description]]
 	 */
 	public function set_templates( $template_path ) {
-		$post_type = 'ufcsm_course';
 		
-		if ( is_singular( $post_type ) || is_post_type_archive( $post_type ) ){
-			$templates = new Ufclas_Syllabus_Manager_Template_Loader;
-			
-			if ( is_archive() ){
-				$template_path = $templates->locate_template( 'syllabus-archive.php', false );
-			}
-			
+		if ( is_post_type_archive( $this->post_type )){			
+			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
+		elseif ( is_tax('ufcsm_instructor') || is_tax('ufcsm_department') || is_tax('ufcsm_level') || is_tax('ufcsm_semester') ){
+			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
+		}
+		elseif (is_singular( $this->post_type )){
+			$template_path = $this->templates->locate_template( 'syllabus-single.php', false );
+		}
+		
 		return $template_path;
 	}
-
+	
+	public function display_content(){
+		include 'templates/syllabus-content.php';
+	}
+	
+	public function display_content_header(){
+		include 'partials/syllabus-content-header.php';
+	}
+	
+	public function display_content_footer(){
+		include 'partials/syllabus-content-footer.php';
+	}
+	
+	function set_courses_query( $query ) {
+		if ( is_admin() || !$query->is_main_query() ) {
+			return;
+		}
+		
+		if ( $query->get('page_id') == $this->post_page_id ){
+			
+			// Reset properties to emulate an archive page
+			$query->set('post_type', 'ufcsm_course');
+			$query->set('page_id', '');
+			$query->is_page = 0;
+			$query->is_singular = 0;
+			$query->is_post_type_archive = 1;
+        	$query->is_archive = 1;
+			
+			$query->set( 'orderby', 'title' );
+			$query->set( 'order', 'ASC' );
+			$query->set( 'posts_per_page', -1 );
+		}
+		elseif ( $query->is_post_type_archive('ufcsm_course') || is_tax('ufcsm_instructor') || is_tax('ufcsm_department') || is_tax('ufcsm_level') || is_tax('ufcsm_semester')  ){
+			$query->set( 'orderby', 'title' );
+			$query->set( 'order', 'ASC' );
+			$query->set( 'posts_per_page', -1 );
+		}
+	}
 }

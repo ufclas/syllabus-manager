@@ -134,7 +134,7 @@ class Ufclas_Syllabus_Manager_Public {
 	}
 	
 	public function display_content(){
-		include 'templates/syllabus-content.php';
+		include 'partials/syllabus-content.php';
 	}
 	
 	public function display_content_header(){

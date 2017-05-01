@@ -15,7 +15,8 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<div id="main" class="container main-content">
+<div id="syllabus-main-wrap">
+<div id="main" class="container main-content syllabus-main-content">
 <div class="row">
   <div class="col-sm-12">
     <?php //ufclas_ufl_2015_breadcrumbs(); ?>

@@ -15,6 +15,7 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-</div>
-</div>
-</div>
+</div><!-- .col-md-12 -->
+</div><!-- .row -->
+</div><!-- .syllabus-main-content -->
+</div><!-- #syllabus-main-wrap -->

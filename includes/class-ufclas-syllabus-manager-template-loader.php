@@ -6,7 +6,7 @@
  * template parts with fallback through the child and parent themes.
  *
  * @link       https://it.clas.ufl.edu/
- * @since      1.0.0
+ * @since      0.0.0
  *
  * @package    Ufclas_Syllabus_Manager
  * @subpackage Ufclas_Syllabus_Manager/includes
@@ -25,7 +25,7 @@ class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
   /**
    * Prefix for filter names.
    *
-   * @since 1.0.0
+   * @since 0.0.0
    *
    * @var string
    */
@@ -34,7 +34,7 @@ class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
   /**
    * Directory name where custom templates for this plugin should be found in the theme.
    *
-   * @since 1.0.0
+   * @since 0.0.0
    *
    * @var string
    */
@@ -51,7 +51,7 @@ class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
    * define( 'MEAL_PLANNER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
    * ~~~
    *
-   * @since 1.0.0
+   * @since 0.0.0
    *
    * @var string
    */

@@ -6,7 +6,7 @@
  * This file is used to markup the admin-facing aspects of the plugin.
  *
  * @link       https://it.clas.ufl.edu/
- * @since      1.0.0
+ * @since      0.0.0
  *
  * @package    Ufclas_Syllabus_Manager
  * @subpackage Ufclas_Syllabus_Manager/admin/partials

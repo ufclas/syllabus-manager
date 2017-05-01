@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://it.clas.ufl.edu/
- * @since             1.0.0
+ * @since             0.0.0
  * @package           Ufclas_Syllabus_Manager
  *
  * @wordpress-plugin
  * Plugin Name:       UFCLAS Syllabus Manager
  * Plugin URI:        https://it.clas.ufl.edu/
  * Description:       WordPress plugin that manages course syllabi. 
- * Version:           1.0.0
+ * Version:           0.0.0
  * Author:            Priscilla Chapman (CLAS IT)
  * Author URI:        https://it.clas.ufl.edu/
  * License:           GPL-2.0+
@@ -66,7 +66,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-ufclas-syllabus-manager.ph
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    0.0.0
  */
 function run_ufclas_syllabus_manager() {
 

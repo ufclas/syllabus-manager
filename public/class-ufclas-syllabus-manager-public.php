@@ -59,8 +59,8 @@ class Ufclas_Syllabus_Manager_Public {
 		$this->version = $version;
 		$this->templates = new Ufclas_Syllabus_Manager_Template_Loader;
 		
-		$this->post_type = 'ufcsm_course';
-		$this->taxonomies = array('ufcsm_instructor', 'ufcsm_department', 'ufcsm_level', 'ufcsm_semester');
+		$this->post_type = 'syllabus_course';
+		$this->taxonomies = array('syllabus_instructor', 'syllabus_department', 'syllabus_level', 'syllabus_semester');
 		$this->post_page_id = 90;
 
 	}
@@ -123,7 +123,7 @@ class Ufclas_Syllabus_Manager_Public {
 		if ( is_post_type_archive( $this->post_type )){			
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
-		elseif ( is_tax('ufcsm_instructor') || is_tax('ufcsm_department') || is_tax('ufcsm_level') || is_tax('ufcsm_semester') ){
+		elseif ( is_tax('syllabus_instructor') || is_tax('syllabus_department') || is_tax('syllabus_level') || is_tax('syllabus_semester') ){
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
 		elseif (is_singular( $this->post_type )){
@@ -153,7 +153,7 @@ class Ufclas_Syllabus_Manager_Public {
 		if ( $query->get('page_id') == $this->post_page_id ){
 			
 			// Reset properties to emulate an archive page
-			$query->set('post_type', 'ufcsm_course');
+			$query->set('post_type', 'syllabus_course');
 			$query->set('page_id', '');
 			$query->is_page = 0;
 			$query->is_singular = 0;
@@ -164,7 +164,7 @@ class Ufclas_Syllabus_Manager_Public {
 			$query->set( 'order', 'ASC' );
 			$query->set( 'posts_per_page', -1 );
 		}
-		elseif ( $query->is_post_type_archive('ufcsm_course') || is_tax('ufcsm_instructor') || is_tax('ufcsm_department') || is_tax('ufcsm_level') || is_tax('ufcsm_semester')  ){
+		elseif ( $query->is_post_type_archive('syllabus_course') || is_tax('syllabus_instructor') || is_tax('syllabus_department') || is_tax('syllabus_level') || is_tax('syllabus_semester')  ){
 			$query->set( 'orderby', 'title' );
 			$query->set( 'order', 'ASC' );
 			$query->set( 'posts_per_page', -1 );

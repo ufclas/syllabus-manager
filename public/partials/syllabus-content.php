@@ -40,21 +40,31 @@
 				$number = get_field('ufcsm_number');
 				$section = get_field('ufcsm_section');
 				$title = get_field('ufcsm_title');
+				$syllabus_id = get_the_ID();
 				$syllabus_url = get_field('ufcsm_syllabus');
 				$syllabus_title = ( $syllabus_url )? sprintf('<a href="%s" target="_blank">%s</a>', $syllabus_url, $title) : $title;
-
-				$instructor_term = 'ufcsm_instructor';
-				$department_term = 'ufcsm_department';
-				$level_term = 'ufcsm_level';
+				
+				$syllabus_lists =  array(
+					'instruct' => 'syllabus_instructor',
+					'dept' => 'syllabus_department',
+					'level' => 'syllabus_level',
+					'semester' => 'syllabus_semester',
+				);
 		?>
 		<tr>
 			<td class="syllabus-course"><?php echo $prefix . $number; ?></td>
 			<td class="syllabus-section"><?php echo $section; ?></td>
 			<td class="syllabus-title"><?php echo $syllabus_title; ?></td>
-			<td class="syllabus-instruct"><?php echo get_the_term_list( get_the_ID(), $instructor_term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' ); ?></td>
-			<td class="syllabus-dept"><?php echo get_the_term_list( get_the_ID(), $department_term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' ); ?></td>
-			<td class="syllabus-level"><?php echo get_the_term_list( get_the_ID(), $level_term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' ); ?></td>
-			<td class="syllabus-semester"><?php echo get_the_term_list( get_the_ID(), 'ufcsm_semester', '<ul class="list-inline"><li>', ',</li><li>', '</li>' ); ?></td>
+			
+			<?php
+				// Display the taxonomy lists
+				foreach ( $syllabus_lists as $key => $term ):
+					$term_class = 'syllabus-' . $key;
+					$term_list = get_the_term_list( $syllabus_id, $term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' );
+					$term_list = ( !is_wp_error( $term_list ) )? $term_list : '';	
+					printf( '<td class="%s">%s</td>', $term_class, $term_list );
+				endforeach;
+			?>
 		</tr>
 			<?php endwhile; // End of the loop. ?>
 		</tbody>

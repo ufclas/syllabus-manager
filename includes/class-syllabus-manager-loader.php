@@ -6,8 +6,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      0.0.0
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/includes
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/includes
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/includes
  * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Ufclas_Syllabus_Manager_Loader {
+class Syllabus_Manager_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

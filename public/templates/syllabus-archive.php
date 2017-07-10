@@ -9,15 +9,15 @@
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
  *
- * @package Ufclas_Syllabus_Manager
+ * @package Syllabus_Manager
  */
 get_header();
 
-do_action( 'ufcsm_content_before' );
+do_action( 'syllabus_manager_content_before' );
 
-do_action( 'ufcsm_content' );
+do_action( 'syllabus_manager_content' );
 
-do_action( 'ufcsm_content_after' );
+do_action( 'syllabus_manager_content_after' );
 
 get_footer(); 
 

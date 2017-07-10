@@ -6,8 +6,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      0.0.0
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/admin
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/admin
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/admin
  * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Ufclas_Syllabus_Manager_Admin {
+class Syllabus_Manager_Admin {
 
 	/**
 	 * The ID of this plugin.
@@ -65,15 +65,15 @@ class Ufclas_Syllabus_Manager_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Ufclas_Syllabus_Manager_Loader as all of the hooks are defined
+		 * defined in Syllabus_Manager_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Ufclas_Syllabus_Manager_Loader will then create the relationship
+		 * The Syllabus_Manager_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ufclas-syllabus-manager-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -88,15 +88,15 @@ class Ufclas_Syllabus_Manager_Admin {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Ufclas_Syllabus_Manager_Loader as all of the hooks are defined
+		 * defined in Syllabus_Manager_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Ufclas_Syllabus_Manager_Loader will then create the relationship
+		 * The Syllabus_Manager_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ufclas-syllabus-manager-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 

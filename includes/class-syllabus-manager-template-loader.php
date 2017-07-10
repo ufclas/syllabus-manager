@@ -8,8 +8,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      0.0.0
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/includes
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  *
  * Only need to specify class properties here.
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/includes
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/includes
  * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
+class Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
   /**
    * Prefix for filter names.
    *
@@ -29,7 +29,7 @@ class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
    *
    * @var string
    */
-  protected $filter_prefix = 'ufcsm';
+  protected $filter_prefix = 'syllabus_manager';
 
   /**
    * Directory name where custom templates for this plugin should be found in the theme.
@@ -55,7 +55,7 @@ class Ufclas_Syllabus_Manager_Template_Loader extends Gamajo_Template_Loader {
    *
    * @var string
    */
-  protected $plugin_directory = UFCLAS_SYLLABUS_MANAGER_DIR;
+  protected $plugin_directory = SYLLABUS_MANAGER_DIR;
 
   /**
    * Directory name where templates are found in this plugin.

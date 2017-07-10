@@ -30,7 +30,7 @@ if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
 		 *
 		 * @var string
 		 */
-		protected $filter_prefix = 'your_plugin';
+		protected $filter_prefix = 'syllabus_manager';
 
 		/**
 		 * Directory name where custom templates for this plugin should be found in the theme.
@@ -54,7 +54,7 @@ if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
 		 *
 		 * @var string
 		 */
-		protected $plugin_directory = 'YOUR_PLUGIN_DIR';
+		protected $plugin_directory = SYLLABUS_MANAGER_DIR;
 
 		/**
 		 * Directory name where templates are found in this plugin.

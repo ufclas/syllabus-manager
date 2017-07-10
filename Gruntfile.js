@@ -14,7 +14,7 @@ module.exports = function(grunt){
 					sourcemap: true
 				},
 				files: {
-					'public/css/ufclas-syllabus-manager-public.css' : 'public/sass/ufclas-syllabus-manager-public.scss',	
+					'public/css/syllabus-manager-public.css' : 'public/sass/syllabus-manager-public.scss',	
 				}	
 			}	 
 		 },

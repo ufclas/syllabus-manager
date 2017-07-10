@@ -8,8 +8,8 @@
  * @link       https://it.clas.ufl.edu/
  * @since      0.0.0
  *
- * @package    Ufclas_Syllabus_Manager
- * @subpackage Ufclas_Syllabus_Manager/public/partials
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/public/partials
  */
 ?>
 
@@ -24,24 +24,24 @@
 	  <table class="table table-hover table-striped syllabus-table">
 		<thead>
 		  <tr>
-			<th class="syllabus-course"><?php _e('Course', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-section"><?php _e('Section', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-title"><?php _e('Title / Syllabus', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-instruct"><?php _e('Instructor(s)', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-dept"><?php _e('Department', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-level"><?php _e('Course Level', 'ufclas-syllabus-manager'); ?></th>
-			<th class="syllabus-semester"><?php _e('Semester', 'ufclas-syllabus-manager'); ?></th>
+			<th class="syllabus-course"><?php _e('Course', 'syllabus-manager'); ?></th>
+			<th class="syllabus-section"><?php _e('Section', 'syllabus-manager'); ?></th>
+			<th class="syllabus-title"><?php _e('Title / Syllabus', 'syllabus-manager'); ?></th>
+			<th class="syllabus-instruct"><?php _e('Instructor(s)', 'syllabus-manager'); ?></th>
+			<th class="syllabus-dept"><?php _e('Department', 'syllabus-manager'); ?></th>
+			<th class="syllabus-level"><?php _e('Course Level', 'syllabus-manager'); ?></th>
+			<th class="syllabus-semester"><?php _e('Semester', 'syllabus-manager'); ?></th>
 		  </tr>
 		</thead>
 		<tbody>
 		<?php
 			while ( have_posts() ) : the_post(); 
-				$prefix = get_field('ufcsm_prefix');
-				$number = get_field('ufcsm_number');
-				$section = get_field('ufcsm_section');
-				$title = get_field('ufcsm_title');
+				$prefix = get_field('syllabus_manager_prefix');
+				$number = get_field('syllabus_manager_number');
+				$section = get_field('syllabus_manager_section');
+				$title = get_field('syllabus_manager_title');
 				$syllabus_id = get_the_ID();
-				$syllabus_url = get_field('ufcsm_syllabus');
+				$syllabus_url = get_field('syllabus_manager_syllabus');
 				$syllabus_title = ( $syllabus_url )? sprintf('<a href="%s" target="_blank">%s</a>', $syllabus_url, $title) : $title;
 				
 				$syllabus_lists =  array(
@@ -70,6 +70,6 @@
 		</tbody>
 		</table>
 	<?php else: ?>
-		<div><?php _e('No courses found.', 'ufclas_syllabus_manager'); ?></div>
+		<div><?php _e('No courses found.', 'Syllabus_Manager'); ?></div>
 	<?php endif; ?>
 </div><!-- .ufcsm-container --> 

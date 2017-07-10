@@ -10,7 +10,7 @@
  *
  * @link              https://it.clas.ufl.edu/
  * @since             0.0.0
- * @package           Ufclas_Syllabus_Manager
+ * @package           Syllabus_Manager
  *
  * @wordpress-plugin
  * Plugin Name:       UFCLAS Syllabus Manager
@@ -21,7 +21,7 @@
  * Author URI:        https://it.clas.ufl.edu/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       ufclas-syllabus-manager
+ * Text Domain:       syllabus-manager
  * Domain Path:       /languages
  */
 
@@ -30,34 +30,34 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'UFCLAS_SYLLABUS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SYLLABUS_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.
- * This action is documented in includes/class-ufclas-syllabus-manager-activator.php
+ * This action is documented in includes/class-syllabus-manager-activator.php
  */
-function activate_ufclas_syllabus_manager() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-ufclas-syllabus-manager-activator.php';
-	Ufclas_Syllabus_Manager_Activator::activate();
+function activate_syllabus_manager() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-syllabus-manager-activator.php';
+	Syllabus_Manager_Activator::activate();
 }
 
 /**
  * The code that runs during plugin deactivation.
- * This action is documented in includes/class-ufclas-syllabus-manager-deactivator.php
+ * This action is documented in includes/class-syllabus-manager-deactivator.php
  */
-function deactivate_ufclas_syllabus_manager() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-ufclas-syllabus-manager-deactivator.php';
-	Ufclas_Syllabus_Manager_Deactivator::deactivate();
+function deactivate_syllabus_manager() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-syllabus-manager-deactivator.php';
+	Syllabus_Manager_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_ufclas_syllabus_manager' );
-register_deactivation_hook( __FILE__, 'deactivate_ufclas_syllabus_manager' );
+register_activation_hook( __FILE__, 'activate_syllabus_manager' );
+register_deactivation_hook( __FILE__, 'deactivate_syllabus_manager' );
 
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-ufclas-syllabus-manager.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-syllabus-manager.php';
 
 /**
  * Begins execution of the plugin.
@@ -68,10 +68,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-ufclas-syllabus-manager.ph
  *
  * @since    0.0.0
  */
-function run_ufclas_syllabus_manager() {
+function run_syllabus_manager() {
 
-	$plugin = new Ufclas_Syllabus_Manager();
+	$plugin = new Syllabus_Manager();
 	$plugin->run();
 
 }
-run_ufclas_syllabus_manager();
+run_syllabus_manager();

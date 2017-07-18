@@ -34,7 +34,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 			  <div class="panel-body">
 				<table id="soc-table" class="table table-striped">
 					<thead>
-						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Meet Times</th><th>Instructor(s)</th><th>Status</th><th>Actions</th></tr>
+						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Level</th><th>Meet Times</th><th>Instructor(s)</th><th>Status</th><th>Actions</th></tr>
 					</thead>
 					<tbody></tbody>
 				</table>

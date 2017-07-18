@@ -158,8 +158,6 @@ class Syllabus_Manager_Admin {
 			
 			$response = wp_remote_get( $api_url );
 			
-			error_log( print_r($response, true) );
-						
 			if ( is_wp_error($response) || !is_array($response) ){
 				$data = false;				
 			}
@@ -167,38 +165,64 @@ class Syllabus_Manager_Admin {
 				$headers = $response['headers'];
 				$body = $response['body'];
 				$courses = json_decode($body);
+				
+				if ( false ){
+					error_log('$courses: ' . print_r($courses, true));
+				}
 			
 				if ( !empty( $courses )){
 					$courses = $courses[0]->COURSES;
 					foreach ( $courses as $course ){
-
 						$prefix = $course->code;
 						$title = $course->name;
 
 						foreach ( $course->sections as $section ){
 							$number = $section->number;
-							$instructors = array();
-							$times = array();					
-
-							foreach ( $section->meetTimes as $time ){
-								$period = $time->meetPeriodBegin;
-								$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
-								$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
+							$level = 'Undergraduate';
+							$status = '<i>No Syllabus</i>';
+							$button = '<button type="button" class="btn btn-primary">Add Syllabus</button>';
+							
+							// Get and format meeting times string
+							if ( !empty( $section->meetTimes ) ){
+								$times = array();
+								foreach ( $section->meetTimes as $time ){
+									$period = $time->meetPeriodBegin;
+									$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
+									$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
+								}
+								$time_str = implode(", ", $times);
 							}
-
-							foreach ( $section->instructors as $instructor ){
-								$instructors[] = $instructor->name;
+							else {
+								$time_str = '<i>No Meeting Time</i>';
 							}
-
+							
+							// Get and format instructor string
+							if ( !empty( $section->instructors ) ){
+								$instructors = array();
+								foreach ( $section->instructors as $instructor ){
+									$instructors[] = $instructor->name;
+								}
+								$instr_str = implode(", ", $instructors);
+							}
+							else {
+								$instr_str = '<i>No Instructor</i>';
+							}
+							
+							// Add values to the data array
 							$data[] = array(
 								$prefix,
 								$number,
 								$title,
-								implode(", ", $times),
-								implode(", ", $instructors),
-								'No Syllabus',
-								'<button type="button" class="btn btn-primary">Add Syllabus</button>'
+								$level,
+								$time_str,
+								$instr_str,
+								$status,
+								$button
 							);
+							
+							if ( false ){
+								error_log('$data: ' . print_r($data, true));
+							}
 						}
 					}
 				}

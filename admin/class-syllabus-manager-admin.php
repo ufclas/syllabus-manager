@@ -72,10 +72,10 @@ class Syllabus_Manager_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+		wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
+		wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
 		
-		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../includes/bootstrap/css/bootstrap.min.css', array(), $this->version, 'screen' );
-		wp_enqueue_style( 'dataTables', plugin_dir_url( __FILE__ ) . '../includes/dataTables/dataTables.min.css', array(), $this->version, 'screen' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugins_url('css/syllabus-manager-admin.css', __FILE__ ), array(), $this->version, 'all' );
 
 	}
 
@@ -98,9 +98,10 @@ class Syllabus_Manager_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( 'bootstrap', plugin_dir_url( __FILE__ ) . '../includes/bootstrap/js/bootstrap.min.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'dataTables', plugin_dir_url( __FILE__ ) . '../includes/dataTables/dataTables.min.js', array( 'jquery','bootstrap' ), $this->version, true );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-admin.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'dataTables', plugins_url('includes/dataTables/dataTables.min.js', dirname(__FILE__)), array( 'jquery','bootstrap' ), $this->version, true );
+		
+		wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'jquery' ), $this->version, true );
 		wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 			'action' => 'syllabus_manager_main',
 			'nonce_name' => 'syllabus-manager-main-nonce',
@@ -126,13 +127,17 @@ class Syllabus_Manager_Admin {
 		include 'partials/syllabus-manager-admin-display.php';
 	}
 	
-	
+	/**
+	 * Gets data for the Schedule of Courses DataTable
+	 * 
+	 * @since 0.0.0
+	 */
 	public function get_main_table_data(){
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-get-main', 'syllabus-manager-main-nonce' );
 		
 		$data = array();
-		$courses = $this->get_courses();
+		$courses = $this->fetch_courses();
 		
 		
 		if ( !empty( $courses )){
@@ -175,7 +180,13 @@ class Syllabus_Manager_Admin {
 		wp_die(); // Required to terminate immediately and return a proper response
 	}
 	
-	public function get_courses(){
+	/**
+	 * Requests courses data
+	 * 
+	 * @return array JSON-decoded data
+	 * @since 0.0.0
+	 */
+	public function fetch_courses(){
 		$courses = array();
 		
 		$api_url = plugins_url('data/20178_biology.json', __FILE__);

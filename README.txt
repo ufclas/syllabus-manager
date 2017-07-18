@@ -14,7 +14,7 @@ WordPress plugin that manages course syllabi.
 
 == Installation ==
 
-1. Upload `syllabus-manager.php` to the `/wp-content/plugins/` directory
+1. Upload `ufclas-syllabus-manager` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
@@ -25,3 +25,5 @@ WordPress plugin that manages course syllabi.
 
 = 1.0 =
 * Initial release
+
+== To-Do ==

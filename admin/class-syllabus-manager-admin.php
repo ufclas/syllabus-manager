@@ -136,7 +136,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-get-main', 'syllabus-manager-main-nonce' );
 		
-		echo json_encode( $this->fetch_courses() );
+		echo json_encode( $this->get_course_data() );
 		
 		wp_die(); // Required to terminate immediately and return a proper response
 	}
@@ -149,89 +149,145 @@ class Syllabus_Manager_Admin {
 	 * @return array JSON-decoded data
 	 * @since 0.0.0
 	 */
-	public function fetch_courses(){
+	public function get_course_data( $dept = '011690003', $term = '20178', $prog_level = 'UGRD' ){
+		// Get the correct transient
+		$transient_key = "syllabus_manager_{$dept}_{$term}_{$prog_level}";
 		
 		// Get existing copy of transient data, if exists
-		if ( false === $data = get_transient( 'syllabus_manager_201708_biology' ) ){
-			// Get external data
-			$api_url = plugins_url('data/201708_biology.json', __FILE__);
+		if ( empty($data = get_transient( $transient_key ))  ){
 			
-			$response = wp_remote_get( $api_url );
+			$args = array(
+				'dept' => $dept,
+				'prog-level' => $prog_level, 
+				'term' => $term,
+			);
 			
-			if ( is_wp_error($response) || !is_array($response) ){
-				$data = false;				
-			}
-			else{
-				$headers = $response['headers'];
-				$body = $response['body'];
-				$courses = json_decode($body);
-				
-				if ( false ){
-					error_log('$courses: ' . print_r($courses, true));
-				}
-			
-				if ( !empty( $courses )){
-					$courses = $courses[0]->COURSES;
-					foreach ( $courses as $course ){
-						$prefix = $course->code;
-						$title = $course->name;
+			if ( false !== ($courses = $this->fetch_courses( $args ) ) ){
+				foreach ( $courses as $course ):
+					$prefix = $course->code;
+					$title = $course->name;
 
-						foreach ( $course->sections as $section ){
-							$number = $section->number;
-							$level = 'Undergraduate';
-							$status = '<i>No Syllabus</i>';
-							$button = '<button type="button" class="btn btn-primary">Add Syllabus</button>';
-							
-							// Get and format meeting times string
-							if ( !empty( $section->meetTimes ) ){
-								$times = array();
-								foreach ( $section->meetTimes as $time ){
-									$period = $time->meetPeriodBegin;
-									$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
-									$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
-								}
-								$time_str = implode(", ", $times);
+					foreach ( $course->sections as $section ):
+						$number = $section->number;
+						$level = 'Undergraduate';
+						$status = '<i>No Syllabus</i>';
+						$button = '<button type="button" class="btn btn-primary">Add Syllabus</button>';
+
+						// Get and format meeting times string
+						if ( !empty( $section->meetTimes ) ){
+							$times = array();
+							foreach ( $section->meetTimes as $time ){
+								$period = $time->meetPeriodBegin;
+								$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
+								$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
 							}
-							else {
-								$time_str = '<i>No Meeting Time</i>';
-							}
-							
-							// Get and format instructor string
-							if ( !empty( $section->instructors ) ){
-								$instructors = array();
-								foreach ( $section->instructors as $instructor ){
-									$instructors[] = $instructor->name;
-								}
-								$instr_str = implode(", ", $instructors);
-							}
-							else {
-								$instr_str = '<i>No Instructor</i>';
-							}
-							
-							// Add values to the data array
-							$data[] = array(
-								$prefix,
-								$number,
-								$title,
-								$level,
-								$time_str,
-								$instr_str,
-								$status,
-								$button
-							);
-							
-							if ( false ){
-								error_log('$data: ' . print_r($data, true));
-							}
+							$time_str = implode(", ", $times);
 						}
-					}
-				}
+						else {
+							$time_str = '<i>No Meeting Time</i>';
+						}
+
+						// Get and format instructor string
+						if ( !empty( $section->instructors ) ){
+							$instructors = array();
+							foreach ( $section->instructors as $instructor ){
+								$instructors[] = $instructor->name;
+							}
+							$instr_str = implode(", ", $instructors);
+						}
+						else {
+							$instr_str = '<i>No Instructor</i>';
+						}
+
+						// Add values to the data array
+						$data[] = array(
+							$prefix,
+							$number,
+							$title,
+							$level,
+							$time_str,
+							$instr_str,
+							$status,
+							$button
+						);
+				
+					endforeach;
+				endforeach;
 				
 				// Seve the updated data
-				set_transient( 'syllabus_manager_201708_biology', $data, 24 * HOUR_IN_SECONDS );
+				set_transient( $transient_key, $data, 24 * HOUR_IN_SECONDS );
 			}
 		}
-		
 		return $data;
+	}
+	
+	/**
+	 * Get course array from external source
+	 * 
+	 * @param  string $dept       
+	 * @param  string $term       
+	 * @param  string $prog_level 
+	 * @return array|false JSON array of course objects
+	 *                              
+	 * @since 0.0.1
+	 */
+	public function fetch_courses( $query_args = array() ){
+		$defaults = array(
+			'category' => 'RES',
+			'course-code' => '',
+			'course-title' => '',
+			'cred-srch' => '',
+			'credits' => '',
+			'day-f' => '',
+			'day-m' => '',
+			'day-r' => '',
+			'day-s' => '',
+			'day-t' => '',
+			'day-w' => '',
+			'days' => 'false',
+			'dept' => '',
+			'eep' => '',
+			'fitsSchedule' => 'false',
+			'ge' => '',
+			'ge-b' => '',
+			'ge-c' => '',
+			'ge-h' => '',
+			'ge-m' => '',
+			'ge-n' => '',
+			'ge-p' => '',
+			'ge-s' => '',
+			'instructor' => '',
+			'last-row' => '0',
+			'level-max' => '--',
+			'level-min' => '--',
+			'no-open-seats' => 'false',
+			'online-a' => '',
+			'online-c' => '',
+			'online-h' => '',
+			'online-p' => '',
+			'online-b' => '',
+			'online-e' => '',
+			'prog-level' => '', 
+			'term' => '',
+			'var-cred' => 'true',
+			'writing' => '',
+		);
+		$args = array_merge($defaults, $query_args);
+		
+		// Get external data
+		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
+		$request_url = $api_url . http_build_query( $args );
+								  
+		$response = wp_remote_get( $request_url );
+		
+		// Valid response
+		if ( ! is_wp_error($response) && is_array($response) ){
+			$headers = $response['headers'];
+			$body = $response['body'];
+			$response_data = json_decode($body);
+			
+			return $response_data[0]->COURSES;
+		}
+		return false;
 	}
 }

@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://it.clas.ufl.edu/
- * @since             0.0.0
+ * @since             0.0.1
  * @package           Syllabus_Manager
  *
  * @wordpress-plugin
@@ -23,6 +23,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       syllabus-manager
  * Domain Path:       /languages
+ * BuildDate:		  20170718
  */
 
 // If this file is called directly, abort.

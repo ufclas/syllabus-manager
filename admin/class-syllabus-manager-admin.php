@@ -136,46 +136,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-get-main', 'syllabus-manager-main-nonce' );
 		
-		$data = array();
-		$courses = $this->fetch_courses();
-		
-		
-		if ( !empty( $courses )){
-			$courses = $courses[0]->COURSES;
-			foreach ( $courses as $course ){
-				
-				$prefix = $course->code;
-				$title = $course->name;
-				
-				foreach ( $course->sections as $section ){
-					$number = $section->number;
-					$instructors = array();
-					$times = array();					
-					
-					foreach ( $section->meetTimes as $time ){
-						$period = $time->meetPeriodBegin;
-						$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
-						$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
-					}
-					
-					foreach ( $section->instructors as $instructor ){
-						$instructors[] = $instructor->name;
-					}
-					
-					$data[] = array(
-						$prefix,
-						$number,
-						$title,
-						implode(", ", $times),
-						implode(", ", $instructors),
-						'No Syllabus',
-						'<button type="button" class="btn btn-primary">Add Syllabus</button>'
-					);
-				}
-			}
-		}
-		
-		echo json_encode( $data );
+		echo json_encode( $this->fetch_courses() );
 		
 		wp_die(); // Required to terminate immediately and return a proper response
 	}
@@ -183,25 +144,70 @@ class Syllabus_Manager_Admin {
 	/**
 	 * Requests courses data
 	 * 
+	 * Fetches data array from transient or refreshes data from external source
+	 * 
 	 * @return array JSON-decoded data
 	 * @since 0.0.0
 	 */
 	public function fetch_courses(){
-		$courses = array();
 		
-		$api_url = plugins_url('data/20178_biology.json', __FILE__);
-		
-		// Fetch external data
-		$response = wp_remote_get( $api_url );
-		
-		if ( is_array($response) && !is_wp_error($response) ){
-			$headers = $response['headers'];
-			$body = $response['body'];
+		// Get existing copy of transient data, if exists
+		if ( false === $data = get_transient( 'syllabus_manager_201708_biology' ) ){
+			// Get external data
+			$api_url = plugins_url('data/201708_biology.json', __FILE__);
 			
-			// Convert JSON to array
-			$courses = json_decode($body);
+			$response = wp_remote_get( $api_url );
+			
+			error_log( print_r($response, true) );
+						
+			if ( is_wp_error($response) || !is_array($response) ){
+				$data = false;				
+			}
+			else{
+				$headers = $response['headers'];
+				$body = $response['body'];
+				$courses = json_decode($body);
+			
+				if ( !empty( $courses )){
+					$courses = $courses[0]->COURSES;
+					foreach ( $courses as $course ){
+
+						$prefix = $course->code;
+						$title = $course->name;
+
+						foreach ( $course->sections as $section ){
+							$number = $section->number;
+							$instructors = array();
+							$times = array();					
+
+							foreach ( $section->meetTimes as $time ){
+								$period = $time->meetPeriodBegin;
+								$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
+								$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
+							}
+
+							foreach ( $section->instructors as $instructor ){
+								$instructors[] = $instructor->name;
+							}
+
+							$data[] = array(
+								$prefix,
+								$number,
+								$title,
+								implode(", ", $times),
+								implode(", ", $instructors),
+								'No Syllabus',
+								'<button type="button" class="btn btn-primary">Add Syllabus</button>'
+							);
+						}
+					}
+				}
+				
+				// Seve the updated data
+				set_transient( 'syllabus_manager_201708_biology', $data, 24 * HOUR_IN_SECONDS );
+			}
 		}
 		
-		return $courses;
+		return $data;
 	}
 }

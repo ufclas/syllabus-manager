@@ -88,7 +88,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 			<div class="panel panel-default">
 			  <div class="panel-heading">
 				<h3 class="panel-title">
-				<?php _e('Schedule of Courses', 'syllabus-manager'); ?></h3>
+				<?php _e('Courses', 'syllabus-manager'); ?></h3>
 			  </div>
 			  <div class="panel-body">
 				<table id="soc-table" class="table table-striped">

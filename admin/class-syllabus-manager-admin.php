@@ -220,7 +220,7 @@ class Syllabus_Manager_Admin {
 						$number = $section->number;
 						$level = 'Undergraduate';
 						$status = '<i>No Syllabus</i>';
-						$button = '<button type="button" class="btn btn-primary">Add Syllabus</button>';
+						$button = '<button type="button" class="btn btn-default">Add Syllabus</button>';
 
 						// Get and format meeting times string
 						if ( !empty( $section->meetTimes ) ){

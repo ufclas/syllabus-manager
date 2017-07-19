@@ -24,31 +24,63 @@ if ( !current_user_can( 'manage_options' ) )  {
 	<br>
 	
 	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title">
-				<?php _e('Filters', 'syllabus-manager'); ?></h3>
-			  </div>
-			  <div class="panel-body">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><?php _e('Course Filters', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+			<form>
+
+			<div class="form-group col-md-4">
+				<label for="filter-dept" class="control-label">Departments: </label>
+				<?php 
+					wp_dropdown_categories(array(
+						'taxonomy' => 'syllabus_department',
+						'hide_empty' => false,
+						'value_field' => 'slug',
+						'id' => 'filter-dept',
+						'name' => 'filter-dept',
+						'class' => 'form-control',
+					)); 
+				 ?>
+			 </div>
 				
-				  <form>
-				  <div class="form-group">
-					<label class="" for="departments">Departments</label><br>
-					<select class="form-control">
-					  <option>1</option>
-					  <option>2</option>
-					  <option>3</option>
-					  <option>4</option>
-					  <option>5</option>
-					</select>
-				  </div>
-				  <button type="submit" class="btn btn-primary">Apply Filters</button>
-				</form>
-				  
+			<div class="form-group col-md-4">
+				<label for="filter-term" class="control-label">Term: </label>
+				<?php 
+					wp_dropdown_categories(array(
+						'taxonomy' => 'syllabus_term',
+						'hide_empty' => false,
+						'value_field' => 'slug',
+						'id' => 'filter-term',
+						'name' => 'filter-term',
+						'class' => 'form-control',
+					)); 
+				 ?>
+			</div>
+				
+			<div class="form-group col-md-4">
+				<label for="filter-level" class="control-label">Course Level: </label>
+				<?php 
+					wp_dropdown_categories(array(
+						'taxonomy' => 'syllabus_level',
+						'hide_empty' => false,
+						'value_field' => 'slug',
+						'id' => 'filter-level',
+						'name' => 'filter-level',
+						'class' => 'form-control',
+					)); 
+				 ?>
 			  </div>
+			  <div class="form-group col-md-12">
+					<button type="submit" class="btn btn-default">Apply Filters</button>
+				</div>
+			
+			</form>
 			</div>
 		</div>
+	</div>
 	</div>
 	
 	<div class="row">
@@ -56,7 +88,6 @@ if ( !current_user_can( 'manage_options' ) )  {
 			<div class="panel panel-default">
 			  <div class="panel-heading">
 				<h3 class="panel-title">
-				<!-- <span class="glyphicon glyphicon-book" aria-hidden="true"></span> -->
 				<?php _e('Schedule of Courses', 'syllabus-manager'); ?></h3>
 			  </div>
 			  <div class="panel-body">
@@ -71,6 +102,4 @@ if ( !current_user_can( 'manage_options' ) )  {
 		</div>
 	</div>	
 
-	<div id="ajax-response"></div>
-	<br class="clear">
 </div>

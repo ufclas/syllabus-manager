@@ -72,9 +72,14 @@ class Syllabus_Manager_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
-		wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
 		
+		// Only add scripts to the plugin main page
+		$screen = get_current_screen();
+		if ( 'toplevel_page_syllabus-manager' == $screen->id ){
+			wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
+			wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );	
+		}
+				
 		wp_enqueue_style( $this->plugin_name, plugins_url('css/syllabus-manager-admin.css', __FILE__ ), array(), $this->version, 'all' );
 
 	}
@@ -117,7 +122,27 @@ class Syllabus_Manager_Admin {
 	public function add_menu(){
 		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
 		add_submenu_page('syllabus-manager', 'Courses', 'Courses', 'manage_options', 'edit.php?post_type=syllabus_course');
+		add_submenu_page('syllabus-manager', 'Departments', 'Departments', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_department');
+		add_submenu_page('syllabus-manager', 'Instructors', 'Instructors', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_instructor');
+		add_submenu_page('syllabus-manager', 'Course Levels', 'Course Levels', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_level');
+		add_submenu_page('syllabus-manager', 'Terms', 'Terms', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_term');
 	}
+	
+	/**
+	 * Moves menu highlight to the Syllabus Manager item
+	 * @param  string $parent_file [[Description]]
+	 * @return string Parent menu item
+	 *                       
+	 * @since 0.0.1
+	 */
+	public function menu_highlight( $parent_file ){ 
+		global $post_type;
+		
+		if ('syllabus_course' == $post_type) { 
+			$parent_file = 'syllabus-manager';  
+		}
+		return $parent_file; 
+	} 
 	
 	/**
 	 * Displays the main Syllabus Manager Admin page

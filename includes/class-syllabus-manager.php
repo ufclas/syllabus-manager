@@ -167,7 +167,8 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
 		$this->loader->add_action( 'wp_ajax_syllabus_manager_main', $plugin_admin, 'get_main_table_data' );
-
+		
+		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' ); 
 	}
 
 	/**
@@ -183,6 +184,7 @@ class Syllabus_Manager {
 		$plugin_courses = new Syllabus_Manager_Courses();
 
 		$this->loader->add_action( 'init', $plugin_courses, 'register_post_type' );
+		$this->loader->add_action( 'init', $plugin_courses, 'register_taxonomies' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_public, 'set_courses_query' );

@@ -178,9 +178,28 @@ class Syllabus_Manager_Admin {
 	/**
 	 * Gets data for the Schedule of Courses DataTable
 	 * 
-	 * @since 0.0.0
+	 * @since 0.0.1
 	 */
 	public function get_main_table_data(){
+				
+		$courses = $this->get_course_data();
+		
+		foreach ( $courses as $course ){
+			echo '<tr>';
+			$count = count( $course );
+			for ( $i=0; $i<$count; $i++ ){
+				echo '<td>' . $course[$i] . '</td>';
+			}
+			echo '</tr>';
+		}
+	}
+	
+	/**
+	 * Gets data for the Schedule of Courses DataTable
+	 * 
+	 * @since 0.0.0
+	 */
+	public function get_main_table_json_data(){
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-get-main', 'syllabus-manager-main-nonce' );
 		
@@ -218,23 +237,10 @@ class Syllabus_Manager_Admin {
 
 					foreach ( $course->sections as $section ):
 						$number = $section->number;
-						$level = 'Undergraduate';
+						$level = $prog_level;
 						$status = '<i>No Syllabus</i>';
 						$button = '<button type="button" class="btn btn-default">Add Syllabus</button>';
 
-						// Get and format meeting times string
-						if ( !empty( $section->meetTimes ) ){
-							$times = array();
-							foreach ( $section->meetTimes as $time ){
-								$period = $time->meetPeriodBegin;
-								$period .= ( $time->meetPeriodBegin != $time->meetPeriodEnd )? '-' . $time->meetPeriodEnd : '';
-								$times[] = sprintf("%s (%s)", implode(" ", $time->meetDays), $period);
-							}
-							$time_str = implode(", ", $times);
-						}
-						else {
-							$time_str = '<i>No Meeting Time</i>';
-						}
 
 						// Get and format instructor string
 						if ( !empty( $section->instructors ) ){
@@ -254,7 +260,6 @@ class Syllabus_Manager_Admin {
 							$number,
 							$title,
 							$level,
-							$time_str,
 							$instr_str,
 							$status,
 							$button

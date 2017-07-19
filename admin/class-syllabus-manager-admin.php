@@ -394,9 +394,11 @@ class Syllabus_Manager_Admin {
 					$ugly_terms = explode( '-', $term );
 					$pretty_terms = array();
 					foreach( $ugly_terms as $ugly_title ){
-						$pretty_terms[] = ucwords(strtolower(trim($ugly_title)), " -\t\r\n\f\v/");
+						//$pretty_terms[] = ucwords(strtolower(trim($ugly_title)), " -\t\r\n\f\v/");
+						$pretty_terms[] = ucwords(strtolower(trim($ugly_title)));
 					}
 					$term = implode('-', $pretty_terms);
+					$term = str_replace('Languages Lit/culture', 'Languages, Literatures, & Cultures', $term);
 				}
 				
 				wp_insert_term( $term, $taxonomies[$filter_name], array('slug' => $slug, 'description' => $desc ));

@@ -6,7 +6,7 @@
 	data['action'] = syllabus_manager_data.action;
 	data[syllabus_manager_data.nonce_name] = syllabus_manager_data.nonce_value;
 	
-	if ( pagenow == 'toplevel_page_syllabus-manager-menu' ) {
+	if ( adminpage == 'toplevel_page_syllabus-manager' ) {
 		// use WordPress to fatch the data
 		$.ajax({
 			type: 'POST',

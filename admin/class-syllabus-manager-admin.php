@@ -115,7 +115,17 @@ class Syllabus_Manager_Admin {
 	 * @since 0.0.0
 	 */
 	public function add_menu(){
-		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager-menu', array( $this, 'display_admin_page'), 'dashicons-book-alt');
+		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
+		add_submenu_page('syllabus-manager', 'Courses', 'Courses', 'manage_options', 'edit.php?post_type=syllabus_course');
+	}
+	
+	/**
+	 * Displays the main Syllabus Manager Admin page
+	 * 
+	 * @since 0.0.0
+	 */
+	public function display_admin_intro_page(){
+		include 'partials/syllabus-manager-welcome-display.php';
 	}
 	
 	/**
@@ -277,6 +287,7 @@ class Syllabus_Manager_Admin {
 		// Get external data
 		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
 		$request_url = $api_url . http_build_query( $args );
+		if ( WP_DEBUG ) { error_log( 'request_url: ' . $request_url ); }
 								  
 		$response = wp_remote_get( $request_url );
 		

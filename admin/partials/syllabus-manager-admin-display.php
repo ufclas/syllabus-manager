@@ -102,7 +102,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 			  <div class="panel-body">
 				<table id="soc-table" class="table table-striped">
 					<thead>
-						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Department</th><th>Semester</th><th>Level</th><th>Status</th><th>Actions</th></tr>
+						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Status</th><th>Actions</th></tr>
 					</thead>
 					<tbody>
 						<?php do_action('syllabus_manager_courses_table'); ?>

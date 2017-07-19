@@ -28,6 +28,34 @@ if ( !current_user_can( 'manage_options' ) )  {
 			<div class="panel panel-default">
 			  <div class="panel-heading">
 				<h3 class="panel-title">
+				<?php _e('Filters', 'syllabus-manager'); ?></h3>
+			  </div>
+			  <div class="panel-body">
+				
+				  <form>
+				  <div class="form-group">
+					<label class="" for="departments">Departments</label><br>
+					<select class="form-control">
+					  <option>1</option>
+					  <option>2</option>
+					  <option>3</option>
+					  <option>4</option>
+					  <option>5</option>
+					</select>
+				  </div>
+				  <button type="submit" class="btn btn-primary">Apply Filters</button>
+				</form>
+				  
+			  </div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title">
 				<!-- <span class="glyphicon glyphicon-book" aria-hidden="true"></span> -->
 				<?php _e('Schedule of Courses', 'syllabus-manager'); ?></h3>
 			  </div>

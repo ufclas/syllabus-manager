@@ -39,6 +39,8 @@ class Syllabus_Manager_Admin {
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	
+	private $plugin_pages;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -51,7 +53,11 @@ class Syllabus_Manager_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
+		
+		$this->plugin_pages = array(
+			'toplevel_page_syllabus-manager',
+			'syllabus-manager_page_syllabus-manager-import',
+		);
 	}
 
 	/**
@@ -73,9 +79,10 @@ class Syllabus_Manager_Admin {
 		 * class.
 		 */
 		
-		// Only add scripts to the plugin main page
-		$screen = get_current_screen();
-		if ( 'toplevel_page_syllabus-manager' == $screen->id ){
+		// Only add styles to the plugin main pages
+		$current_screen = get_current_screen();
+		
+		if ( in_array( $current_screen->id, $this->plugin_pages ) ){
 			wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
 			wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );	
 		}
@@ -102,9 +109,14 @@ class Syllabus_Manager_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'dataTables', plugins_url('includes/dataTables/dataTables.min.js', dirname(__FILE__)), array( 'jquery','bootstrap' ), $this->version, true );
+		
+		// Only add scripts to the plugin main pages
+		$current_screen = get_current_screen();
+		
+		if ( in_array( $current_screen->id, $this->plugin_pages ) ){
+			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
+			wp_enqueue_script( 'dataTables', plugins_url('includes/dataTables/dataTables.min.js', dirname(__FILE__)), array( 'jquery','bootstrap' ), $this->version, true );
+		}
 		
 		wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'jquery' ), $this->version, true );
 		wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
@@ -121,6 +133,7 @@ class Syllabus_Manager_Admin {
 	 */
 	public function add_menu(){
 		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
+		add_submenu_page('syllabus-manager', 'Import', 'Import', 'manage_options', 'syllabus-manager-import', array( $this, 'display_import_page'));
 		add_submenu_page('syllabus-manager', 'Courses', 'Courses', 'manage_options', 'edit.php?post_type=syllabus_course');
 		add_submenu_page('syllabus-manager', 'Departments', 'Departments', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_department');
 		add_submenu_page('syllabus-manager', 'Instructors', 'Instructors', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_instructor');
@@ -149,8 +162,8 @@ class Syllabus_Manager_Admin {
 	 * 
 	 * @since 0.0.0
 	 */
-	public function display_admin_intro_page(){
-		include 'partials/syllabus-manager-welcome-display.php';
+	public function display_admin_page(){
+		include 'partials/syllabus-manager-admin-display.php';
 	}
 	
 	/**
@@ -158,8 +171,8 @@ class Syllabus_Manager_Admin {
 	 * 
 	 * @since 0.0.0
 	 */
-	public function display_admin_page(){
-		include 'partials/syllabus-manager-admin-display.php';
+	public function display_import_page(){
+		include 'partials/syllabus-manager-import-display.php';
 	}
 	
 	/**
@@ -326,5 +339,71 @@ class Syllabus_Manager_Admin {
 			return $response_data[0]->COURSES;
 		}
 		return false;
+	}
+	
+	public function import_init(){
+		if ( empty($_POST) || empty($_FILES) ){
+			return;
+		}
+		
+		// Test whether the request includes a valid nonce
+		check_admin_referer('syllabus-manager-import', 'wpnonce_syllabus_manager_import');
+		
+		$filter_name = sanitize_text_field( $_POST['import-name'] );
+		$uploaded_file = $_FILES['import-filter-file'];
+		
+		/** Include admin functions to get access to wp_handle_upload() */
+    	require_once ABSPATH . 'wp-admin/includes/admin.php';
+		
+		$file = wp_handle_upload( $uploaded_file, array('test_form' => false,'mimes' => array('json' => 'application/json')));
+		
+		if ( isset($file['error']) ){
+			return new WP_Error( 'import_filter_upload_error', __( 'File upload error.' ), array( 'status' => 400 ) );
+		}
+		
+		/**
+		 * Save the uploaded file to the media library temporarily
+		 */
+		$file_args = array(
+			'post_title' => sanitize_file_name($file['file']),
+			'post_content' => $file['url'],
+			'post_mime_type' => $file['type'],
+			'guid' => $file['url'],
+			'context' => 'import',
+			'post_status' => 'private'
+		);
+		$file_id = wp_insert_attachment( $file_args, $file['file'] );
+		
+		// Process the selected array and insert terms
+		if ( false !== ( $json = file_get_contents( $file['file'] ) ) ){
+			$filter_data = json_decode( $json );
+			$filter_data = $filter_data->{$filter_name};
+			
+			$taxonomies = array(
+				'terms' => 'syllabus_term',
+				'departments' => 'syllabus_department',
+				'progLevels' => 'syllabus_level',
+			);
+			
+			foreach ( $filter_data as $data ){
+				$slug = $data->CODE;
+				$term = $desc = $data->DESC;
+				
+				// Change Department names to title case
+				if ( 'departments' == $filter_name ){
+					$ugly_terms = explode( '-', $term );
+					$pretty_terms = array();
+					foreach( $ugly_terms as $ugly_title ){
+						$pretty_terms[] = ucwords(strtolower(trim($ugly_title)), " -\t\r\n\f\v/");
+					}
+					$term = implode('-', $pretty_terms);
+				}
+				
+				wp_insert_term( $term, $taxonomies[$filter_name], array('slug' => $slug, 'description' => $desc ));
+			}
+		}
+		
+		// Clean up files
+		wp_delete_attachment( $file_id );
 	}
 }

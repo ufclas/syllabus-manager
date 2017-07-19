@@ -189,7 +189,8 @@ class Syllabus_Manager_Admin {
 		$transient_key = "syllabus_manager_{$dept}_{$term}_{$prog_level}";
 		
 		// Get existing copy of transient data, if exists
-		if ( empty($data = get_transient( $transient_key ))  ){
+		$data = get_transient( $transient_key );
+		if ( empty($data) ){
 			
 			$args = array(
 				'dept' => $dept,

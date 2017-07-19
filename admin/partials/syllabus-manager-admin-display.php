@@ -30,10 +30,10 @@ if ( !current_user_can( 'manage_options' ) )  {
 				<h3 class="panel-title"><?php _e('Course Filters', 'syllabus-manager'); ?></h3>
 			</div>
 			<div class="panel-body">
-			<form>
+			<form id="filter-form" action="" method="post">
 
 			<div class="form-group col-md-4">
-				<label for="filter-dept" class="control-label">Departments: </label>
+				<label for="filter-dept" class="control-label"><?php _e('Departments', 'syllabus-manager'); ?></label>
 				<?php 
 					wp_dropdown_categories(array(
 						'taxonomy' => 'syllabus_department',
@@ -42,12 +42,15 @@ if ( !current_user_can( 'manage_options' ) )  {
 						'id' => 'filter-dept',
 						'name' => 'filter-dept',
 						'class' => 'form-control',
+						'show_option_none' => __('Select Department', 'syllabus-manager'),
+						'show_option_value' => '',
+						'required' => true,
 					)); 
 				 ?>
 			 </div>
 				
 			<div class="form-group col-md-4">
-				<label for="filter-term" class="control-label">Term: </label>
+				<label for="filter-term" class="control-label"><?php _e('Semester', 'syllabus-manager'); ?></label>
 				<?php 
 					wp_dropdown_categories(array(
 						'taxonomy' => 'syllabus_term',
@@ -56,12 +59,15 @@ if ( !current_user_can( 'manage_options' ) )  {
 						'id' => 'filter-term',
 						'name' => 'filter-term',
 						'class' => 'form-control',
+						'show_option_none' => __('Select Semester', 'syllabus-manager'),
+						'show_option_value' => '',
+						'required' => true,
 					)); 
 				 ?>
 			</div>
 				
 			<div class="form-group col-md-4">
-				<label for="filter-level" class="control-label">Course Level: </label>
+				<label for="filter-level" class="control-label"><?php _e('Program Level', 'syllabus-manager'); ?></label>
 				<?php 
 					wp_dropdown_categories(array(
 						'taxonomy' => 'syllabus_level',
@@ -70,6 +76,9 @@ if ( !current_user_can( 'manage_options' ) )  {
 						'id' => 'filter-level',
 						'name' => 'filter-level',
 						'class' => 'form-control',
+						'show_option_none' => __('Select Program Level', 'syllabus-manager'),
+						'show_option_value' => '',
+						'required' => true,
 					)); 
 				 ?>
 			  </div>
@@ -93,7 +102,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 			  <div class="panel-body">
 				<table id="soc-table" class="table table-striped">
 					<thead>
-						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Level</th><th>Instructor(s)</th><th>Status</th><th>Actions</th></tr>
+						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Department</th><th>Semester</th><th>Level</th><th>Status</th><th>Actions</th></tr>
 					</thead>
 					<tbody>
 						<?php do_action('syllabus_manager_courses_table'); ?>

@@ -216,13 +216,13 @@ class Syllabus_Manager_Admin {
 	 * @return array JSON-decoded data
 	 * @since 0.0.0
 	 */
-	public function get_course_data( $dept = '011690003', $term = '20178', $prog_level = 'UGRD' ){
+	public function get_course_data( $dept = '', $term = '20178', $prog_level = 'UGRD' ){
 		// Get the correct transient
-		$transient_key = "syllabus_manager_{$dept}_{$term}_{$prog_level}";
+		$transient_key = "syllabus_manager_{$term}{$dept}{$prog_level}";
 		
 		// Get existing copy of transient data, if exists
 		$data = get_transient( $transient_key );
-		if ( empty($data) ){
+		if ( WP_DEBUG || empty($data) ){
 			
 			$args = array(
 				'dept' => $dept,
@@ -237,6 +237,7 @@ class Syllabus_Manager_Admin {
 
 					foreach ( $course->sections as $section ):
 						$number = $section->number;
+						$dept = $section->deptCode;
 						$level = $prog_level;
 						$status = '<i>No Syllabus</i>';
 						$button = '<button type="button" class="btn btn-default">Add Syllabus</button>';
@@ -259,8 +260,10 @@ class Syllabus_Manager_Admin {
 							$prefix,
 							$number,
 							$title,
-							$level,
 							$instr_str,
+							$dept,
+							$term,
+							$level,
 							$status,
 							$button
 						);

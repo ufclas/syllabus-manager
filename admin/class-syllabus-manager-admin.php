@@ -65,7 +65,7 @@ class Syllabus_Manager_Admin {
 	 *
 	 * @since    0.0.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles( $hook ) {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -80,13 +80,11 @@ class Syllabus_Manager_Admin {
 		 */
 		
 		// Only add styles to the plugin main pages
-		$current_screen = get_current_screen();
-		
-		if ( in_array( $current_screen->id, $this->plugin_pages ) ){
+		if ( in_array( $hook, $this->plugin_pages ) ){
 			wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
 			wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );	
 		}
-				
+					
 		wp_enqueue_style( $this->plugin_name, plugins_url('css/syllabus-manager-admin.css', __FILE__ ), array(), $this->version, 'all' );
 
 	}
@@ -96,7 +94,7 @@ class Syllabus_Manager_Admin {
 	 *
 	 * @since    0.0.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts( $hook ) {
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -111,19 +109,24 @@ class Syllabus_Manager_Admin {
 		 */
 		
 		// Only add scripts to the plugin main pages
-		$current_screen = get_current_screen();
-		
-		if ( in_array( $current_screen->id, $this->plugin_pages ) ){
+		if ( 'toplevel_page_syllabus-manager' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
 			wp_enqueue_script( 'dataTables', plugins_url('includes/dataTables/dataTables.min.js', dirname(__FILE__)), array( 'jquery','bootstrap' ), $this->version, true );
+			wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'jquery' ), $this->version, true );
+			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
+				'action' => 'syllabus_manager_main',
+				'nonce_name' => 'syllabus-manager-main-nonce',
+				'nonce_value' => wp_create_nonce( 'syllabus-manager-get-main' ),
+			));
 		}
 		
-		wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'jquery' ), $this->version, true );
-		wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
-			'action' => 'syllabus_manager_main',
-			'nonce_name' => 'syllabus-manager-main-nonce',
-			'nonce_value' => wp_create_nonce( 'syllabus-manager-get-main' ),
-		));
+		if ( 'syllabus-manager_page_syllabus-manager-import' == $hook ){
+			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
+			wp_enqueue_script( 'vue-js', 'https://unpkg.com/vue@2.4.2', array(), null, true);
+			wp_enqueue_script( 'vue-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'vue-js' ), $this->version, true );
+		}
+		
+		
 	}
 	
 	/**

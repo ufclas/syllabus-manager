@@ -94,18 +94,41 @@ if ( !current_user_can( 'manage_options' ) )  {
 	
 	<div class="row">
 		<div class="col-md-12">
-			<div class="panel panel-default">
+			<div id="soc-courses-panel" class="panel panel-default">
 			  <div class="panel-heading">
-				<h3 class="panel-title">
-				<?php _e('Courses', 'syllabus-manager'); ?></h3>
+				<h3 class="panel-title">{{panel_title}}</h3>
 			  </div>
 			  <div class="panel-body">
-				<table id="soc-table" class="table table-striped">
+				<div class="notice" :class="notice_class">
+                    <transition name="fade">
+                        <p v-if="notice_msg">{{notice_msg}}</p>
+                    </transition>
+                </div>  
+                <table id="soc-table" class="table table-striped">
 					<thead>
-						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Status</th><th>Actions</th></tr>
+						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Published Status</th><th>Actions</th></tr>
 					</thead>
 					<tbody>
-						<?php do_action('syllabus_manager_courses_table'); ?>
+						<tr v-for="(course, id) in courses">
+                            <td class="course-code" :class="{'bg-success': course.status}">{{course.code}}</td>
+                            <td class="section-number" :class="{'bg-success': course.status}">{{course.section_number}}</td>
+                            <td class="title" :class="{'bg-success': course.status}">{{course.title}}</td>
+                            
+                            <td class="instructors" :class="{'bg-success': course.status}">
+                                <span v-if="course.instructors">{{course.instructors}}</span>
+                                <span v-else class="no-data"><?php _e('No instructors listed', 'syllabus_manager'); ?></span>
+                            </td>
+                            
+                            <td class="status" :class="{'bg-success': course.status}">
+                                <span v-if="course.status"><?php _e('Published', 'syllabus_manager'); ?></span>
+                                <span v-else class="no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
+                            </td>
+                            
+                            <td class="action" :class="{'bg-success': course.status}">
+                                <button v-if="!course.status" @click="add_course(id)" type="button" class="btn btn-default"><?php _e('Add Syllabus', 'syllabus_manager'); ?></button>
+                                <button v-else @click="edit_course(id)" type="button" class="btn btn-success"><?php _e('Edit Syllabus', 'syllabus_manager'); ?></button>
+                            </td>
+                        </tr>
 					</tbody>
 				</table>
 			  </div>

@@ -82,11 +82,8 @@ class Syllabus_Manager_Admin {
 		// Only add styles to the plugin main pages
 		if ( in_array( $hook, $this->plugin_pages ) ){
 			wp_enqueue_style( 'bootstrap', plugins_url('includes/bootstrap/css/bootstrap.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );
-			wp_enqueue_style( 'dataTables', plugins_url('includes/dataTables/dataTables.min.css', dirname(__FILE__) ), array(), $this->version, 'screen' );	
-		}
-					
-		wp_enqueue_style( $this->plugin_name, plugins_url('css/syllabus-manager-admin.css', __FILE__ ), array(), $this->version, 'all' );
-
+            wp_enqueue_style( $this->plugin_name, plugins_url('css/syllabus-manager-admin.css', __FILE__ ), array(), $this->version, 'all' );
+        }
 	}
 
 	/**
@@ -111,22 +108,19 @@ class Syllabus_Manager_Admin {
 		// Only add scripts to the plugin main pages
 		if ( 'toplevel_page_syllabus-manager' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'dataTables', plugins_url('includes/dataTables/dataTables.min.js', dirname(__FILE__)), array( 'jquery','bootstrap' ), $this->version, true );
-			wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'jquery' ), $this->version, true );
+			wp_enqueue_script( 'vue-js', 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js', array(), null, true);
+            wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
-				'action' => 'syllabus_manager_main',
-				'nonce_name' => 'syllabus-manager-main-nonce',
-				'nonce_value' => wp_create_nonce( 'syllabus-manager-get-main' ),
+				'panel_title' => __('Courses', 'syllabus_manager'),
+				'courses' => $this->get_course_data(),
 			));
 		}
 		
 		if ( 'syllabus-manager_page_syllabus-manager-import' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'vue-js', 'https://unpkg.com/vue@2.4.2', array(), null, true);
+			wp_enqueue_script( 'vue-js', 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js', array(), null, true);
 			wp_enqueue_script( 'vue-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'vue-js' ), $this->version, true );
 		}
-		
-		
 	}
 	
 	/**
@@ -225,8 +219,10 @@ class Syllabus_Manager_Admin {
 		
 		// Get existing copy of transient data, if exists
 		$data = get_transient( $transient_key );
-		if ( WP_DEBUG || empty($data) ){
+		if ( empty($data) ){
 			
+            error_log( 'Setting transient...' . $transient_key );
+            
 			$args = array(
 				'dept' => $dept,
 				'prog-level' => $prog_level, 
@@ -240,9 +236,9 @@ class Syllabus_Manager_Admin {
 
 					foreach ( $course->sections as $section ):
 						$number = $section->number;
-						$status = '<i>No Syllabus</i>';
-						$button = '<button type="button" class="btn btn-default">Add Syllabus</button>';
-
+						$status = 0;
+						$button = 1;
+                        $section_id = implode('_', array($term, $prefix, $number));
 
 						// Get and format instructor string
 						if ( !empty( $section->instructors ) ){
@@ -253,22 +249,22 @@ class Syllabus_Manager_Admin {
 							$instr_str = implode(", ", $instructors);
 						}
 						else {
-							$instr_str = '<i>No Instructor</i>';
+							$instr_str = 0;
 						}
 
-						// Add values to the data array
-						$data[] = array(
-							$prefix,
-							$number,
-							$title,
-							$instr_str,
-							$status,
-							$button
+						// Add objects to the data array
+						$data[$section_id] = array(
+							'code' => $prefix,
+							'section_number' => $number,
+							'title' => $title,
+							'instructors' => $instr_str,
+							'status' => $status,
+							'action' => $button
 						);
 				
 					endforeach;
 				endforeach;
-				
+                
 				// Seve the updated data
 				set_transient( $transient_key, $data, 24 * HOUR_IN_SECONDS );
 			}
@@ -332,7 +328,7 @@ class Syllabus_Manager_Admin {
 		// Get external data
 		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
 		$request_url = $api_url . http_build_query( $args );
-		if ( WP_DEBUG ) { error_log( 'request_url: ' . $request_url ); }
+		if ( false ) { error_log( 'request_url: ' . $request_url ); }
 								  
 		$response = wp_remote_get( $request_url );
 		

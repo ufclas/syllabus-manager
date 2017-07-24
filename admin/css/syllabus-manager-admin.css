@@ -2,3 +2,17 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+body{
+    background-color: #f1f1f1 !important;
+}
+#soc-table .no-data {
+    font-style: italic;
+    color: #999;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0
+}

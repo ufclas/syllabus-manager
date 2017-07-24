@@ -113,6 +113,7 @@ class Syllabus_Manager_Admin {
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
 				'courses' => $this->get_course_data(),
+                'ajax_nonce' => wp_create_nonce('syllabus-manager-create-course')
 			));
 		}
 		
@@ -203,6 +204,20 @@ class Syllabus_Manager_Admin {
 		echo json_encode( $this->get_course_data() );
 		
 		wp_die(); // Required to terminate immediately and return a proper response
+	}
+    
+    /**
+	 * Gets data for the Schedule of Courses DataTable
+	 * 
+	 * @since 0.0.0
+	 */
+	public function create_course(){
+		error_log('Create course called');
+        
+        // Verify the request to prevent preocessing external requests
+		check_ajax_referer( 'syllabus-manager-create-course', 'ajax_nonce' );
+		
+		wp_send_json( array('msg' => 'got this from wordpress!') );
 	}
 	
 	/**

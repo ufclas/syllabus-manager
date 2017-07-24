@@ -166,6 +166,7 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+		$this->loader->add_action( 'wp_ajax_create_course', $plugin_admin, 'create_course' );
 		$this->loader->add_action( 'load-syllabus-manager_page_syllabus-manager-import', $plugin_admin, 'import_init' );
 		
 		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' ); 

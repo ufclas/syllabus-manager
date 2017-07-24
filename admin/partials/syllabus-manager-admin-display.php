@@ -18,11 +18,11 @@ if ( !current_user_can( 'manage_options' ) )  {
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div class="wrap">
+<div id="soc-courses" class="wrap">
 	<h1 class="wp-heading-inline"><?php _e('CLAS Syllabus Manager', 'syllabus-manager'); ?></h1>
 	<hr class="wp-header-end">
 	<br>
-	
+    
 	<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-default">
@@ -45,6 +45,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 						'show_option_none' => __('Select Department', 'syllabus-manager'),
 						'show_option_value' => '',
 						'required' => true,
+                        'v-model' => 'selectedDept'
 					)); 
 				 ?>
 			 </div>
@@ -92,6 +93,34 @@ if ( !current_user_can( 'manage_options' ) )  {
 	</div>
 	</div>
 	
+    <div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><?php _e('Overview', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+
+			<div class="col-md-4">
+				<span>Department</span>
+				<h1>Biology (0%)</h1>
+			 </div>
+				
+			<div class="col-md-4">
+				<span>Current Semester</span>
+				<h1>Fall 2017 (0%)</h1>
+			</div>
+				
+			<div class="col-md-4">
+				<span>Published Courses</span>
+				<h1>{{publishedCourses}} (0%)</h1>
+			  </div>
+			
+			</div>
+		</div>
+	</div>
+	</div>
+    
 	<div class="row">
 		<div class="col-md-12">
 			<div id="soc-courses-panel" class="panel panel-default">

@@ -63,7 +63,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 	
 	<div class="row">
 	<div class="col-md-12">
-		<div id="vue-import" class="panel panel-default">
+		<div v-show="false" id="vue-import" class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">
 			<?php _e('Vue.js Test', 'syllabus-manager'); ?></h3>

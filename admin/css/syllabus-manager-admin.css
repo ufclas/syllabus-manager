@@ -10,6 +10,9 @@ body{
     font-style: italic;
     color: #999;
 }
+#soc-table .bg-success {
+    background-color: #dff0d8;
+}
 
 .glyphicon.fast-right-spinner {
     -webkit-animation: glyphicon-spin-r 1s infinite linear;

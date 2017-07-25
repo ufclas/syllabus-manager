@@ -10,11 +10,11 @@ module.exports = function(grunt){
 		 sass: {
 			dist: {
 				options: {
-					style: 'compressed',
-					sourcemap: true
+					style: 'compressed'
 				},
 				files: {
 					'public/css/syllabus-manager-public.css' : 'public/sass/syllabus-manager-public.scss',	
+					'admin/css/syllabus-manager-admin.css' : 'admin/sass/syllabus-manager-admin.scss'	
 				}	
 			}	 
 		 },
@@ -31,9 +31,9 @@ module.exports = function(grunt){
 					require('autoprefixer')({browsers: ['last 2 versions']})
 				]
 			},
-			// prefix all css files in the project root
+			// prefix all css files in the folders
 			dist: {
-				src: 'public/css/*.css'
+				src: ['public/css/*.css','admin/css/*.css']
 			}	 
 		 },
 		

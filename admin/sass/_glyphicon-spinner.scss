@@ -1,0 +1,68 @@
+/**
+ * Glyphicon Spinner
+ * 
+ * @link https://bootsnipp.com/snippets/djeAk
+ * @author uzumaxy
+ */
+
+.glyphicon {
+	&.fast-right-spinner {
+		animation: glyphicon-spin-r 1s infinite linear;
+	}
+	&.normal-right-spinner {
+		animation: glyphicon-spin-r 2s infinite linear;
+	}
+	&.slow-right-spinner {
+		animation: glyphicon-spin-r 3s infinite linear;
+	}
+	
+	&.fast-left-spinner {
+		animation: glyphicon-spin-l 1s infinite linear;
+	}
+	&.normal-left-spinner {
+		animation: glyphicon-spin-l 2s infinite linear;
+	}
+	&.slow-left-spinner {
+		animation: glyphicon-spin-l 3s infinite linear;
+	}
+}
+@-webkit-keyframes glyphicon-spin-r {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes glyphicon-spin-r {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+@-webkit-keyframes glyphicon-spin-l {
+    0% {
+        transform: rotate(359deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes glyphicon-spin-l {
+    0% {
+        transform: rotate(359deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+

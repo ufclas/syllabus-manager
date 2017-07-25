@@ -113,7 +113,7 @@ class Syllabus_Manager_Admin {
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
 				'courses' => $this->get_course_data(),
-                'ajax_nonce' => wp_create_nonce('syllabus-manager-create-course')
+                'ajax_nonce' => wp_create_nonce('syllabus-manager-add-syllabus')
 			));
 		}
 		
@@ -136,7 +136,7 @@ class Syllabus_Manager_Admin {
 		add_submenu_page('syllabus-manager', 'Departments', 'Departments', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_department');
 		add_submenu_page('syllabus-manager', 'Instructors', 'Instructors', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_instructor');
 		add_submenu_page('syllabus-manager', 'Course Levels', 'Course Levels', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_level');
-		add_submenu_page('syllabus-manager', 'Terms', 'Terms', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_term');
+		add_submenu_page('syllabus-manager', 'Terms', 'Terms', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_semester');
 	}
 	
 	/**
@@ -211,13 +211,62 @@ class Syllabus_Manager_Admin {
 	 * 
 	 * @since 0.0.0
 	 */
-	public function create_course(){
-		error_log('Create course called');
-        
-        // Verify the request to prevent preocessing external requests
-		check_ajax_referer( 'syllabus-manager-create-course', 'ajax_nonce' );
+	public function add_syllabus(){
+		// Verify the request to prevent preocessing external requests
+		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
 		
-		wp_send_json( array('msg' => 'got this from wordpress!') );
+		if ( !current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
+		}
+		
+		// Merge post values into one array
+		$post_course = array_merge( $_POST['course_data'] );
+		
+		// Get department ID
+		$dept_term = get_term_by('slug', $post_course['department'], 'syllabus_department');
+				
+		// Set up the post data
+		$syllabus_course = array(
+			'post_title' => wp_strip_all_tags( "{$post_course['code']} {$post_course['section_number']} {$post_course['title']}" ),
+			'post_name' => $post_course['id'],
+			'post_content' => '',
+			'post_status' => 'publish',
+			'post_author' => get_current_user_id(),
+			'post_type' => 'syllabus_course',
+			'tax_input' => array(
+				'syllabus_department' => ( !is_wp_error( $dept_term ) && !empty( $dept_term ) )? $dept_term->term_id : array(),
+				'syllabus_level' => $post_course['level'],
+				'syllabus_semester' => $post_course['semester'],
+				'syllabus_instructor' => $post_course['instructors'],
+			),
+			'meta_input' => array(
+				'soc_course_id' => $post_course['id']
+			)
+		);
+		
+		// Insert the post into the database
+		$id = wp_insert_post( $syllabus_course );
+		
+		// error_log(print_r($_POST, true));
+		// error_log(print_r($syllabus_course, true));
+		
+		if ( !is_wp_error( $id ) ){
+			wp_send_json_success( array('msg' => 'Added syllabus') );	
+		}
+		else {
+			wp_send_json_error( array('msg' => $id->get_error_message()) );
+		}
+	}
+	
+	public function remove_syllabus(){
+		// Verify the request to prevent preocessing external requests
+		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
+		
+		if ( !current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
+		}
+		
+		wp_send_json_success( array('msg' => 'Removed syllabus') );
 	}
 	
 	/**
@@ -230,7 +279,7 @@ class Syllabus_Manager_Admin {
 	 */
 	public function get_course_data( $term = '20178', $dept = '011690003', $prog_level = 'UGRD' ){
 		// Get the correct transient
-		$transient_key = "syllabus_manager_{$term}{$dept}{$prog_level}";
+		$transient_key = "syllabus_manager_{$term}_{$dept}_{$prog_level}";
 		
 		// Get existing copy of transient data, if exists
 		$data = get_transient( $transient_key );
@@ -253,13 +302,13 @@ class Syllabus_Manager_Admin {
 						$number = $section->number;
 						$status = 0;
 						$button = 1;
-                        $section_id = implode('_', array($term, $prefix, $number));
+                        $section_id = implode('-', array($term, $prefix, $number));
 
 						// Get and format instructor string
 						if ( !empty( $section->instructors ) ){
 							$instructors = array();
 							foreach ( $section->instructors as $instructor ){
-								$instructors[] = $instructor->name;
+								$instructors[] = preg_replace("/(.+),\s?(\S+)(.*)/", "$2 $1", $instructor->name);
 							}
 							$instr_str = implode(", ", $instructors);
 						}
@@ -274,7 +323,7 @@ class Syllabus_Manager_Admin {
 							'title' => $title,
 							'instructors' => $instr_str,
 							'status' => $status,
-							'action' => $button
+							'action' => $button,
 						);
 				
 					endforeach;
@@ -397,7 +446,7 @@ class Syllabus_Manager_Admin {
 			$filter_data = $filter_data->{$filter_name};
 			
 			$taxonomies = array(
-				'terms' => 'syllabus_term',
+				'terms' => 'syllabus_semester',
 				'departments' => 'syllabus_department',
 				'progLevels' => 'syllabus_level',
 			);

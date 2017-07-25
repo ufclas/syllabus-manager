@@ -138,26 +138,26 @@ class Syllabus_Manager_Courses {
 		/**
 		 * Taxonomy: Terms
 		 */
-		$term_labels = array(
-			'name' => __( 'Terms', 'syllabus_manager' ),
-			'singular_name' => __( 'Term', 'syllabus_manager' ),
+		$semester_labels = array(
+			'name' => __( 'Semesters', 'syllabus_manager' ),
+			'singular_name' => __( 'Semester', 'syllabus_manager' ),
 		);
 
-		$term_args = array(
-			'label' => $term_labels['name'],
-			'labels' => $term_labels,
+		$semester_args = array(
+			'label' => $semester_labels['name'],
+			'labels' => $semester_labels,
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => "{$this->post_type_base}/term", 'with_front' => true, ),
+			'rewrite' => array( 'slug' => "{$this->post_type_base}/semester", 'with_front' => true, ),
 			'show_admin_column' => true,
 			'show_in_rest' => false,
 			'rest_base' => '',
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( 'syllabus_term', array( $this->post_type_name, 'attachment' ), $term_args );
+		register_taxonomy( 'syllabus_semester', array( $this->post_type_name, 'attachment' ), $semester_args );
 	}
 }

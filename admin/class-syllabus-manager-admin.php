@@ -220,35 +220,27 @@ class Syllabus_Manager_Admin {
 		}
 		
 		// Merge post values into one array
-		$post_course = array_merge( $_POST['course_data'] );
+		$post_data = $_POST['course_data'];
 		
-		// Get department ID
-		$dept_term = get_term_by('slug', $post_course['department'], 'syllabus_department');
-				
-		// Set up the post data
-		$syllabus_course = array(
-			'post_title' => wp_strip_all_tags( "{$post_course['code']} {$post_course['section_number']} {$post_course['title']}" ),
-			'post_name' => $post_course['id'],
-			'post_content' => '',
-			'post_status' => 'publish',
-			'post_author' => get_current_user_id(),
-			'post_type' => 'syllabus_course',
-			'tax_input' => array(
-				'syllabus_department' => ( !is_wp_error( $dept_term ) && !empty( $dept_term ) )? $dept_term->term_id : array(),
-				'syllabus_level' => $post_course['level'],
-				'syllabus_semester' => $post_course['semester'],
-				'syllabus_instructor' => $post_course['instructors'],
-			),
-			'meta_input' => array(
-				'soc_course_id' => $post_course['id']
-			)
+		error_log(print_r($post_data, true));
+		
+		$section = new Syllabus_Manager_Section( 
+			$post_data['code'],
+			$post_data['title'],
+			$post_data['section_number'],
+			$post_data['semester'],
+			array($post_data['department']),
+			$post_data['level'],
+			explode(', ', $post_data['instructors'])
 		);
 		
+		error_log(print_r($section, true));
+		error_log(print_r($section->get_post_args(), true));
+				
 		// Insert the post into the database
-		$id = wp_insert_post( $syllabus_course );
+		$id = wp_insert_post( $section->get_post_args() );
 		
-		// error_log(print_r($_POST, true));
-		// error_log(print_r($syllabus_course, true));
+		error_log( 'wp_insert_post: ' . print_r($id, true) );
 		
 		if ( !is_wp_error( $id ) ){
 			wp_send_json_success( array('msg' => 'Added syllabus') );	
@@ -277,56 +269,88 @@ class Syllabus_Manager_Admin {
 	 * @return array JSON-decoded data
 	 * @since 0.0.0
 	 */
-	public function get_course_data( $term = '20178', $dept = '011690003', $prog_level = 'UGRD' ){
+	public function get_course_data( $semester = '20178', $department = '011690003', $level = 'UGRD' ){
 		// Get the correct transient
-		$transient_key = "syllabus_manager_{$term}_{$dept}_{$prog_level}";
+		$transient_key = "syllabus_manager_{$semester}_{$department}_{$level}";
 		
 		// Get existing copy of transient data, if exists
 		$data = get_transient( $transient_key );
-		if ( empty($data) ){
+		
+		if ( WP_DEBUG || empty($data) ){
 			
-            error_log( 'Setting transient...' . $transient_key );
+			if ( WP_DEBUG ){ error_log( 'Setting transient...' . $transient_key ); }
             
-			$args = array(
-				'dept' => $dept,
-				'prog-level' => $prog_level, 
-				'term' => $term,
-			);
+			$args = array( 'dept' => $department, 'prog-level' => $level, 'term' => $semester );
 			
 			if ( false !== ($courses = $this->fetch_courses( $args ) ) ){
-				foreach ( $courses as $course ):
-					$prefix = $course->code;
-					$title = $course->name;
-
-					foreach ( $course->sections as $section ):
-						$number = $section->number;
-						$status = 0;
-						$button = 1;
-                        $section_id = implode('-', array($term, $prefix, $number));
-
-						// Get and format instructor string
-						if ( !empty( $section->instructors ) ){
-							$instructors = array();
-							foreach ( $section->instructors as $instructor ){
-								$instructors[] = preg_replace("/(.+),\s?(\S+)(.*)/", "$2 $1", $instructor->name);
-							}
-							$instr_str = implode(", ", $instructors);
-						}
-						else {
-							$instr_str = 0;
-						}
-
-						// Add objects to the data array
-						$data[$section_id] = array(
-							'code' => $prefix,
-							'section_number' => $number,
-							'title' => $title,
-							'instructors' => $instr_str,
-							'status' => $status,
-							'action' => $button,
-						);
 				
-					endforeach;
+				$tax_queries =  array(
+					'taxonomy' 	=> 'syllabus_semester',
+					'field' 	=> 'slug',
+					'terms' 	=> $semester
+				);
+				
+				if ( !empty($department) ){
+					$tax_queries[] = array(
+						'taxonomy' => 'syllabus_department',
+						'field' => 'slug',
+						'terms' => $department
+					);
+				}
+				
+				if ( !empty($level) ){
+					$tax_queries[] = array(
+						'taxonomy' => 'syllabus_level',
+						'field' => 'slug',
+						'terms' => $level
+					);
+				}
+				
+				foreach ( $courses as $course ):
+				
+				// Get a list of courses already created_category
+				/*
+				$course_query = new WP_Query( array(
+					'post_type' => 'syllabus_course',
+					'tax_query' => array($tax_queries),
+					'meta_query' => array(
+						array(
+							'key' => 'sm_section_key',
+							'value' => $course->code,
+							'compare' => 'LIKE'
+						)
+					)
+				));
+				*/
+				//$existing_courses = $course_query->get_posts();
+				//error_log( print_r($existing_courses, true) );
+				
+				foreach ( $course->sections as $section ):
+					
+					$syllabus_section = new Syllabus_Manager_Section(
+						$course->code,
+						$course->name,
+						$section->number,
+						$semester,
+						$department,
+						$level,
+						$section->instructors
+					);
+					
+					$status = 0;
+					$button = 1;
+
+					// Add objects to the data array
+					$data[$syllabus_section->section_key] = array(
+						'code' => $syllabus_section->course_code,
+						'section_number' => $syllabus_section->number,
+						'title' => $syllabus_section->course_title,
+						'instructors' => join(', ', $syllabus_section->instructors),
+						'status' => $status,
+						'action' => $button,
+					);
+				
+				endforeach;
 				endforeach;
                 
 				// Seve the updated data

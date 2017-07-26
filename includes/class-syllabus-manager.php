@@ -128,6 +128,7 @@ class Syllabus_Manager {
 		/**
 		 * Custom Post Types and Taxonomies
 		 */ 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-section.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-courses.php';
 		
 		

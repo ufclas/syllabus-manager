@@ -36,12 +36,11 @@
 		<tbody>
 		<?php
 			while ( have_posts() ) : the_post(); 
-				$prefix = get_field('syllabus_manager_prefix');
-				$number = get_field('syllabus_manager_number');
-				$section = get_field('syllabus_manager_section');
-				$title = get_field('syllabus_manager_title');
+				$course_code = get_field('sm_course_code');
+				$section_number = get_field('sm_section_number');
+				$title = get_field('sm_course_title');
 				$syllabus_id = get_the_ID();
-				$syllabus_url = get_field('syllabus_manager_syllabus');
+				$syllabus_url = get_field('sm_syllabus');
 				$syllabus_title = ( $syllabus_url )? sprintf('<a href="%s" target="_blank">%s</a>', $syllabus_url, $title) : $title;
 				
 				$syllabus_lists =  array(
@@ -52,8 +51,8 @@
 				);
 		?>
 		<tr>
-			<td class="syllabus-course"><?php echo $prefix . $number; ?></td>
-			<td class="syllabus-section"><?php echo $section; ?></td>
+			<td class="syllabus-course"><?php echo $course_code; ?></td>
+			<td class="syllabus-section"><?php echo $section_number; ?></td>
 			<td class="syllabus-title"><?php echo $syllabus_title; ?></td>
 			
 			<?php

@@ -169,7 +169,7 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
 		$this->loader->add_action( 'wp_ajax_add_syllabus', $plugin_admin, 'add_syllabus' );
 		$this->loader->add_action( 'wp_ajax_remove_syllabus', $plugin_admin, 'remove_syllabus' );
-		$this->loader->add_action( 'load-syllabus-manager_page_syllabus-manager-import', $plugin_admin, 'import_init' );
+		$this->loader->add_action( 'load-syllabus-manager_page_syllabus-manager-import', $plugin_admin, 'import_handler' );
 		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' ); 
 	}
 

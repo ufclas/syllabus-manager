@@ -234,19 +234,19 @@ class Syllabus_Manager_Admin {
 			explode(', ', $post_data['instructors'])
 		);
 		
-		error_log(print_r($section, true));
-		error_log(print_r($section->get_post_args(), true));
-				
 		// Insert the post into the database
-		$id = wp_insert_post( $section->get_post_args() );
+		$post_id = wp_insert_post( $section->get_post_args() );
 		
-		error_log( 'wp_insert_post: ' . print_r($id, true) );
-		
-		if ( !is_wp_error( $id ) ){
-			wp_send_json_success( array('msg' => 'Added syllabus') );	
+		if ( !is_wp_error( $post_id ) ){
+			error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section->section_key );
+			add_post_meta( $post_id, 'sm_course_code', $section->course_code );
+			add_post_meta( $post_id, 'sm_course_title', $section->course_title );
+			add_post_meta( $post_id, 'sm_section_number', $section->number );
+			wp_send_json_success( array('msg' => 'Added course: '. $section->section_key) );	
 		}
 		else {
-			wp_send_json_error( array('msg' => $id->get_error_message()) );
+			error_log( 'Error inserting post: ' . print_r($post_id, true) );
+			wp_send_json_error( array('msg' => $post_id->get_error_message()) );
 		}
 	}
 	
@@ -269,14 +269,14 @@ class Syllabus_Manager_Admin {
 	 * @return array JSON-decoded data
 	 * @since 0.0.0
 	 */
-	public function get_course_data( $semester = '20178', $department = '011690003', $level = 'UGRD' ){
+	public function get_course_data( $semester = '20178', $department = '011690003', $level = 'ugrd' ){
 		// Get the correct transient
 		$transient_key = "syllabus_manager_{$semester}_{$department}_{$level}";
 		
 		// Get existing copy of transient data, if exists
 		$data = get_transient( $transient_key );
 		
-		if ( WP_DEBUG || empty($data) ){
+		if ( false || empty($data) ){
 			
 			if ( WP_DEBUG ){ error_log( 'Setting transient...' . $transient_key ); }
             
@@ -308,23 +308,6 @@ class Syllabus_Manager_Admin {
 				
 				foreach ( $courses as $course ):
 				
-				// Get a list of courses already created_category
-				/*
-				$course_query = new WP_Query( array(
-					'post_type' => 'syllabus_course',
-					'tax_query' => array($tax_queries),
-					'meta_query' => array(
-						array(
-							'key' => 'sm_section_key',
-							'value' => $course->code,
-							'compare' => 'LIKE'
-						)
-					)
-				));
-				*/
-				//$existing_courses = $course_query->get_posts();
-				//error_log( print_r($existing_courses, true) );
-				
 				foreach ( $course->sections as $section ):
 					
 					$syllabus_section = new Syllabus_Manager_Section(
@@ -342,6 +325,7 @@ class Syllabus_Manager_Admin {
 
 					// Add objects to the data array
 					$data[$syllabus_section->section_key] = array(
+						'section_key' => $syllabus_section->section_key,
 						'code' => $syllabus_section->course_code,
 						'section_number' => $syllabus_section->number,
 						'title' => $syllabus_section->course_title,
@@ -431,13 +415,33 @@ class Syllabus_Manager_Admin {
 		return false;
 	}
 	
-	public function import_init(){
-		if ( empty($_POST) || empty($_FILES) ){
+	public function import_handler(){
+		if ( !isset($_POST['action']) ){
+			return;
+		}
+		
+		error_log(print_r($_POST, true));
+		
+		switch ( $_POST['action'] ){
+			case 'import_filters':
+				$this->import_filters();
+				break;
+			case 'update':
+				$this->update_courses();
+				break;
+			case 'create':
+				$this->create_courses();
+				break;
+		}
+	}
+	
+	public function import_filters(){
+		if ( empty($_FILES) ){
 			return;
 		}
 		
 		// Test whether the request includes a valid nonce
-		check_admin_referer('syllabus-manager-import', 'wpnonce_syllabus_manager_import');
+		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
 		
 		$filter_name = sanitize_text_field( $_POST['import-name'] );
 		$uploaded_file = $_FILES['import-filter-file'];
@@ -497,5 +501,127 @@ class Syllabus_Manager_Admin {
 		
 		// Clean up files
 		wp_delete_attachment( $file_id );
+	}
+	
+	public function update_courses(){
+		// Test whether the request includes a valid nonce
+		check_admin_referer('sm_update_courses', 'sm_update_courses_nonce');
+		
+		if ( WP_DEBUG ) {error_log('Updating courses...'); }
+		
+		$semester = $_POST['semester'];
+		$department = $_POST['department'];
+		$level = $_POST['level'];
+		
+		// Get the courses
+		$course_data = $this->get_course_data( $semester, $department, $level );
+		
+		$matched_courses = $this->get_matched_courses( $semester, $department, $level, $course_data );
+		if ( WP_DEBUG ){ error_log( print_r($matched_courses, true) ); }
+		
+		foreach ( $matched_courses as $section_key => $post_id ){
+			
+			$section = new Syllabus_Manager_Section( 
+				$course_data[$section_key]['code'],
+				$course_data[$section_key]['title'],
+				$course_data[$section_key]['section_number'],
+				$semester,
+				array($department),
+				$level,
+				explode(', ', $course_data[$section_key]['instructors']),
+				$post_id
+			);
+						
+			$post_id = wp_update_post( $section->get_post_args() );
+			
+			if ( !is_wp_error($post_id) ){
+				error_log( 'Successfully updated post: ' . $post_id . ' for ' . $section_key );
+				update_post_meta( $post_id, 'sm_course_code', $course_data[$section_key]['code'] );
+				update_post_meta( $post_id, 'sm_course_title', $course_data[$section_key]['title'] );
+				update_post_meta( $post_id, 'sm_section_number', $course_data[$section_key]['section_number'] );
+			}
+			
+		}
+	}
+	
+	public function get_matched_courses( $semester, $department, $level, $new_course_data ){
+		$current_courses = array();
+		
+		// Get target course ids
+		$current_query = new WP_Query( array(
+			'post_type' => 'syllabus_course',
+			'posts_per_page' => -1,
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'syllabus_semester',
+					'field' => 'slug',
+					'terms' => $semester,
+				),
+				array(
+					'taxonomy' => 'syllabus_department',
+					'field' => 'slug',
+					'terms' => $department,
+				),
+				array(
+					'taxonomy' => 'syllabus_level',
+					'field' => 'slug',
+					'terms' => $level,
+				)
+			),
+		));
+		$current_course_posts = $current_query->get_posts();
+		
+		// Add meta values to the array
+		foreach( $current_course_posts as $post ){
+			$current_courses[$post->sm_section_key] = $post->ID;
+		}
+		
+		// Get the list of course posts that exist in the course data
+		return array_intersect_key($current_courses, $new_course_data);
+	}
+	
+	public function create_courses(){
+		// Test whether the request includes a valid nonce
+		check_admin_referer('sm_create_courses', 'sm_create_courses_nonce');
+		
+		if ( !current_user_can( 'manage_options' ) ) {
+			wp_die( __('You do not have sufficient permissions to access this page.', 'syllabus_manager'));
+		}
+		
+		if ( WP_DEBUG ) {error_log('Creating courses...'); }
+		
+		$semester = $_POST['semester'];
+		$department = $_POST['department'];
+		$level = $_POST['level'];
+		
+		// Get the courses
+		$course_data = $this->get_course_data( $semester, $department, $level );
+		//error_log( print_r($course_data, true) );
+		
+		foreach ( $course_data as $section_key => $course_section ){
+			$section = new Syllabus_Manager_Section( 
+				$course_section['code'],
+				$course_section['title'],
+				$course_section['section_number'],
+				$semester,
+				array($department),
+				$level,
+				explode(', ', $course_section['instructors'])
+			);
+			
+			// Insert the post into the database
+			$post_id = wp_insert_post( $section->get_post_args() );
+			
+			if ( !is_wp_error( $post_id ) ){
+				error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_key );
+				add_post_meta( $post_id, 'sm_course_code', $section->course_code );
+				add_post_meta( $post_id, 'sm_course_title', $section->course_title );
+				add_post_meta( $post_id, 'sm_section_number', $section->number );
+			}
+			else {
+				error_log( 'Error inserting post: ' . print_r($post_id, true) );
+			}
+		}			
+		
 	}
 }

@@ -74,12 +74,14 @@ class Syllabus_Manager_Section {
 	 */
 	public $instructors;
 	
+	public $post_id;
+	
 	/** 
 	 * Define a course section from $_POST or DB data
 	 *
 	 * @since    0.0.0
 	 */
-	public function __construct( $course_code, $course_title, $number, $semester, $department = array(), $level = '', $instructors = array() ) {
+	public function __construct( $course_code, $course_title, $number, $semester, $department = array(), $level = '', $instructors = array(), $post_id = null ) {
 		$this->course_code 	= $course_code;
 		$this->course_title = $course_title;
 		$this->number 		= $number;
@@ -88,6 +90,7 @@ class Syllabus_Manager_Section {
 		$this->level 		= $level;
 		$this->instructors 	= $this->set_instructors( $instructors );
 		$this->section_key 	= $this->set_section_key();
+		$this->post_id 		= $post_id;
 	}
 	
 	/** 
@@ -142,8 +145,10 @@ class Syllabus_Manager_Section {
 		$post_author = get_current_user_id();
 		$post_type = 'syllabus_course';
 		$post_status = 'publish';
+		$post_status = 'publish';
+		$post_id = $this->post_id;
 		
-		return array(
+		$args = array(
 			'post_title' => $post_title,
 			'post_name' => $this->section_key,
 			'post_content' => '',
@@ -160,5 +165,10 @@ class Syllabus_Manager_Section {
 				'sm_section_key' => $this->section_key
 			)
 		);
+		
+		if ( !empty($post_id) ){
+			$args = array_merge( $args, array('ID' => $post_id) );
+		}
+		return $args;
 	}
 }

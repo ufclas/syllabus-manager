@@ -18,7 +18,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div class="wrap">
+<div id="app" class="wrap">
 	<h1 class="wp-heading-inline"><?php _e('Import', 'syllabus-manager'); ?></h1>
 	<hr class="wp-header-end">
 	<br>
@@ -49,8 +49,8 @@ if ( !current_user_can( 'manage_options' ) )  {
 				<input type="file" id="import-filter-file" name="import-filter-file" accept=".json" required />
 			</div>
 			
-			<input type="hidden" name="action" value"import-filter" />
-			<?php wp_nonce_field('syllabus-manager-import', 'wpnonce_syllabus_manager_import' ); ?>
+			<input type="hidden" name="action" value="filter" />
+			<?php wp_nonce_field('sm_import_filters', 'sm_import_filters_nonce'); ?>
 			<?php submit_button( __( 'Import File', 'syllabus-manager' ), 'primary', 'submit', false); ?>
 		</form>
 		</div>
@@ -62,75 +62,94 @@ if ( !current_user_can( 'manage_options' ) )  {
 	</div>
 	
 	
-	<div id="import-courses-row" class="row">
+	<div id="create-courses-row" class="row">
 	<div class="col-md-12">
 		<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">
-			<?php _e('Import Course Data from Source', 'syllabus-manager'); ?></h3>
+			<?php _e('Create Courses', 'syllabus-manager'); ?></h3>
 		</div>
 		<div class="panel-body">
-		<div class="col-md-6 col-sm-12">
-		<form id="import-courses" method="post">
+			<form id="create-courses-form" method="post">
+			
 			<div class="form-group">
-				<label class="sr-only" for="import-semester"><?php _e( 'Semesters: ', 'syllabus_manager' ); ?></label><br>
-				<select id="import-semester" name="semester" v-model="selected_value" class="form-control"  required>
+				<label class="sr-only" for="create-semester"><?php _e( 'Semesters: ', 'syllabus_manager' ); ?></label><br>
+				<select id="create-semester" name="semester" class="form-control" required>
 					<option value=""><?php _e( 'Select a Semester', 'syllabus_manager' ); ?></option>
 					<option v-for="option in semesters" :value="option.id">{{option.label}}</option>
 				</select>
 			</div>
 			
-			<?php wp_nonce_field('syllabus-manager-import', 'wpnonce_syllabus_manager_import' ); ?>
-			<?php submit_button( __( 'Import Courses', 'syllabus-manager' ), 'primary', 'submit', false); ?>
+			<div class="form-group">
+				<label class="sr-only" for="create-departments"><?php _e( 'Departments: ', 'syllabus_manager' ); ?></label><br>
+				<select id="create-department" name="department" class="form-control"  required>
+					<option value=""><?php _e( 'Select a Department', 'syllabus_manager' ); ?></option>
+					<option v-for="option in departments" :value="option.id">{{option.label}}</option>
+				</select>
+			</div>
+				
+			<div class="form-group">
+				<label class="sr-only" for="create-level"><?php _e( 'Levels: ', 'syllabus_manager' ); ?></label><br>
+				<select id="create-level" name="level" class="form-control"  required>
+					<option value=""><?php _e( 'Select a Program Level', 'syllabus_manager' ); ?></option>
+					<option v-for="option in levels" :value="option.id">{{option.label}}</option>
+				</select>
+			</div>
+			
+			<input type="hidden" name="action" value="create" />
+			<?php wp_nonce_field('sm_create_courses', 'sm_create_courses_nonce'); ?>
+			<?php submit_button( __( 'Create Courses', 'syllabus-manager' ), 'primary', 'submit', false); ?>
 		</form>
-		</div>
-		<div class="col-md-6 col-sm-12">
-		<h1>{{selected_value}}</h1>
-		</div>
 		</div><!-- .panel-body -->
 		</div><!-- .panel -->
 	</div>
 	</div>
 	
-	<div class="row">
+	
+	<div id="update-courses-row" class="row">
 	<div class="col-md-12">
-		<div v-show="false" id="vue-import" class="panel panel-default">
+		<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">
-			<?php _e('Vue.js Test', 'syllabus-manager'); ?></h3>
+				<?php _e('Update Courses from Source', 'syllabus-manager'); ?>
+			</h3>
 		</div>
 		<div class="panel-body">
 		<div class="col-md-6 col-sm-12">
-		<p class="bg-info" :class="{'bg-info': true}" :style="fancyDiv">{{msg}}</p>
-		<p><a v-bind:href="url">View Source</a></p>
-		<form>
-			<div class="form-group">
-				<label for="email" class="control-label">Email</label>
-				<input type="email" id="email" v-model.lazy="email" class="form-control" aria-describedby="email-help">
-				<span v-show="email.length > 3" id="email-help" class="help-block">You entered: {{email}}.</span>
-			</div>
-			<div class="form-group">
-				<fieldset>
-					<legend>Interests</legend>
-					<div v-for="interest in interests">
-						<div class="checkbox"><label><input type="checkbox" v-model="selectedInterests" v-bind:value="interest"> {{interest}}</label></div>
-					</div>
-					<span v-if="selectedInterests.length == 0" id="interests-help" class="help-block">Select at least one interest.</span>
-					<span v-else-if="selectedInterests.length >= 3" id="interests-help" class="help-block">You're very active !</span>
-					<span v-else>You selected: {{selectedInterests.join(', ')}}.</span>
-				</fieldset>
-			</div>
-			<div class="form-group">
-				<label for="dept-dropdown" class="control-label">Departments</label>
-				<select v-model="selectedDepartment" id="dept-dropdown" class="form-control">
-					<option v-for="dept in departments" v-bind:value="dept.id">{{dept.name}}</option>
+		<form id="update-courses-form" method="post">
+			
+			<div class="form-group" class="col-md-4 col-sm-12">
+				<label class="sr-only" for="update-semester"><?php _e( 'Semesters: ', 'syllabus_manager' ); ?></label><br>
+				<select id="update-semester" name="semester" class="form-control" required>
+					<option value=""><?php _e( 'Select a Semester', 'syllabus_manager' ); ?></option>
+					<option v-for="option in semesters" :value="option.id">{{option.label}}</option>
 				</select>
-				<span v-show="selectedDepartment" class="help-block">You selected: {{selectedDepartment}}.</span>
 			</div>
-			<button v-on:click.prevent="subscribe" class="btn btn-primary">Subscribe</button>
+			
+			<div class="form-group" class="col-md-4 col-sm-12">
+				<label class="sr-only" for="update-departments"><?php _e( 'Departments: ', 'syllabus_manager' ); ?></label><br>
+				<select id="update-department" name="department" class="form-control"  required>
+					<option value=""><?php _e( 'Select a Department', 'syllabus_manager' ); ?></option>
+					<option v-for="option in departments" :value="option.id">{{option.label}}</option>
+				</select>
+			</div>
+			
+			<div class="form-group" class="col-md-4 col-sm-12">
+				<label class="sr-only" for="update-level"><?php _e( 'Levels: ', 'syllabus_manager' ); ?></label><br>
+				<select id="update-level" name="level" class="form-control"  required>
+					<option value=""><?php _e( 'Select a Program Level', 'syllabus_manager' ); ?></option>
+					<option v-for="option in levels" :value="option.id">{{option.label}}</option>
+				</select>
+			</div>
+			
+			<input type="hidden" name="action" value="update" />
+			<?php wp_nonce_field('sm_update_courses', 'sm_update_courses_nonce'); ?>
+			<?php submit_button( __( 'Update Courses', 'syllabus-manager' ), 'primary', 'submit', false); ?>
 		</form>
 		</div>
-		</div>
-		</div>
+		</div><!-- .panel-body -->
+		</div><!-- .panel -->
 	</div>
-	</div>
+</div><!-- #update-courses-row -->
+	
+</div>

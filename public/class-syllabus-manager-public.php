@@ -120,7 +120,7 @@ class Syllabus_Manager_Public {
 	 */
 	public function set_templates( $template_path ) {
 		
-		if ( is_post_type_archive( $this->post_type )){			
+		/*if ( is_post_type_archive( $this->post_type )){			
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
 		elseif ( is_tax('syllabus_instructor') || is_tax('syllabus_department') || is_tax('syllabus_level') || is_tax('syllabus_semester') ){
@@ -129,7 +129,7 @@ class Syllabus_Manager_Public {
 		elseif (is_singular( $this->post_type )){
 			$template_path = $this->templates->locate_template( 'syllabus-single.php', false );
 		}
-		
+		*/
 		return $template_path;
 	}
 	

@@ -1,4 +1,25 @@
 var vm = new Vue({
+	el: '#import-courses-row',
+	data: {
+		selected_value: '',
+		semesters: [
+			{
+				id: '20178',
+				label: 'Fall 2017'
+			},
+			{
+				id: '20175',
+				label: 'Summer 2017'
+			},
+			{
+				id: '20171',
+				label: 'Spring 2017'
+			},
+		]
+	}
+});
+
+/*var vm = new Vue({
 	el: '#vue-import',
 	data: {
 		msg: 'Learning Vue.js',
@@ -45,3 +66,4 @@ var vm = new Vue({
 		}
 	}
 });
+*/

@@ -61,6 +61,37 @@ if ( !current_user_can( 'manage_options' ) )  {
 	</div>
 	</div>
 	
+	
+	<div id="import-courses-row" class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+			<?php _e('Import Course Data from Source', 'syllabus-manager'); ?></h3>
+		</div>
+		<div class="panel-body">
+		<div class="col-md-6 col-sm-12">
+		<form id="import-courses" method="post">
+			<div class="form-group">
+				<label class="sr-only" for="import-semester"><?php _e( 'Semesters: ', 'syllabus_manager' ); ?></label><br>
+				<select id="import-semester" name="semester" v-model="selected_value" class="form-control"  required>
+					<option value=""><?php _e( 'Select a Semester', 'syllabus_manager' ); ?></option>
+					<option v-for="option in semesters" :value="option.id">{{option.label}}</option>
+				</select>
+			</div>
+			
+			<?php wp_nonce_field('syllabus-manager-import', 'wpnonce_syllabus_manager_import' ); ?>
+			<?php submit_button( __( 'Import Courses', 'syllabus-manager' ), 'primary', 'submit', false); ?>
+		</form>
+		</div>
+		<div class="col-md-6 col-sm-12">
+		<h1>{{selected_value}}</h1>
+		</div>
+		</div><!-- .panel-body -->
+		</div><!-- .panel -->
+	</div>
+	</div>
+	
 	<div class="row">
 	<div class="col-md-12">
 		<div v-show="false" id="vue-import" class="panel panel-default">

@@ -84,8 +84,8 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->plugin_name . '-datatables', plugin_dir_url( dirname(__FILE__) ) . 'includes/datatables/datatables.min.css', array(), $this->version, 'screen' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-public.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -107,8 +107,8 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
+		wp_enqueue_script( $this->plugin_name . '-datatables', plugin_dir_url( dirname(__FILE__) ) . 'includes/datatables/datatables.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
-
 	}
 	
 	/**

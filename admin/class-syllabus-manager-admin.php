@@ -133,10 +133,10 @@ class Syllabus_Manager_Admin {
 		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
 		add_submenu_page('syllabus-manager', 'Import', 'Import', 'manage_options', 'syllabus-manager-import', array( $this, 'display_import_page'));
 		add_submenu_page('syllabus-manager', 'Courses', 'Courses', 'manage_options', 'edit.php?post_type=syllabus_course');
+		add_submenu_page('syllabus-manager', 'Semesters', 'Semesters', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_semester');
 		add_submenu_page('syllabus-manager', 'Departments', 'Departments', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_department');
 		add_submenu_page('syllabus-manager', 'Instructors', 'Instructors', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_instructor');
-		add_submenu_page('syllabus-manager', 'Course Levels', 'Course Levels', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_level');
-		add_submenu_page('syllabus-manager', 'Terms', 'Terms', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_semester');
+		add_submenu_page('syllabus-manager', 'Program Levels', 'Program Levels', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_level');
 	}
 	
 	/**

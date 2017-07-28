@@ -63,101 +63,113 @@ class Syllabus_Manager_Courses {
 		/**
 		 * Taxonomy: Instructors.
 		 */
-		$instructor_labels = array(
+		$taxonomy_name = 'syllabus_instructor';
+		$taxonomy_base = 'instructors';
+		
+		$labels = array(
 			'name' => __( 'Instructors', 'syllabus_manager' ),
 			'singular_name' => __( 'Instructor', 'syllabus_manager' ),
 		);
 
-		$instructor_args = array(
-			'label' => $instructor_labels['name'],
-			'labels' => $instructor_labels,
+		$args = array(
+			'label' => $labels['name'],
+			'labels' => $labels,
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => "{$this->post_type_base}/instructor", 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
 			'show_admin_column' => true,
-			'show_in_rest' => false,
-			'rest_base' => '',
+			'show_in_rest' => true,
+			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( 'syllabus_instructor', array( $this->post_type_name ), $instructor_args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
 
 		/**
 		 * Taxonomy: Departments.
 		 */
-		$dept_labels = array(
+		$taxonomy_name = 'syllabus_department';
+		$taxonomy_base = 'departments';
+		
+		$labels = array(
 			'name' => __( 'Departments', 'syllabus_manager' ),
 			'singular_name' => __( 'Department', 'syllabus_manager' ),
 		);
 
-		$dept_args = array(
-			'label' => $dept_labels['name'],
-			'labels' => $dept_labels,
-			'public' => true,
-			'hierarchical' => true,
-			'show_ui' => true,
-			'show_in_menu' => false,
-			'show_in_nav_menus' => true,
-			'query_var' => true,
-			'rewrite' => array( 'slug' => "{$this->post_type_base}/dept", 'with_front' => true, ),
-			'show_admin_column' => true,
-			'show_in_rest' => false,
-			'rest_base' => '',
-			'show_in_quick_edit' => true,
-		);
-		register_taxonomy( 'syllabus_department', array( 'attachment', $this->post_type_name ), $dept_args );
-
-		/**
-		 * Taxonomy: Course Levels.
-		 */
-		$level_labels = array(
-			'name' => __( 'Course Levels', 'syllabus_manager' ),
-			'singular_name' => __( 'Course Level', 'syllabus_manager' ),
-		);
-
-		$level_args = array(
-			'label' => $level_labels['name'],
-			'labels' => $level_labels,
+		$args = array(
+			'label' => $labels['name'],
+			'labels' => $labels,
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => "{$this->post_type_base}/level", 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
 			'show_admin_column' => true,
-			'show_in_rest' => false,
-			'rest_base' => '',
+			'show_in_rest' => true,
+			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( 'syllabus_level', array( 'attachment', $this->post_type_name ), $level_args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
 
 		/**
-		 * Taxonomy: Terms
+		 * Taxonomy: Program Levels.
 		 */
-		$semester_labels = array(
+		$taxonomy_name = 'syllabus_level';
+		$taxonomy_base = 'program-levels';
+		
+		$labels = array(
+			'name' => __( 'Program Levels', 'syllabus_manager' ),
+			'singular_name' => __( 'Program Level', 'syllabus_manager' ),
+		);
+
+		$args = array(
+			'label' => $labels['name'],
+			'labels' => $labels,
+			'public' => true,
+			'hierarchical' => false,
+			'show_ui' => true,
+			'show_in_menu' => false,
+			'show_in_nav_menus' => true,
+			'query_var' => true,
+			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
+			'show_admin_column' => true,
+			'show_in_rest' => true,
+			'rest_base' => $taxonomy_base,
+			'show_in_quick_edit' => true,
+		);
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
+		
+		/**
+		 * Taxonomy: Semester
+		 */
+		$taxonomy_name = 'syllabus_semester';
+		$taxonomy_base = 'semesters';
+		
+		$labels = array(
 			'name' => __( 'Semesters', 'syllabus_manager' ),
 			'singular_name' => __( 'Semester', 'syllabus_manager' ),
 		);
 
-		$semester_args = array(
-			'label' => $semester_labels['name'],
-			'labels' => $semester_labels,
+		$args = array(
+			'label' => $labels['name'],
+			'labels' => $labels,
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => "{$this->post_type_base}/semester", 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
 			'show_admin_column' => true,
-			'show_in_rest' => false,
-			'rest_base' => '',
+			'show_in_rest' => true,
+			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( 'syllabus_semester', array( $this->post_type_name, 'attachment' ), $semester_args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
 	}
 }

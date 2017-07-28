@@ -30,9 +30,15 @@ class Syllabus_Manager_Activator {
 	 * @since    0.0.0
 	 */
 	public static function activate() {
+		Syllabus_Manager_Activator::create_tables();
+		
+		flush_rewrite_rules();
+	}
+	
+	public static function create_tables(){
 		global $wpdb;
 				
-		$table_name = $wpdb->prefix . 'courses_20178';
+		$table_name = $wpdb->prefix . 'semester_20178';
 		
 		$sql = "CREATE TABLE $table_name (
 		  ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -51,10 +57,6 @@ class Syllabus_Manager_Activator {
 		// Save version number of the table structure
 		add_option( 'sm_db_version', '0.0.0' );
 		
-		error_log('Syllabus manager activated.');
-		error_log($table_name);
-		error_log($charset_collate);
-		error_log(get_option('sm_db_version'));
+		if ( WP_DEBUG ) {error_log('Syllabus Manager activated.');}
 	}
-
 }

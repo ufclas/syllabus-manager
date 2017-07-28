@@ -30,7 +30,11 @@ class Syllabus_Manager_Deactivator {
 	 * @since    0.0.0
 	 */
 	public static function deactivate() {
-
+		
+		// Get rid of the custom rewrite rules
+		flush_rewrite_rules();
+		
+		if ( WP_DEBUG ) {error_log('Syllabus Manager deactivated.');}
 	}
 
 }

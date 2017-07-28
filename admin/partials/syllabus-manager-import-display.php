@@ -40,7 +40,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 				<select id="import-name" name="import-name" class="form-control" required>
 					<option value="departments"><?php _e( 'Departments', 'syllabus_manager' ); ?></option>
 					<option value="terms"><?php _e( 'Terms', 'syllabus_manager' ); ?></option>
-					<option value="progLevels"><?php _e( 'Course Levels', 'syllabus_manager' ); ?></option>
+					<option value="progLevels"><?php _e( 'Program Levels', 'syllabus_manager' ); ?></option>
 				</select>
 			</div>
 			

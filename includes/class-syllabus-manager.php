@@ -189,6 +189,7 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'init', $plugin_courses, 'register_taxonomies' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_courses_table', $plugin_public, 'get_courses_table' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_public, 'set_courses_query' );
 		$this->loader->add_action( 'template_include', $plugin_public, 'set_templates' );
 		$this->loader->add_action( 'syllabus_manager_content', $plugin_public, 'display_content' );

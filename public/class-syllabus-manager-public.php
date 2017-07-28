@@ -84,7 +84,7 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name . '-datatables', plugin_dir_url( dirname(__FILE__) ) . 'includes/datatables/datatables.min.css', array(), $this->version, 'screen' );
+		wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-public.css', array(), $this->version, 'all' );
 	}
 
@@ -107,8 +107,12 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name . '-datatables', plugin_dir_url( dirname(__FILE__) ) . 'includes/datatables/datatables.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
+		/*wp_localize_script( $this->plugin_name, 'sm_public_data', array(
+			'courses' => $this->get_courses_table(),
+			'ajax_nonce' => wp_create_nonce('sm-get-courses=table')
+		));*/
 	}
 	
 	/**
@@ -150,15 +154,18 @@ class Syllabus_Manager_Public {
 			return;
 		}
 		
-		if ( $query->get('page_id') == $this->post_page_id ){
+		if ( WP_DEBUG ){ error_log( print_r($query, true) ); }
+				
+		if ( $query->get_queried_object_id() == $this->post_page_id ){
+			error_log( 'Syllabus Manager changing query for page' );
 			
 			// Reset properties to emulate an archive page
 			$query->set('post_type', 'syllabus_course');
-			$query->set('page_id', '');
-			$query->is_page = 0;
-			$query->is_singular = 0;
-			$query->is_post_type_archive = 1;
-        	$query->is_archive = 1;
+			$query->set('pagename', null);
+			$query->is_page = false;
+			$query->is_singular = false;
+			$query->is_post_type_archive = true;
+        	$query->is_archive = true;
 			
 			$query->set( 'orderby', 'title' );
 			$query->set( 'order', 'ASC' );
@@ -169,5 +176,9 @@ class Syllabus_Manager_Public {
 			$query->set( 'order', 'ASC' );
 			$query->set( 'posts_per_page', -1 );
 		}
+	}
+	
+	function get_courses_table(){
+		
 	}
 }

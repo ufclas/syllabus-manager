@@ -60,7 +60,7 @@
 				foreach ( $syllabus_lists as $key => $term ):
 					$term_class = 'syllabus-' . $key;
 					$term_list = get_the_term_list( $syllabus_id, $term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' );
-					$term_list = ( !is_wp_error( $term_list ) )? $term_list : '';	
+					$term_list = ( !is_wp_error( $term_list ) )? $term_list : '<code>' . print_r($term_list, true) . '</code>';	
 					printf( '<td class="%s">%s</td>', $term_class, $term_list );
 				endforeach;
 			?>

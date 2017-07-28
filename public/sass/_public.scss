@@ -27,21 +27,23 @@
 		}
 	}
 	
+	.syllabus-title {
+		@media screen and (min-width: $screen-md-min){
+			width: 35%;
+		}
+	}
+	
+	
 	.syllabus-level {
 		@media screen and (max-width: $screen-md-max){
 			display: none;
 		}
-	}
+	} 
 
 	.syllabus-dept {
 		@media screen and (max-width: $screen-lg-max){
 			display: none;
 		}
 	}
-
-	.syllabus-semester {
-		display: none;
-	}
 }
-
 

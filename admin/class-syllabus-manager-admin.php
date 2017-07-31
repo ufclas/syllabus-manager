@@ -116,7 +116,6 @@ class Syllabus_Manager_Admin {
                 'ajax_nonce' => wp_create_nonce('syllabus-manager-add-syllabus')
 			));
 		}
-		
 		if ( 'syllabus-manager_page_syllabus-manager-import' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
 			wp_enqueue_script( 'vue-js', 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js', array(), null, true);
@@ -423,7 +422,7 @@ class Syllabus_Manager_Admin {
 		error_log(print_r($_POST, true));
 		
 		switch ( $_POST['action'] ){
-			case 'import_filters':
+			case 'filter':
 				$this->import_filters();
 				break;
 			case 'update':
@@ -442,6 +441,8 @@ class Syllabus_Manager_Admin {
 		
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
+		
+		global $wpdb;
 		
 		$filter_name = sanitize_text_field( $_POST['import-name'] );
 		$uploaded_file = $_FILES['import-filter-file'];
@@ -474,28 +475,57 @@ class Syllabus_Manager_Admin {
 			$filter_data = $filter_data->{$filter_name};
 			
 			$taxonomies = array(
-				'terms' => 'syllabus_semester',
-				'departments' => 'syllabus_department',
-				'progLevels' => 'syllabus_level',
+				'terms' => array(
+					'tax' => 'syllabus_semester',
+					'table' => 'sy_soc_semesters',
+				),
+				'departments' => array(
+					'tax' => 'syllabus_department',
+					'table' => 'sy_soc_departments',
+				),
+				'progLevels' => array(
+					'tax' => 'syllabus_level',
+					'table' => '',
+				),
 			);
 			
 			foreach ( $filter_data as $data ){
 				$slug = $data->CODE;
 				$term = $desc = $data->DESC;
 				
+				$table_name = $taxonomies[$filter_name]['table'];
+				$table_data =  array();
+				$table_format = array();
+				
 				// Change Department names to title case
 				if ( 'departments' == $filter_name ){
 					$ugly_terms = explode( '-', $term );
 					$pretty_terms = array();
 					foreach( $ugly_terms as $ugly_title ){
-						//$pretty_terms[] = ucwords(strtolower(trim($ugly_title)), " -\t\r\n\f\v/");
 						$pretty_terms[] = ucwords(strtolower(trim($ugly_title)));
 					}
 					$term = implode('-', $pretty_terms);
 					$term = str_replace('Languages Lit/culture', 'Languages, Literatures, & Cultures', $term);
 				}
 				
-				wp_insert_term( $term, $taxonomies[$filter_name], array('slug' => $slug, 'description' => $desc ));
+				//wp_insert_term( $term, $taxonomies[$filter_name], array('slug' => $slug, 'description' => $desc ));
+				
+				if ( 'departments' == $filter_name ) {
+					$table_name = 'sy_soc_departments';
+					$table_data = array( 'deptcode' => $slug, 'deptname' => $term );
+					$table_format = array('%s', '%s');
+				}
+				elseif ( 'terms' == $filter_name ){
+					$table_name = 'sy_soc_semesters';
+					$table_data = array( 'semester' => $slug, 'description' => $term );
+					$table_format = array('%s', '%s');
+				}
+				
+				$wpdb->insert($table_name, $table_data, $table_format);
+				
+				//error_log( $table_name );
+				//error_log( print_r($table_data, true) );
+				//error_log( print_r($table_format, true) );
 			}
 		}
 		
@@ -507,7 +537,7 @@ class Syllabus_Manager_Admin {
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_update_courses', 'sm_update_courses_nonce');
 		
-		if ( WP_DEBUG ) {error_log('Updating courses...'); }
+		if ( WP_DEBUG ) { error_log('Updating courses...'); }
 		
 		$semester = $_POST['semester'];
 		$department = $_POST['department'];

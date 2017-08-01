@@ -57,7 +57,7 @@ class Syllabus_Manager_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->templates = new Syllabus_Manager_Template_Loader;
+		// $this->templates = new Syllabus_Manager_Template_Loader;
 		
 		$this->post_type = 'syllabus_course';
 		$this->taxonomies = array('syllabus_instructor', 'syllabus_department', 'syllabus_level', 'syllabus_semester');

@@ -69,7 +69,7 @@ class Syllabus_Manager {
 	public function __construct() {
 
 		$this->plugin_name = 'syllabus-manager';
-		$this->version = '0.0.0';
+		$this->version = '0.1.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -115,9 +115,11 @@ class Syllabus_Manager {
 		
 		/**
 		 * Template loader classes
+		 * 
+		 * @todo Allow for themes to override default templates
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-template-loader.php';
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-template-loader.php';
 		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -129,7 +131,7 @@ class Syllabus_Manager {
 		 * Custom Post Types and Taxonomies
 		 */ 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-section.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-post-type.php';
 		
 		
 		$this->loader = new Syllabus_Manager_Loader();
@@ -183,7 +185,7 @@ class Syllabus_Manager {
 	private function define_public_hooks() {
 
 		$plugin_public = new Syllabus_Manager_Public( $this->get_plugin_name(), $this->get_version() );
-		$plugin_courses = new Syllabus_Manager_Courses();
+		$plugin_courses = new Syllabus_Manager_Post_Type();
 
 		$this->loader->add_action( 'init', $plugin_courses, 'register_post_type' );
 		$this->loader->add_action( 'init', $plugin_courses, 'register_taxonomies' );

@@ -1,34 +1,52 @@
 <?php
-
 /**
- * Fired during plugin activation
+ * Adds custom post types and taxonomies
  *
- * @link       https://it.clas.ufl.edu/
- * @since      0.0.0
- *
- * @package    Syllabus_Manager
- * @subpackage Syllabus_Manager/includes
- */
-
-/**
- * Fired during plugin activation.
- *
- * This class defines all code necessary to run during the plugin's activation.
+ * Adds Courses post type and Taxonomies for departments, semesters, and instructors
  *
  * @since      0.0.1
  * @package    Syllabus_Manager
  * @subpackage Syllabus_Manager/includes
  * @author     Priscilla Chapman (CLAS IT) <no-reply@clas.ufl.edu>
  */
-class Syllabus_Manager_Courses {
-	public $post_type_name;
-	public $post_type_base;
+class Syllabus_Manager_Post_Type {
 	
+	/**
+	 * Post type name
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var      string    $post_type_name
+	 */
+	private $post_type_name;
+	
+	/**
+	 * Base used in URLs and REST API for the post type
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var      string    $post_type_base
+	 */
+	private $post_type_base;
+	
+	/** 
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    0.0.1
+	 */
 	public function __construct() {
 		$this->post_type_name = 'syllabus_course';
 		$this->post_type_base = 'courses';
 	}
 	
+	
+	/**
+	 * Registers the post type
+	 * 
+	 * @since 0.0.1
+	 * @param [[Type]] $label_name          [[Description]]
+	 * @param [[Type]] $label_name_singular [[Description]]
+	 */
 	public function register_post_type(){
 		
 		$post_type_labels = array(
@@ -59,6 +77,13 @@ class Syllabus_Manager_Courses {
 		register_post_type( $this->post_type_name, $post_type_args );
 	}
 	
+	/**
+	 * Registers the taxonomies for the post type
+	 * 
+	 * Departments, Instructors, Semesters, Course Levels
+	 * 
+	 * @since 0.0.1
+	 */
 	public function register_taxonomies(){
 		/**
 		 * Taxonomy: Instructors.

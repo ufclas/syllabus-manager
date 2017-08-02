@@ -283,44 +283,54 @@ class Syllabus_Manager_Admin {
 		$data = array();
 		$args = array( 'dept' => $department, 'prog-level' => $level, 'term' => $semester );
 		
+		/**
+		 * Query
+		 * 
+		 * @todo Update repo with new query string
+		 */
 		$query = "SELECT
 			A.id AS section_id,
 			A.number AS section_code,
 			A.course_id,
 			B.code AS course_code,
 			B.name AS course_title,
-			C.instructor_id,
-			D.name AS instructor_name,
+			GROUP_CONCAT( D.name SEPARATOR ';') AS instructor_list,
 			A.dept_id,
 			E.deptcode, 
 			E.deptname,
 			A.semester_id,
 			F.semester AS semester_code,
+			G.post_id,
 			'Fall 2017' AS semester
-		FROM
+		 FROM
 			sy_soc_sections AS A 
 			LEFT JOIN sy_soc_courses AS B ON A.course_id = B.id
 			LEFT JOIN sy_soc_sections_instructors AS C ON A.id = C.section_id
 			LEFT JOIN sy_soc_instructors AS D ON C.instructor_id = D.id
 			LEFT JOIN sy_soc_departments AS E ON A.dept_id = E.id
 			LEFT JOIN sy_soc_semesters AS F ON A.semester_id = F.id
-		WHERE 
+			LEFT JOIN sy_soc_sections_posts AS G ON A.id = G.section_id
+		 WHERE 
 			A.dept_id >= 1 AND
 			A.semester_id = 1 AND
-			CAST(SUBSTR(B.code,4,4) AS UNSIGNED INTEGER ) < 4999";
+			SUBSTR(B.code,4,4) < 5000
+		 GROUP BY
+		A.id";
 		
 		/**
 		 * Query list of courses
-		 * @todo 
+		 * 
+		 * @todo Determine if this needs to be an array or objects
+		 * @todo Pass in the semester name as a parameter in query, use prepare
 		 */
-		$courses = $wpdb->get_results( $query, OBJECT_K );
+		$sections = $wpdb->get_results( $query );
 		
 		if ( WP_DEBUG ){ 
 			error_log( 'Getting sections from tables...' );
 			// error_log( print_r( $courses, true ) );
 		}
 		
-		if ( !is_null( $courses ) ){
+		if ( !is_null( $sections ) ){
 
 			$tax_queries =  array(
 				'taxonomy' 	=> 'syllabus_semester',
@@ -344,22 +354,20 @@ class Syllabus_Manager_Admin {
 				);
 			}
 
-			foreach ( $courses as $section ):
-
+			foreach ( $sections as $section ):
+				
+				//error_log( print_r( $section->instructor_list, true ) );
+			
 				$syllabus_section = new Syllabus_Manager_Section( array( 
-						'section_id' => $section->section_id,
-						'section_code' => $section->section_code,
-						'course_id' => $section->course_id,
-						'course_code' => $section->course_code,
-						'course_title' => $section->course_title,
-						'instructor_id' => $section->instructor_id,
-						'instructor_name' => $section->instructor_name,
-						'dept_id' => $section->dept_id,
-						'deptcode' => $section->deptcode,
-						'deptname' => $section->deptname,
-						'semester_id' => $section->semester_id,
-						'semester_code' => $section->semester_code,
-						'semester' => $section->semester,
+					'section_id' => $section->section_id,
+					'section_code' => $section->section_code,
+					'course_id' => $section->course_id,
+					'course_code' => $section->course_code,
+					'course_title' => $section->course_title,
+					'instructors' => $section->instructor_list,
+					'department' => $section->deptcode,
+					'semester_code' => $section->semester_code,
+					'post_id' => $section->post_id,
 				));
 
 				$status = 0;
@@ -371,7 +379,7 @@ class Syllabus_Manager_Admin {
 					'code' => $syllabus_section->course_code,
 					'section_number' => $syllabus_section->section_code,
 					'title' => $syllabus_section->course_title,
-					'instructors' => join(';', $syllabus_section->instructors),
+					'instructors' => join(', ', $syllabus_section->instructors),
 					'status' => $status,
 					'action' => $button,
 				);

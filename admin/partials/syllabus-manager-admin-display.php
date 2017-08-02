@@ -23,6 +23,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 	<hr class="wp-header-end">
 	<br>
     
+	<!--
 	<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-default">
@@ -92,6 +93,7 @@ if ( !current_user_can( 'manage_options' ) )  {
 		</div>
 	</div>
 	</div>
+	-->
 	
     <div class="row">
 	<div class="col-md-12">

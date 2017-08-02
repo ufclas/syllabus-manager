@@ -102,27 +102,25 @@ class Syllabus_Manager_Section {
 			'course_id' => null,
 			'course_code' => null,
 			'course_title' => null,
-			'instructor_id' => null,
-			'instructor_name' => null,
+			'instructors' => null,
 			'dept_id' => null,
 			'deptcode' => null,
 			'deptname' => null,
 			'semester_id' => null,
 			'semester_code' => null,
-			'semester' => null,
 			'post_id' => null,
 		);
 		$args = array_merge( $defaults, $section_args );
 		
-		$this->course_id 	= $args['course_id'];
-		$this->course_code 	= $args['course_code'];
-		$this->course_title = $args['course_title'];
-		$this->section_code	= $args['section_code'];
-		$this->semester 	= $args['semester_code'];
-		$this->department 	= $this->set_department( $args['deptcode'] );
-		$this->instructors 	= $this->set_instructors( $args['instructor_name'] );
-		$this->section_id 	= $args['section_id'];
-		$this->post_id 		= $args['post_id'];
+		$this->course_id 	 = $args['course_id'];
+		$this->course_code 	 = $args['course_code'];
+		$this->course_title  = $args['course_title'];
+		$this->section_code	 = $args['section_code'];
+		$this->semester_code = $args['semester_code'];
+		$this->department 	 = $this->set_department( $args['deptcode'] );
+		$this->instructors 	 = $this->set_instructors( $args['instructors'] );
+		$this->section_id 	 = $args['section_id'];
+		$this->post_id 		 = $args['post_id'];
 	}
 	
 	/** 
@@ -148,7 +146,7 @@ class Syllabus_Manager_Section {
 	public function set_instructors( $instructor_list = array() ){
 		
 		// Convert to an array if this list is a string with semicolor delimiter
-		$instructors = ( !is_array($instructor_list) )? explode(';', $instructor_list) : $instructor_list;
+		$instructors = ( is_array($instructor_list) )? $instructor_list : explode(';', $instructor_list);
 		
 		// Format instructor name to change firstname lastname order
 		foreach ( $instructors as $index => $instructor ){
@@ -218,7 +216,7 @@ class Syllabus_Manager_Section {
 			'tax_input' => array(
 				'syllabus_department' => $post_department,
 				'syllabus_level' => $prog_level,
-				'syllabus_semester' => $this->semester,
+				'syllabus_semester' => $this->semester_code,
 				'syllabus_instructor' => $post_instructors
 			),
 			'meta_input' => array(

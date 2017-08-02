@@ -140,30 +140,30 @@ if ( !current_user_can( 'manage_options' ) )  {
 						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Published Status</th><th>Actions</th></tr>
 					</thead>
 					<tbody>
-						<tr v-for="(course, id, index) in courses" :class="{'bg-success': (course.status == 1)}">
-                            <td class="course-code" :class="">{{course.code}}</td>
-                            <td class="section-number" :class="">{{course.section_number}}</td>
-                            <td class="title" :class="">{{course.title}}</td>
+						<tr v-for="(course, course_id, index) in courses" :class="{'bg-success': sectionClassSuccess(course.sections[0])}">
+                            <td class="course-code" :class="">{{course.course_code}}</td>
+                            <td class="section-number" :class="">{{course.sections[0].section_code}}</td>
+                            <td class="title" :class="">{{course.course_title}}</td>
                             
                             <td class="instructors" :class="">
-                                <span v-if="course.instructors">{{course.instructors}}</span>
+                                <span v-if="course.sections[0].instructors">{{course.instructors}}</span>
                                 <span v-else class="no-data"><?php _e('No instructors listed', 'syllabus_manager'); ?></span>
                             </td>
                             
                             <td class="status" :class="">
-                                <span v-if="course.status"><?php _e('Published', 'syllabus_manager'); ?></span>
+                                <span v-if="sectionClassSuccess(course.sections[0]"><?php _e('Published', 'syllabus_manager'); ?></span>
                                 <span v-else class="no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
                             </td>
                             
                             <td class="action" :class="">
                                 <button 
 									type="button" 
-									@click="add_syllabus(id, $event)"  
+									@click="add_syllabus(course.sections[0].section_id, $event)"  
 									class="btn has-spinner" 
-									:class="{'btn-success': course.status, active: -1 == course.status}"
+									:class="{'btn-success': sectionClassSuccess(course.sections[0], active: -1 == course_status}"
 									autocomplete="off">
-									<span v-if="1 == course.status"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
-									<span v-else-if="-1 == course.status"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
+									<span v-if="1 == sectionClassSuccess(course.sections[0]"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
+									<span v-else-if="-1 == sectionClassSuccess(course.sections[0]"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
 									<span v-else><?php _e('Add Syllabus', 'syllabus_manager'); ?></span>									
 								</button>
                             </td>

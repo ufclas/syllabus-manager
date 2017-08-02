@@ -119,7 +119,7 @@ class Syllabus_Manager_Admin {
             wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
-				'courses' => $this->get_course_data(),
+				'courses' => Syllabus_Manager_Course::get_courses(),
                 'ajax_nonce' => wp_create_nonce('syllabus-manager-add-syllabus')
 			));
 		}
@@ -187,7 +187,7 @@ class Syllabus_Manager_Admin {
 	 */
 	public function get_main_table_data(){
 				
-		$courses = $this->get_course_data();
+		$courses = Syllabus_Manager_Course::get_courses();
 		
 		foreach ( $courses as $course ){
 			echo '<tr>';
@@ -208,7 +208,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-get-main', 'syllabus-manager-main-nonce' );
 		
-		echo json_encode( $this->get_course_data() );
+		echo json_encode( Syllabus_Manager_Course::get_courses() );
 		
 		wp_die(); // Required to terminate immediately and return a proper response
 	}
@@ -230,6 +230,8 @@ class Syllabus_Manager_Admin {
 		$post_data = $_POST['course_data'];
 		
 		error_log(print_r($post_data, true));
+		
+		return;
 		
 		$section = new Syllabus_Manager_Section( 
 			$post_data['code'],
@@ -268,127 +270,7 @@ class Syllabus_Manager_Admin {
 		wp_send_json_success( array('msg' => 'Removed syllabus') );
 	}
 	
-	/**
-	 * Requests courses data
-	 * 
-	 * Fetches data array from transient or refreshes data from external source
-	 * 
-	 * @return array JSON-decoded data
-	 * @since 0.0.0
-	 */
-	public function get_course_data( $semester = '20178', $department = '011690003', $level = 'ugrd' ){
-		
-		global $wpdb;
-		
-		$data = array();
-		$args = array( 'dept' => $department, 'prog-level' => $level, 'term' => $semester );
-		
-		/**
-		 * Query
-		 * 
-		 * @todo Update repo with new query string
-		 */
-		$query = "SELECT
-			A.id AS section_id,
-			A.number AS section_code,
-			A.course_id,
-			B.code AS course_code,
-			B.name AS course_title,
-			GROUP_CONCAT( D.name SEPARATOR ';') AS instructor_list,
-			A.dept_id,
-			E.deptcode, 
-			E.deptname,
-			A.semester_id,
-			F.semester AS semester_code,
-			G.post_id,
-			'Fall 2017' AS semester
-		 FROM
-			sy_soc_sections AS A 
-			LEFT JOIN sy_soc_courses AS B ON A.course_id = B.id
-			LEFT JOIN sy_soc_sections_instructors AS C ON A.id = C.section_id
-			LEFT JOIN sy_soc_instructors AS D ON C.instructor_id = D.id
-			LEFT JOIN sy_soc_departments AS E ON A.dept_id = E.id
-			LEFT JOIN sy_soc_semesters AS F ON A.semester_id = F.id
-			LEFT JOIN sy_soc_sections_posts AS G ON A.id = G.section_id
-		 WHERE 
-			A.dept_id >= 1 AND
-			A.semester_id = 1 AND
-			SUBSTR(B.code,4,4) < 5000
-		 GROUP BY
-		A.id";
-		
-		/**
-		 * Query list of courses
-		 * 
-		 * @todo Determine if this needs to be an array or objects
-		 * @todo Pass in the semester name as a parameter in query, use prepare
-		 */
-		$sections = $wpdb->get_results( $query );
-		
-		if ( WP_DEBUG ){ 
-			error_log( 'Getting sections from tables...' );
-			// error_log( print_r( $courses, true ) );
-		}
-		
-		if ( !is_null( $sections ) ){
-
-			$tax_queries =  array(
-				'taxonomy' 	=> 'syllabus_semester',
-				'field' 	=> 'slug',
-				'terms' 	=> $semester
-			);
-
-			if ( !empty($department) ){
-				$tax_queries[] = array(
-					'taxonomy' => 'syllabus_department',
-					'field' => 'slug',
-					'terms' => $department
-				);
-			}
-
-			if ( !empty($level) ){
-				$tax_queries[] = array(
-					'taxonomy' => 'syllabus_level',
-					'field' => 'slug',
-					'terms' => $level
-				);
-			}
-
-			foreach ( $sections as $section ):
-				
-				//error_log( print_r( $section->instructor_list, true ) );
-			
-				$syllabus_section = new Syllabus_Manager_Section( array( 
-					'section_id' => $section->section_id,
-					'section_code' => $section->section_code,
-					'course_id' => $section->course_id,
-					'course_code' => $section->course_code,
-					'course_title' => $section->course_title,
-					'instructors' => $section->instructor_list,
-					'department' => $section->deptcode,
-					'semester_code' => $section->semester_code,
-					'post_id' => $section->post_id,
-				));
-
-				$status = 0;
-				$button = 1;
-
-				// Add objects to the data array
-				$data[$syllabus_section->section_id] = array(
-					'section_id' => $syllabus_section->section_id,
-					'code' => $syllabus_section->course_code,
-					'section_number' => $syllabus_section->section_code,
-					'title' => $syllabus_section->course_title,
-					'instructors' => join(', ', $syllabus_section->instructors),
-					'status' => $status,
-					'action' => $button,
-				);
-
-			endforeach;
-		}
-		
-		return $data;
-	}
+	
 	
 	/**
 	 * Get course array from external source
@@ -560,7 +442,7 @@ class Syllabus_Manager_Admin {
 		$level = $_POST['level'];
 		
 		// Get the courses
-		$course_data = $this->get_course_data( $semester, $department, $level );
+		$course_data = Syllabus_Manager_Course::get_courses( $semester, $department, $level );
 		
 		$matched_courses = $this->get_matched_courses( $semester, $department, $level, $course_data );
 		if ( WP_DEBUG ){ error_log( print_r($matched_courses, true) ); }
@@ -641,7 +523,7 @@ class Syllabus_Manager_Admin {
 		$level = $_POST['level'];
 		
 		// Get the courses
-		$course_data = $this->get_course_data( $semester, $department, $level );
+		$course_data = Syllabus_Manager_Course::get_courses( $semester, $department, $level );
 		//error_log( print_r($course_data, true) );
 		
 		foreach ( $course_data as $section_id => $course_section ){

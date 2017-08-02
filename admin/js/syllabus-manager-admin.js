@@ -19,7 +19,11 @@ var vm = new Vue({
     computed: {
     },
     methods: {
-        add_syllabus: function ( id, event ) {
+        sectionClassSuccess: function ( section ) {
+			console.log(section.post_id);
+			return (section.post_id != null);	
+		},
+		add_syllabus: function ( id, event ) {
 			// Update the button  while loading
 			var course_data = this.courses[id];
 			course_data.id = id;

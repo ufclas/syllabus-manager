@@ -40,6 +40,13 @@ class Syllabus_Manager_Admin {
 	 */
 	private $version;
 	
+	/**
+	 * Names of plugin's admin dashboard pages
+	 *
+	 * @since    0.0.0
+	 * @access   private
+	 * @var      string    $plugin_pages    The current version of this plugin.
+	 */
 	private $plugin_pages;
 
 	/**
@@ -238,11 +245,11 @@ class Syllabus_Manager_Admin {
 		$post_id = wp_insert_post( $section->get_post_args() );
 		
 		if ( !is_wp_error( $post_id ) ){
-			error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section->section_key );
+			error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section->section_id );
 			add_post_meta( $post_id, 'sm_course_code', $section->course_code );
 			add_post_meta( $post_id, 'sm_course_title', $section->course_title );
-			add_post_meta( $post_id, 'sm_section_number', $section->number );
-			wp_send_json_success( array('msg' => 'Added course: '. $section->section_key) );	
+			add_post_meta( $post_id, 'sm_section_number', $section->section_code );
+			wp_send_json_success( array('msg' => 'Added course: '. $section->section_id) );	
 		}
 		else {
 			error_log( 'Error inserting post: ' . print_r($post_id, true) );
@@ -270,77 +277,108 @@ class Syllabus_Manager_Admin {
 	 * @since 0.0.0
 	 */
 	public function get_course_data( $semester = '20178', $department = '011690003', $level = 'ugrd' ){
-		// Get the correct transient
-		$transient_key = "syllabus_manager_{$semester}_{$department}_{$level}";
 		
-		// Get existing copy of transient data, if exists
-		$data = get_transient( $transient_key );
+		global $wpdb;
 		
-		if ( false || empty($data) ){
-			
-			if ( WP_DEBUG ){ error_log( 'Setting transient...' . $transient_key ); }
-            
-			$args = array( 'dept' => $department, 'prog-level' => $level, 'term' => $semester );
-			
-			if ( false !== ($courses = $this->fetch_courses( $args ) ) ){
-				
-				$tax_queries =  array(
-					'taxonomy' 	=> 'syllabus_semester',
-					'field' 	=> 'slug',
-					'terms' 	=> $semester
-				);
-				
-				if ( !empty($department) ){
-					$tax_queries[] = array(
-						'taxonomy' => 'syllabus_department',
-						'field' => 'slug',
-						'terms' => $department
-					);
-				}
-				
-				if ( !empty($level) ){
-					$tax_queries[] = array(
-						'taxonomy' => 'syllabus_level',
-						'field' => 'slug',
-						'terms' => $level
-					);
-				}
-				
-				foreach ( $courses as $course ):
-				
-				foreach ( $course->sections as $section ):
-					
-					$syllabus_section = new Syllabus_Manager_Section(
-						$course->code,
-						$course->name,
-						$section->number,
-						$semester,
-						$department,
-						$level,
-						$section->instructors
-					);
-					
-					$status = 0;
-					$button = 1;
-
-					// Add objects to the data array
-					$data[$syllabus_section->section_key] = array(
-						'section_key' => $syllabus_section->section_key,
-						'code' => $syllabus_section->course_code,
-						'section_number' => $syllabus_section->number,
-						'title' => $syllabus_section->course_title,
-						'instructors' => join(', ', $syllabus_section->instructors),
-						'status' => $status,
-						'action' => $button,
-					);
-				
-				endforeach;
-				endforeach;
-                
-				// Seve the updated data
-				set_transient( $transient_key, $data, 24 * HOUR_IN_SECONDS );
-			}
+		$data = array();
+		$args = array( 'dept' => $department, 'prog-level' => $level, 'term' => $semester );
+		
+		$query = "SELECT
+			A.id AS section_id,
+			A.number AS section_code,
+			A.course_id,
+			B.code AS course_code,
+			B.name AS course_title,
+			C.instructor_id,
+			D.name AS instructor_name,
+			A.dept_id,
+			E.deptcode, 
+			E.deptname,
+			A.semester_id,
+			F.semester AS semester_code,
+			'Fall 2017' AS semester
+		FROM
+			sy_soc_sections AS A 
+			LEFT JOIN sy_soc_courses AS B ON A.course_id = B.id
+			LEFT JOIN sy_soc_sections_instructors AS C ON A.id = C.section_id
+			LEFT JOIN sy_soc_instructors AS D ON C.instructor_id = D.id
+			LEFT JOIN sy_soc_departments AS E ON A.dept_id = E.id
+			LEFT JOIN sy_soc_semesters AS F ON A.semester_id = F.id
+		WHERE 
+			A.dept_id >= 1 AND
+			A.semester_id = 1 AND
+			CAST(SUBSTR(B.code,4,4) AS UNSIGNED INTEGER ) < 4999";
+		
+		/**
+		 * Query list of courses
+		 * @todo 
+		 */
+		$courses = $wpdb->get_results( $query, OBJECT_K );
+		
+		if ( WP_DEBUG ){ 
+			error_log( 'Getting sections from tables...' );
+			// error_log( print_r( $courses, true ) );
 		}
+		
+		if ( !is_null( $courses ) ){
+
+			$tax_queries =  array(
+				'taxonomy' 	=> 'syllabus_semester',
+				'field' 	=> 'slug',
+				'terms' 	=> $semester
+			);
+
+			if ( !empty($department) ){
+				$tax_queries[] = array(
+					'taxonomy' => 'syllabus_department',
+					'field' => 'slug',
+					'terms' => $department
+				);
+			}
+
+			if ( !empty($level) ){
+				$tax_queries[] = array(
+					'taxonomy' => 'syllabus_level',
+					'field' => 'slug',
+					'terms' => $level
+				);
+			}
+
+			foreach ( $courses as $section ):
+
+				$syllabus_section = new Syllabus_Manager_Section( array( 
+						'section_id' => $section->section_id,
+						'section_code' => $section->section_code,
+						'course_id' => $section->course_id,
+						'course_code' => $section->course_code,
+						'course_title' => $section->course_title,
+						'instructor_id' => $section->instructor_id,
+						'instructor_name' => $section->instructor_name,
+						'dept_id' => $section->dept_id,
+						'deptcode' => $section->deptcode,
+						'deptname' => $section->deptname,
+						'semester_id' => $section->semester_id,
+						'semester_code' => $section->semester_code,
+						'semester' => $section->semester,
+				));
+
+				$status = 0;
+				$button = 1;
+
+				// Add objects to the data array
+				$data[$syllabus_section->section_id] = array(
+					'section_id' => $syllabus_section->section_id,
+					'code' => $syllabus_section->course_code,
+					'section_number' => $syllabus_section->section_code,
+					'title' => $syllabus_section->course_title,
+					'instructors' => join(';', $syllabus_section->instructors),
+					'status' => $status,
+					'action' => $button,
+				);
+
+			endforeach;
+		}
+		
 		return $data;
 	}
 	
@@ -519,26 +557,26 @@ class Syllabus_Manager_Admin {
 		$matched_courses = $this->get_matched_courses( $semester, $department, $level, $course_data );
 		if ( WP_DEBUG ){ error_log( print_r($matched_courses, true) ); }
 		
-		foreach ( $matched_courses as $section_key => $post_id ){
+		foreach ( $matched_courses as $section_id => $post_id ){
 			
 			$section = new Syllabus_Manager_Section( 
-				$course_data[$section_key]['code'],
-				$course_data[$section_key]['title'],
-				$course_data[$section_key]['section_number'],
+				$course_data[$section_id]['code'],
+				$course_data[$section_id]['title'],
+				$course_data[$section_id]['section_number'],
 				$semester,
 				array($department),
 				$level,
-				explode(', ', $course_data[$section_key]['instructors']),
+				explode(', ', $course_data[$section_id]['instructors']),
 				$post_id
 			);
 						
 			$post_id = wp_update_post( $section->get_post_args() );
 			
 			if ( !is_wp_error($post_id) ){
-				error_log( 'Successfully updated post: ' . $post_id . ' for ' . $section_key );
-				update_post_meta( $post_id, 'sm_course_code', $course_data[$section_key]['code'] );
-				update_post_meta( $post_id, 'sm_course_title', $course_data[$section_key]['title'] );
-				update_post_meta( $post_id, 'sm_section_number', $course_data[$section_key]['section_number'] );
+				error_log( 'Successfully updated post: ' . $post_id . ' for ' . $section_id );
+				update_post_meta( $post_id, 'sm_course_code', $course_data[$section_id]['code'] );
+				update_post_meta( $post_id, 'sm_course_title', $course_data[$section_id]['title'] );
+				update_post_meta( $post_id, 'sm_section_number', $course_data[$section_id]['section_number'] );
 			}
 			
 		}
@@ -573,7 +611,7 @@ class Syllabus_Manager_Admin {
 		
 		// Add meta values to the array
 		foreach( $current_course_posts as $post ){
-			$current_courses[$post->sm_section_key] = $post->ID;
+			$current_courses[$post->sm_section_id] = $post->ID;
 		}
 		
 		// Get the list of course posts that exist in the course data
@@ -598,7 +636,7 @@ class Syllabus_Manager_Admin {
 		$course_data = $this->get_course_data( $semester, $department, $level );
 		//error_log( print_r($course_data, true) );
 		
-		foreach ( $course_data as $section_key => $course_section ){
+		foreach ( $course_data as $section_id => $course_section ){
 			$section = new Syllabus_Manager_Section( 
 				$course_section['code'],
 				$course_section['title'],
@@ -613,10 +651,10 @@ class Syllabus_Manager_Admin {
 			$post_id = wp_insert_post( $section->get_post_args() );
 			
 			if ( !is_wp_error( $post_id ) ){
-				error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_key );
+				error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );
 				add_post_meta( $post_id, 'sm_course_code', $section->course_code );
 				add_post_meta( $post_id, 'sm_course_title', $section->course_title );
-				add_post_meta( $post_id, 'sm_section_number', $section->number );
+				add_post_meta( $post_id, 'sm_section_number', $section->section_code );
 			}
 			else {
 				error_log( 'Error inserting post: ' . print_r($post_id, true) );

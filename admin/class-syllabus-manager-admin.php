@@ -115,7 +115,7 @@ class Syllabus_Manager_Admin {
 		// Only add scripts to the plugin main pages
 		if ( 'toplevel_page_syllabus-manager' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'vue-js', 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js', array(), null, true);
+			wp_enqueue_script( 'vue-js', plugins_url('includes/vue/vue.min.js', dirname(__FILE__)), array(), null, true);
             wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
@@ -126,7 +126,7 @@ class Syllabus_Manager_Admin {
 		
 		if ( 'syllabus-manager_page_syllabus-manager-import' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'vue-js', 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js', array(), null, true);
+			wp_enqueue_script( 'vue-js', plugins_url('includes/vue/vue.min.js', dirname(__FILE__)), array(), null, true);
 			wp_enqueue_script( 'vue-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'vue-js' ), $this->version, true );
 		}
 	}

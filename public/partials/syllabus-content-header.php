@@ -21,7 +21,14 @@
   <div class="col-sm-12">
     <?php //ufclas_ufl_2015_breadcrumbs(); ?>
     <header class="entry-header">
-      <?php the_archive_title( '<h1 class="page-title">', '</h1>' ); ?>
+	<?php 
+	  	if ( is_archive() ){
+			the_archive_title( '<h1 class="page-title">', '</h1>' );
+	  	}
+		else {
+			the_title( '<h1 class="page-title">', '</h1>' );
+		}
+	?>
     </header>
     <!-- .entry-header --> 
   </div>

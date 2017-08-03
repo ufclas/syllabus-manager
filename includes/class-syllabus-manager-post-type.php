@@ -29,6 +29,15 @@ class Syllabus_Manager_Post_Type {
 	 */
 	private $post_type_base;
 	
+	/**
+	 * Custom taxonomies used for the custom post type
+	 *
+	 * @since    0.0.1
+	 * @access   private
+	 * @var      array    $taxonomies
+	 */
+	private $taxonomies;
+	
 	/** 
 	 * Initialize the class and set its properties.
 	 *
@@ -64,7 +73,7 @@ class Syllabus_Manager_Post_Type {
 			'show_in_rest' => true,
 			'rest_base' => $this->post_type_base,
 			'has_archive' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'exclude_from_search' => false,
 			'capability_type' => 'page',
 			'map_meta_cap' => true,
@@ -102,10 +111,10 @@ class Syllabus_Manager_Post_Type {
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base ),
 			'show_admin_column' => true,
 			'show_in_rest' => true,
 			'rest_base' => $taxonomy_base,
@@ -130,10 +139,10 @@ class Syllabus_Manager_Post_Type {
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base ),
 			'show_admin_column' => true,
 			'show_in_rest' => true,
 			'rest_base' => $taxonomy_base,
@@ -158,10 +167,10 @@ class Syllabus_Manager_Post_Type {
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base ),
 			'show_admin_column' => true,
 			'show_in_rest' => true,
 			'rest_base' => $taxonomy_base,
@@ -186,10 +195,10 @@ class Syllabus_Manager_Post_Type {
 			'public' => true,
 			'hierarchical' => false,
 			'show_ui' => true,
-			'show_in_menu' => false,
+			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $taxonomy_base, 'with_front' => true, ),
+			'rewrite' => array( 'slug' => $taxonomy_base ),
 			'show_admin_column' => true,
 			'show_in_rest' => true,
 			'rest_base' => $taxonomy_base,

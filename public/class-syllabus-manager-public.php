@@ -133,6 +133,9 @@ class Syllabus_Manager_Public {
 		elseif (is_singular( $this->post_type )){
 			$template_path = $this->templates->locate_template( 'syllabus-single.php', false );
 		}
+		elseif ( is_page( array('departments','instructors','semesters') ) ){
+			$template_path = $this->templates->locate_template( 'syllabus-archive-taxonomy-terms.php', false );
+		}
 		
 		return $template_path;
 	}
@@ -154,7 +157,7 @@ class Syllabus_Manager_Public {
 			return;
 		}
 		
-		if ( WP_DEBUG ){ error_log( print_r($query, true) ); }
+		if ( WP_DEBUG ){ //error_log( print_r($query, true) ); }
 				
 		if ( $query->get_queried_object_id() == $this->post_page_id ){
 			error_log( 'Syllabus Manager changing query for page' );
@@ -177,8 +180,5 @@ class Syllabus_Manager_Public {
 			$query->set( 'posts_per_page', -1 );
 		}
 	}
-	
-	function get_courses_table(){
-		
-	}
+}
 }

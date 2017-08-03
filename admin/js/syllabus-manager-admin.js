@@ -20,8 +20,7 @@ var vm = new Vue({
     },
     methods: {
         sectionClassSuccess: function ( section ) {
-			console.log(section.post_id);
-			return (section.post_id != null);	
+			return (section.post_id != null);
 		},
 		add_syllabus: function ( id, event ) {
 			// Update the button  while loading

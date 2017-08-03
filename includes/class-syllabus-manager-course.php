@@ -196,7 +196,6 @@ class Syllabus_Manager_Course {
 
 		endforeach;
 		
-		
 		error_log( print_r( $courses, true ) );
 		return $courses;
 	}

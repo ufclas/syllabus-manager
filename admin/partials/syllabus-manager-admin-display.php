@@ -96,37 +96,63 @@ if ( !current_user_can( 'manage_options' ) )  {
 	-->
 	
     <div class="row">
-	<div class="col-md-12">
+		<div class="col-md-4">
 		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php _e('Overview', 'syllabus-manager'); ?></h3>
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Department', 'syllabus-manager'); ?></h3>
 			</div>
 			<div class="panel-body">
-
-			<div class="col-md-4">
-				<span>Department</span>
-				<h1>Biology (0%)</h1>
-			 </div>
-				
-			<div class="col-md-4">
-				<span>Current Semester</span>
-				<h1>Fall 2017 (0%)</h1>
-			</div>
-				
-			<div class="col-md-4">
-				<span>Published Courses</span>
-				<h1>{{publishedCourses}} (0%)</h1>
-			  </div>
-			
+				<div class="panel-icon">
+					<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+				</div>
+				<div class="panel-desc">
+					<span>Department</span>
+					<h1>Biology <span class="badge">60%</span></h1>
+					
 			</div>
 		</div>
-	</div>
+		</div>
+		</div>
+			<div class="col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Semester', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+				
+				<div class="panel-icon">
+					<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+				</div>
+				<div class="panel-desc">
+					<span>Current Semester</span>
+				<h1>Fall 2017  <span class="badge">60%</span></h1>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Status', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+				<div class="panel-icon">
+					<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+				</div>
+				<div class="panel-desc">
+					<span>Published Courses</span>
+					<h1>{{publishedCourses}} <span class="badge">60%</span></h1>
+				
+				
+			</div>
+		</div>
+		</div>
 	</div>
     
 	<div class="row">
 		<div class="col-md-12">
-			<div id="soc-courses-panel" class="panel panel-default">
-			  <div class="panel-heading">
+			<div id="soc-courses-panel" class="panel panel-info">
+			  <div class="panel-heading sr-only">
 				<h3 class="panel-title">{{panel_title}}</h3>
 			  </div>
 			  <div class="panel-body">
@@ -135,7 +161,8 @@ if ( !current_user_can( 'manage_options' ) )  {
                         <p v-if="notice_msg">{{notice_msg}}</p>
                     </transition>
                 </div>  
-                <table id="soc-table" class="table table-striped">
+               	
+				   <table id="soc-table" class="table table-striped">
 					<thead>
 						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Published Status</th><th>Actions</th></tr>
 					</thead>
@@ -145,31 +172,32 @@ if ( !current_user_can( 'manage_options' ) )  {
                             <td class="section-number" :class="">{{course.sections[0].section_code}}</td>
                             <td class="title" :class="">{{course.course_title}}</td>
                             
-                            <td class="instructors" :class="">
-                                <span v-if="course.sections[0].instructors">{{course.instructors}}</span>
+                            <td class="instructors">
+                                <span v-if="course.sections[0].instructors.length > 0">{{course.sections[0].instructors.join(', ')}}</span>
                                 <span v-else class="no-data"><?php _e('No instructors listed', 'syllabus_manager'); ?></span>
                             </td>
                             
-                            <td class="status" :class="">
-                                <span v-if="sectionClassSuccess(course.sections[0]"><?php _e('Published', 'syllabus_manager'); ?></span>
+							<td class="status">
+                                <span v-if="sectionClassSuccess(course.sections[0])"><?php _e('Published', 'syllabus_manager'); ?></span>
                                 <span v-else class="no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
                             </td>
-                            
-                            <td class="action" :class="">
+							
+							<td class="action">
                                 <button 
 									type="button" 
 									@click="add_syllabus(course.sections[0].section_id, $event)"  
 									class="btn has-spinner" 
-									:class="{'btn-success': sectionClassSuccess(course.sections[0], active: -1 == course_status}"
+									:class="{'btn-success': sectionClassSuccess(course.sections[0]), active: -1 == course_status}"
 									autocomplete="off">
-									<span v-if="1 == sectionClassSuccess(course.sections[0]"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
-									<span v-else-if="-1 == sectionClassSuccess(course.sections[0]"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
+									<span v-if="sectionClassSuccess(course.sections[0]"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
+									<span v-else-if="-1 == course.status"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
 									<span v-else><?php _e('Add Syllabus', 'syllabus_manager'); ?></span>									
 								</button>
                             </td>
                         </tr>
 					</tbody>
 				</table>
+				  
 			  </div>
 			</div>
 		</div>

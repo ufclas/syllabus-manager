@@ -11,3 +11,30 @@ body{
 		background-color: $color_bg_success;
 	}
 }
+
+.panel-body {
+	.panel-icon, .panel-desc {
+		display: inline-block;
+		min-height: 50px;
+		min-width: 50px;
+	}
+	
+	.panel-icon { 
+		display: inline-block;
+		margin-right: 15px;
+		width: 50px;
+		
+		.glyphicon {
+			background: rgba(0, 0, 0, 0.25);
+			border-radius: 100%;
+			text-align: center;
+			line-height: 56px;
+			font-size: 20px;
+			color: white;
+			width: 50px;
+			height: 50px;
+		}
+	}
+	
+	
+}

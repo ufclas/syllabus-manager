@@ -118,8 +118,8 @@ class Syllabus_Manager {
 		 * 
 		 * @todo Allow for themes to override default templates
 		 */
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
-		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-template-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-template-loader.php';
 		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing

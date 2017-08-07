@@ -1,5 +1,15 @@
 <?php
 /**
+ * Class for interacting with course data from data tables
+ *
+ * @link       https://it.clas.ufl.edu/
+ * @since      0.1.0
+ *
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/admin
+ */
+
+/**
  * Class for interacting with section data from data tables
  *
  * @since      0.1.0

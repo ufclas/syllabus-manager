@@ -2,6 +2,16 @@
 /**
  * Class for interacting with section data from data tables
  *
+ * @link       https://it.clas.ufl.edu/
+ * @since      0.1.0
+ *
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/admin
+ */
+
+/**
+ * Class for interacting with section data from data tables
+ *
  * @since      0.1.0
  * @package    Syllabus_Manager
  * @subpackage Syllabus_Manager/includes
@@ -93,6 +103,7 @@ class Syllabus_Manager_Section {
 	/** 
 	 * Define a course section from $_POST or DB data
 	 *
+	 * @param array $section_args
 	 * @since    0.0.0
 	 */
 	public function __construct( $section_args = array() ) {
@@ -164,7 +175,14 @@ class Syllabus_Manager_Section {
 	public function get_post_department(){
 		return $this->get_post_terms( $this->department, 'syllabus_department');
 	}
-		
+	
+	/**
+	 * Converts an array of term slugs for a taxonomy to an array of term IDs
+	 * 
+	 * @param  array $term_slugs 
+	 * @param  string $taxonomy   
+	 * @return array Term ids
+	 */
 	public function get_post_terms( $term_slugs, $taxonomy ){
 		$term_ids = array();
 		foreach ( $term_slugs as $slug ){

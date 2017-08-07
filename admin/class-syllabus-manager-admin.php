@@ -69,8 +69,9 @@ class Syllabus_Manager_Admin {
 
 	/**
 	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    0.0.0
+	 * 
+	 * @param string $hook The current admin page.
+	 * @since 0.0.0
 	 */
 	public function enqueue_styles( $hook ) {
 
@@ -95,7 +96,8 @@ class Syllabus_Manager_Admin {
 
 	/**
 	 * Register the JavaScript for the admin area.
-	 *
+	 * 
+	 * @param string $hook The current admin page.
 	 * @since    0.0.0
 	 */
 	public function enqueue_scripts( $hook ) {
@@ -259,6 +261,12 @@ class Syllabus_Manager_Admin {
 		}
 	}
 	
+	/**
+	 * Removes document from course
+	 * 
+	 * @since 0.1.0
+	 * @todo Implement removing selected attachment
+	 */
 	public function remove_syllabus(){
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
@@ -275,9 +283,7 @@ class Syllabus_Manager_Admin {
 	/**
 	 * Get course array from external source
 	 * 
-	 * @param  string $dept       
-	 * @param  string $term       
-	 * @param  string $prog_level 
+	 * @param  array $query_args Query to get data from external source
 	 * @return array|false JSON array of course objects
 	 *                              
 	 * @since 0.0.1
@@ -343,6 +349,11 @@ class Syllabus_Manager_Admin {
 		return false;
 	}
 	
+	/**
+	 * Handle forms on the Import screen depending on action
+	 * 
+	 * @since 0.1.0
+	 */
 	public function import_handler(){
 		if ( !isset($_POST['action']) ){
 			return;
@@ -363,6 +374,11 @@ class Syllabus_Manager_Admin {
 		}
 	}
 	
+	/**
+	 * Import taxonomy terms from downloaded filters.json data
+	 * 
+	 * @since 0.1.0
+	 */
 	public function import_filters(){
 		if ( empty($_FILES) ){
 			return;
@@ -431,6 +447,11 @@ class Syllabus_Manager_Admin {
 		wp_delete_attachment( $file_id );
 	}
 	
+	/**
+	 * Updates WP course post attributes from the external source data
+	 * 
+	 * @since 0.1.0
+	 */
 	public function update_courses(){
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_update_courses', 'sm_update_courses_nonce');
@@ -472,6 +493,16 @@ class Syllabus_Manager_Admin {
 		}
 	}
 	
+	/**
+	 * Compares WP course posts with courses in the data tables
+	 * 
+	 * @param  string $semester      
+	 * @param  string $department     
+	 * @param  string $level           
+	 * @param  array $new_course_data Array of Syllabus_Manager_Course objects
+	 * @return array Array of Syllabus_Manager_Courses that exist in the external table data
+	 * @since 0.1.0
+	 */
 	public function get_matched_courses( $semester, $department, $level, $new_course_data ){
 		$current_courses = array();
 		
@@ -508,6 +539,11 @@ class Syllabus_Manager_Admin {
 		return array_intersect_key($current_courses, $new_course_data);
 	}
 	
+	/**
+	 * Inserts a new WP course post into the database
+	 * 
+	 * @since 0.1.0
+	 */
 	public function create_courses(){
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_create_courses', 'sm_create_courses_nonce');

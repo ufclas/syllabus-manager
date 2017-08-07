@@ -40,10 +40,40 @@ class Syllabus_Manager_Public {
 	 */
 	private $version;
 	
+	/**
+	 * Template loader
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      Syllabus_Manager_Template_Loader $templates
+	 */
 	public $templates;
 	
+	/**
+	 * Post type name
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      string    $post_type
+	 */
 	public $post_type;
+	
+	/**
+	 * Taxonomies used in this plugin
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      array $taxonomies
+	 */
 	public $taxonomies;
+	
+	/**
+	 * Page ID of page to replace with courses content
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      int    $post_page_id
+	 */
 	public $post_page_id;
 
 	/**
@@ -140,18 +170,40 @@ class Syllabus_Manager_Public {
 		return $template_path;
 	}
 	
+	/**
+	 * Display page content
+	 * 
+	 * @since 0.0.0
+	 */
 	public function display_content(){
 		include 'partials/syllabus-content.php';
 	}
 	
+	/**
+	 * Display page header
+	 * 
+	 * @since 0.0.0
+	 */
 	public function display_content_header(){
 		include 'partials/syllabus-content-header.php';
 	}
 	
+	/**
+	 * Display page footer
+	 * 
+	 * @since 0.0.0
+	 */
 	public function display_content_footer(){
 		include 'partials/syllabus-content-footer.php';
 	}
 	
+	/**
+	 * Allows using a page for displaying courses
+	 * 
+	 * @param WP_Query $query Page query
+	 * @since 0.1.0
+	 * @todo Implement using a user-picked page ID instead of hardcoded one.
+	 */
 	function set_courses_query( $query ) {
 		if ( is_admin() || !$query->is_main_query() ) {
 			return;

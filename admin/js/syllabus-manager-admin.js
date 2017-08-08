@@ -4,19 +4,17 @@ jQuery(function($){
 
 
 var vm = new Vue({
-    el: '#soc-courses',
+    el: '#sm-admin',
     data: {
         panel_title: syllabus_manager_data.panel_title,
         departments: syllabus_manager_data.departments,
         courses: syllabus_manager_data.courses,
         publishedCourses: 0,
-        notice_msg: '',
-        notice_class: '',
+        notice_msg: 'Default message to display for the notice.',
+        notice_class: 'notice-info',
         selected_department: '011690003',
         selected_semester: '20178',
         selected_level: 'UGRD',
-    },
-    computed: {
     },
     methods: {
         sectionClassSuccess: function ( section ) {
@@ -58,5 +56,8 @@ var vm = new Vue({
 				}
             }.bind(this), 'json');	
         }
-    }
+    },
+	beforeMount: function () {
+		console.log(this.courses);
+	}
 });

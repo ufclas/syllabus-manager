@@ -1,5 +1,22 @@
-$gray: #f1f1f1;
+$gray_lt: #f1f1f1;
+$gray: #999;
 $green: #dff0d8;
 
-$color_bg_admin: $gray;
-$color_bg_success: $green;
+$color_admin_bg: $gray_lt;
+$color_success_bg: $green;
+
+$size_icon: 50px;
+
+/* Bootstrap Styles */
+$grid_gutter_width: 30px;
+
+$screen_xs:	480px;
+$screen_sm:	768px;
+$screen_md:	992px;
+$screen_lg:	1200px;
+$screen_xl:	1400px;
+
+$screen_xs_max: $screen_sm - 1;
+$screen_sm_max:	$screen_md - 1;
+$screen_md_max:	$screen_lg - 1;
+$screen_lg_max:	$screen_xl - 1;

@@ -231,9 +231,7 @@ class Syllabus_Manager_Admin {
 		// Merge post values into one array
 		$post_data = $_POST['course_data'];
 		
-		error_log(print_r($post_data, true));
-		
-		return;
+		if ( false ) {error_log(print_r($post_data, true));}
 		
 		$section = new Syllabus_Manager_Section( 
 			$post_data['code'],

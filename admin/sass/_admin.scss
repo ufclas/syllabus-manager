@@ -1,40 +1,86 @@
 body{
-    background-color: $color_bg_admin !important;
+    background-color: $color_admin_bg !important;
 }
 
-#soc-table {
-	.no-data {
+#sm-table {
+	.sm-no-data {
 		font-style: italic;
-		color: #999;
+		color: $gray;
 	}
 	.bg-success {
-		background-color: $color_bg_success;
+		background-color: $color_success_bg;
 	}
 }
 
-.panel-body {
-	.panel-icon, .panel-desc {
-		display: inline-block;
-		min-height: 50px;
-		min-width: 50px;
+#sm-admin {
+	.sm-card {
+		border-radius: 0;
+		border-left: 4px solid $gray;
 	}
-	
-	.panel-icon { 
+	.sm-content {
 		display: inline-block;
-		margin-right: 15px;
-		width: 50px;
+		min-height: $size_icon;
+		min-width: $size_icon;
+	}
+	.sm-card-icon { 
+		@extend .sm-content;
+		margin-right: $grid_gutter_width/2;
+		width: $size_icon;
 		
 		.glyphicon {
-			background: rgba(0, 0, 0, 0.25);
+			background: $gray;
 			border-radius: 100%;
 			text-align: center;
 			line-height: 56px;
 			font-size: 20px;
 			color: white;
-			width: 50px;
-			height: 50px;
+			width: $size_icon;
+			height: $size_icon;
 		}
 	}
+	.sm-card-desc {
+		@extend .sm-content;
+	}
 	
+	.sm-card-title {
+		font-size: 12px;
+		text-transform: uppercase;
+		margin: 0;
+	}
+	.sm-card-info {
+		font-size: 24px;
+		margin: 0;
+	}
+}
+.sm-table {
+	& > div {
+		padding: $grid_gutter_width/2;
+		margin-bottom: $grid_gutter_width/2;
+	}
 	
+	@media screen and (min-width: $screen_md){
+		display: table;
+		border-collapse: collapse;
+		width: 100%;
+
+		& > div {
+			display: table-row;
+			margin-bottom: 0;
+
+			& > div {
+				display: table-cell;
+				padding: $grid_gutter_width/2 $grid_gutter_width/4;
+				border-bottom: 1px solid #ccc;
+			}
+		}
+	}
+}
+.sm-courses {
+	@extend .sm-table;
+	
+	.sm-course {
+		background-color: $gray_lt;
+	}
+	.sm-course > div {
+	}
 }

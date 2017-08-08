@@ -1,3 +1,103 @@
-body{background-color:#f1f1f1 !important}#soc-table .no-data{font-style:italic;color:#999}#soc-table .bg-success{background-color:#dff0d8}.panel-body .panel-icon,.panel-body .panel-desc{display:inline-block;min-height:50px;min-width:50px}.panel-body .panel-icon{display:inline-block;margin-right:15px;width:50px}.panel-body .panel-icon .glyphicon{background:rgba(0,0,0,0.25);border-radius:100%;text-align:center;line-height:56px;font-size:20px;color:white;width:50px;height:50px}.glyphicon.fast-right-spinner{animation:glyphicon-spin-r 1s infinite linear}.glyphicon.normal-right-spinner{animation:glyphicon-spin-r 2s infinite linear}.glyphicon.slow-right-spinner{animation:glyphicon-spin-r 3s infinite linear}.glyphicon.fast-left-spinner{animation:glyphicon-spin-l 1s infinite linear}.glyphicon.normal-left-spinner{animation:glyphicon-spin-l 2s infinite linear}.glyphicon.slow-left-spinner{animation:glyphicon-spin-l 3s infinite linear}@keyframes glyphicon-spin-r{0%{transform:rotate(0deg)}100%{transform:rotate(359deg)}}@keyframes glyphicon-spin-l{0%{transform:rotate(359deg)}100%{transform:rotate(0deg)}}
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+/* Bootstrap Styles */
+body {
+  background-color: #f1f1f1 !important; }
+
+#sm-table .sm-no-data {
+  font-style: italic;
+  color: #999; }
+
+#sm-table .bg-success {
+  background-color: #dff0d8; }
+
+#sm-admin .sm-card {
+  border-radius: 0;
+  border-left: 4px solid #999; }
+
+#sm-admin .sm-content, #sm-admin .sm-card-icon, #sm-admin .sm-card-desc {
+  display: inline-block;
+  min-height: 50px;
+  min-width: 50px; }
+
+#sm-admin .sm-card-icon {
+  margin-right: 15px;
+  width: 50px; }
+  #sm-admin .sm-card-icon .glyphicon {
+    background: #999;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 56px;
+    font-size: 20px;
+    color: white;
+    width: 50px;
+    height: 50px; }
+
+#sm-admin .sm-card-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  margin: 0; }
+
+#sm-admin .sm-card-info {
+  font-size: 24px;
+  margin: 0; }
+
+.sm-table > div, .sm-courses > div {
+  padding: 15px;
+  margin-bottom: 15px; }
+
+@media screen and (min-width: 992px) {
+  .sm-table, .sm-courses {
+    display: table;
+    border-collapse: collapse;
+    width: 100%; }
+    .sm-table > div, .sm-courses > div {
+      display: table-row;
+      margin-bottom: 0; }
+      .sm-table > div > div, .sm-courses > div > div {
+        display: table-cell;
+        padding: 15px 7.5px;
+        border-bottom: 1px solid #ccc; } }
+
+.sm-courses .sm-course {
+  background-color: #f1f1f1; }
+
+/**
+ * Glyphicon Spinner
+ * 
+ * @link https://bootsnipp.com/snippets/djeAk
+ * @author uzumaxy
+ */
+.glyphicon.fast-right-spinner {
+  animation: glyphicon-spin-r 1s infinite linear; }
+
+.glyphicon.normal-right-spinner {
+  animation: glyphicon-spin-r 2s infinite linear; }
+
+.glyphicon.slow-right-spinner {
+  animation: glyphicon-spin-r 3s infinite linear; }
+
+.glyphicon.fast-left-spinner {
+  animation: glyphicon-spin-l 1s infinite linear; }
+
+.glyphicon.normal-left-spinner {
+  animation: glyphicon-spin-l 2s infinite linear; }
+
+.glyphicon.slow-left-spinner {
+  animation: glyphicon-spin-l 3s infinite linear; }
+
+@keyframes glyphicon-spin-r {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+
+@keyframes glyphicon-spin-l {
+  0% {
+    transform: rotate(359deg); }
+  100% {
+    transform: rotate(0deg); } }
 
 /*# sourceMappingURL=syllabus-manager-admin.css.map */

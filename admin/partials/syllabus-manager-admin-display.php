@@ -84,12 +84,28 @@ if ( !current_user_can( 'manage_options' ) )  {
 			<h3 class="panel-title">{{panel_title}}</h3>
 		  </div>
 		  <div class="panel-body">
-			  <div class="sm-courses">
-			  <div v-for="course in courses" class="sm-course">
-			  	<div class="sm-course-code">{{course.course_code}}</div>
-			  	<div class="sm-course-title">{{course.course_title}}</div>
-			  	<div class="sm-course-status sm-no-data"><?php _e('Not Published', 'syllabus_manager'); ?></div>
-			  	<div class="sm-course-arrow"><span class="glyphicon glyphicon-chevron-down"></span></div>
+			  <div id="sm-courses-group" class="sm-courses panel-group" role="tablist" aria-multiselectable="true">
+			  <div v-for="course in courses" class="sm-course panel panel-default">
+			  	<div v-bind:id="getCourseHeadingTarget(course)" class="panel-heading" role="tab">
+					<h4 class="panel-title"><a v-bind:href="getCoursePanelTarget(course, true)" 
+						   class="collapsed" 
+						   data-toggle="collapse" 
+						   role="button" 
+						   aria-expanded="false" 
+						   aria-controls="getCoursePanelTarget(course)">{{getCoursePanelTitle(course)}}</a></h4>
+				</div>
+				<div v-bind:id="getCoursePanelTarget(course)" 
+					 class="panel-collapse collapse" 
+					 role="tabpanel" 
+					 aria-labelledby="getCourseHeadingTarget(course)">
+					<div class="panel-body">
+						<div class="sm-sections">
+							<div class="sm-course-code">{{course.course_code}}</div>
+							<div class="sm-course-title">{{course.course_title}}</div>
+							<div class="sm-course-status sm-no-data"><?php _e('Not Published', 'syllabus_manager'); ?></div>
+						</div>
+					</div>	
+				</div>
 			  </div>
 			  </div>
 

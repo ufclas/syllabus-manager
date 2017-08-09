@@ -20,6 +20,17 @@ var vm = new Vue({
         sectionClassSuccess: function ( section ) {
 			return (section.post_id != null);
 		},
+		getCoursePanelTitle: function ( course ) {
+			return course.course_code + ' ' + course.course_title;
+		},
+		getCourseHeadingTarget: function ( course, isSelector ) {
+			var prefix = (isSelector)? '#' : '';
+			return prefix + 'sm-course-heading-' + course.course_id;
+		},
+		getCoursePanelTarget: function ( course, isSelector ) {
+			var prefix = (isSelector)? '#' : '';
+			return prefix + 'sm-course-panel-' + course.course_id;
+		},
 		add_syllabus: function ( id, event ) {
 			// Update the button  while loading
 			var course_data = this.courses[id];

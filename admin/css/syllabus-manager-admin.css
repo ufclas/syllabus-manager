@@ -44,25 +44,44 @@ body {
   font-size: 24px;
   margin: 0; }
 
-.sm-table > div, .sm-courses > div {
+.sm-faux-table > div, .sm-sections > div {
   padding: 15px;
   margin-bottom: 15px; }
 
 @media screen and (min-width: 992px) {
-  .sm-table, .sm-courses {
+  .sm-faux-table, .sm-sections {
     display: table;
     border-collapse: collapse;
     width: 100%; }
-    .sm-table > div, .sm-courses > div {
+    .sm-faux-table > div, .sm-sections > div {
       display: table-row;
       margin-bottom: 0; }
-      .sm-table > div > div, .sm-courses > div > div {
+      .sm-faux-table > div > div, .sm-sections > div > div {
         display: table-cell;
         padding: 15px 7.5px;
         border-bottom: 1px solid #ccc; } }
 
-.sm-courses .sm-course {
-  background-color: #f1f1f1; }
+#sm-courses-group .panel-title-uparrow, #sm-courses-group .panel-title a[data-toggle="collapse"]::before, #sm-courses-group .panel-title-down-arrow {
+  float: left;
+  font-family: 'Glyphicons Halflings';
+  margin-right: 1em; }
+
+#sm-courses-group .panel-title-uparrow, #sm-courses-group .panel-title a[data-toggle="collapse"]::before {
+  content: "\e113"; }
+
+#sm-courses-group .panel-title-downarrow, #sm-courses-group .panel-title a.collapsed[data-toggle="collapse"]::before {
+  content: "\e114"; }
+
+#sm-courses-group .panel-title > a {
+  display: block;
+  outline: none;
+  font-weight: bold;
+  padding: 7.5px 0;
+  color: #23527c; }
+  #sm-courses-group .panel-title > a:active, #sm-courses-group .panel-title > a:focus, #sm-courses-group .panel-title > a:hover {
+    text-decoration: none;
+    box-shadow: none;
+    color: #0096dd; }
 
 /**
  * Glyphicon Spinner

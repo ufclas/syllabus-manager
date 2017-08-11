@@ -16,20 +16,68 @@ var vm = new Vue({
         selected_semester: '20178',
         selected_level: 'UGRD',
     },
-    methods: {
-        sectionClassSuccess: function ( section ) {
-			return (section.post_id != null);
+    filters: {
+		 /**
+		 * Convert an array to a comma-separated string
+		 * 
+		 * @param array value
+		 * @return string
+		 */
+		join: function (value) {
+			return value.join(', ');
 		},
-		getCoursePanelTitle: function ( course ) {
+		
+		/**
+		 * Convert term to appropriate string value
+		 * 
+		 * @param string value
+		 * @param string type
+		 * @return string
+		 */
+		formatTermValue: function (value, type) {
+			if (type == 'level'){
+				return 'Undergraduate';
+			}
+			else if (type == 'semester'){
+				return 'Fall 2017';
+			}
+		}
+	},
+	methods: {
+        /**
+		 * Course title with added course code
+		 * 
+		 * @param object course
+		 * @return string
+		 */
+		coursePanelTitle: function ( course ) {
 			return course.course_code + ' ' + course.course_title;
 		},
-		getCourseHeadingTarget: function ( course, isSelector ) {
+		
+		/**
+		 * Unique id for each course panel title, used for aria-labelledby
+		 * 
+		 * @param boolean isSelector Whether to add '#' to refer to the ID
+		 * @return string
+		 */
+		coursePanelTitleID: function ( course, isSelector ) {
 			var prefix = (isSelector)? '#' : '';
 			return prefix + 'sm-course-heading-' + course.course_id;
 		},
-		getCoursePanelTarget: function ( course, isSelector ) {
+		
+		/**
+		 * Unique id for each course panel body, used for expand-collapse
+		 * 
+		 * @param boolean isSelector Whether to add '#' to refer to the ID
+		 * @return string
+		 */
+		coursePanelID: function ( course, isSelector ) {
 			var prefix = (isSelector)? '#' : '';
 			return prefix + 'sm-course-panel-' + course.course_id;
+		},
+		
+		sectionClassSuccess: function ( section ) {
+			return (section.post_id != null);
 		},
 		add_syllabus: function ( id, event ) {
 			// Update the button  while loading

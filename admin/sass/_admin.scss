@@ -3,10 +3,7 @@ body{
 }
 
 #sm-table {
-	.sm-no-data {
-		font-style: italic;
-		color: $gray;
-	}
+	
 	.bg-success {
 		background-color: $color_success_bg;
 	}
@@ -78,9 +75,9 @@ body{
 
 #sm-courses-group {
 	.panel-title-uparrow, .panel-title-down-arrow {
-		float: left;
 		font-family: 'Glyphicons Halflings';
-		margin-right :1em;
+		position: absolute;
+		left: 0;
 	}
 	.panel-title-uparrow {
 		content:"\e113";
@@ -88,18 +85,20 @@ body{
 	.panel-title-downarrow {
 		content:"\e114";
 	}
-	
+	.panel-title {
+		position: relative;
+	}
 	.panel-title > a {
 		display: block;
 		outline: none;
 		font-weight: bold;
-		padding: $grid_gutter_width/4 0;
-		color: #23527c;
+		padding: $grid_gutter_width/4 0 $grid_gutter_width/4 $grid_gutter_width;
+		color: $blue_dk;
 		
 		&:active, &:focus, &:hover {
 			text-decoration: none;
 			box-shadow: none;
-			color: #0096dd;
+			color: $blue;
 		}
 	}
 	
@@ -113,4 +112,22 @@ body{
 
 .sm-sections {
 	@extend .sm-faux-table;
+	
+	.sm-section {
+		width: calc(100%/8);
+		
+		&.sm-section-coursecode {
+			width: 7.5%;
+		}
+		&.sm-section-coursetitle {
+			width: 22.5%;
+		}
+		&.sm-section-code {
+			width: 7.5%;
+		}
+	}
+	.sm-no-data {
+		font-style: italic;
+		color: $gray;
+	}
 }

@@ -6,10 +6,6 @@
 body {
   background-color: #f1f1f1 !important; }
 
-#sm-table .sm-no-data {
-  font-style: italic;
-  color: #999; }
-
 #sm-table .bg-success {
   background-color: #dff0d8; }
 
@@ -62,9 +58,9 @@ body {
         border-bottom: 1px solid #ccc; } }
 
 #sm-courses-group .panel-title-uparrow, #sm-courses-group .panel-title a[data-toggle="collapse"]::before, #sm-courses-group .panel-title-down-arrow {
-  float: left;
   font-family: 'Glyphicons Halflings';
-  margin-right: 1em; }
+  position: absolute;
+  left: 0; }
 
 #sm-courses-group .panel-title-uparrow, #sm-courses-group .panel-title a[data-toggle="collapse"]::before {
   content: "\e113"; }
@@ -72,16 +68,32 @@ body {
 #sm-courses-group .panel-title-downarrow, #sm-courses-group .panel-title a.collapsed[data-toggle="collapse"]::before {
   content: "\e114"; }
 
+#sm-courses-group .panel-title {
+  position: relative; }
+
 #sm-courses-group .panel-title > a {
   display: block;
   outline: none;
   font-weight: bold;
-  padding: 7.5px 0;
+  padding: 7.5px 0 7.5px 30px;
   color: #23527c; }
   #sm-courses-group .panel-title > a:active, #sm-courses-group .panel-title > a:focus, #sm-courses-group .panel-title > a:hover {
     text-decoration: none;
     box-shadow: none;
     color: #0096dd; }
+
+.sm-sections .sm-section {
+  width: calc(100%/8); }
+  .sm-sections .sm-section.sm-section-coursecode {
+    width: 7.5%; }
+  .sm-sections .sm-section.sm-section-coursetitle {
+    width: 22.5%; }
+  .sm-sections .sm-section.sm-section-code {
+    width: 7.5%; }
+
+.sm-sections .sm-no-data {
+  font-style: italic;
+  color: #999; }
 
 /**
  * Glyphicon Spinner

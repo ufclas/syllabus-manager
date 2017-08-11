@@ -84,25 +84,50 @@ if ( !current_user_can( 'manage_options' ) )  {
 			<h3 class="panel-title">{{panel_title}}</h3>
 		  </div>
 		  <div class="panel-body">
+			  
 			  <div id="sm-courses-group" class="sm-courses panel-group" role="tablist" aria-multiselectable="true">
 			  <div v-for="course in courses" class="sm-course panel panel-default">
-			  	<div v-bind:id="getCourseHeadingTarget(course)" class="panel-heading" role="tab">
-					<h4 class="panel-title"><a v-bind:href="getCoursePanelTarget(course, true)" 
+			  	<div v-bind:id="coursePanelTitleID(course)" class="panel-heading" role="tab">
+					<h4 class="panel-title">
+						<a v-bind:href="coursePanelID(course, true)" 
 						   class="collapsed" 
 						   data-toggle="collapse" 
 						   role="button" 
 						   aria-expanded="false" 
-						   aria-controls="getCoursePanelTarget(course)">{{getCoursePanelTitle(course)}}</a></h4>
+						   aria-controls="coursePanelID(course)">{{coursePanelTitle(course)}}</a>
+					</h4>
 				</div>
-				<div v-bind:id="getCoursePanelTarget(course)" 
+				<div v-bind:id="coursePanelID(course)" 
 					 class="panel-collapse collapse" 
 					 role="tabpanel" 
-					 aria-labelledby="getCourseHeadingTarget(course)">
+					 aria-labelledby="coursePanelTitleID(course)">
 					<div class="panel-body">
-						<div class="sm-sections">
-							<div class="sm-course-code">{{course.course_code}}</div>
-							<div class="sm-course-title">{{course.course_title}}</div>
-							<div class="sm-course-status sm-no-data"><?php _e('Not Published', 'syllabus_manager'); ?></div>
+						<div v-for="section in course.sections" class="sm-sections">
+							<div class="sm-section-row">
+							<div class="sm-section-coursecode sm-section">{{course.course_code}}</div>
+							<div class="sm-section-coursetitle sm-section">{{course.course_title}}</div>
+							<div class="sm-section-code sm-section">{{section.section_code}}</div>
+							<div class="sm-section-instruct sm-section">
+								<span v-if="section.instructors[0] != ''">{{section.instructors | join}}</span>
+								<span v-else class="sm-no-data"><?php _e('No instructors', 'syllabus_manager'); ?></span>
+							</div>
+							<div class="sm-section-level sm-section">{{ selected_level | formatTermValue('level') }}</div>
+							<div class="sm-section-semester sm-section">{{ selected_level | formatTermValue('semester') }}</div>
+							<div class="sm-section-status sm-section">
+								<span class="sm-no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
+							</div>
+							<div class="sm-section-action sm-section">
+								<button 
+									type="button" 
+									@click="add_syllabus(section, $event)" 
+									class="btn btn-primary has-spinner" 
+									autocomplete="off">
+									<span v-if="false"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
+									<span v-else-if="false"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
+									<span v-else><?php _e('Add Syllabus', 'syllabus_manager'); ?></span>									
+								</button>
+							</div>
+							</div>
 						</div>
 					</div>	
 				</div>

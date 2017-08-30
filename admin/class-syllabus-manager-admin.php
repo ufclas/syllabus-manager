@@ -586,4 +586,21 @@ class Syllabus_Manager_Admin {
 		}			
 		
 	}
+	
+	
+	/**
+	 * Add support for uploading file formats
+	 * 
+	 * @param array $existing_mimes
+	 * @return array $existing_mimes
+	 * @since 1.0
+	 */
+	function custom_upload_mimes( $existing_mimes = array() ) {
+		// Add file extension 'extension' with mime type 'mime/type'
+		$existing_mimes['svg'] = 'image/svg+xml';
+		$existing_mimes['json'] = 'application/json'; 
+
+		// and return the new full result
+		return $existing_mimes;
+	}
 }

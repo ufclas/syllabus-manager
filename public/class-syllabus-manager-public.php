@@ -91,7 +91,8 @@ class Syllabus_Manager_Public {
 		
 		$this->post_type = 'syllabus_course';
 		$this->taxonomies = array('syllabus_instructor', 'syllabus_department', 'syllabus_level', 'syllabus_semester');
-		$this->post_page_id = 90;
+		$this->post_page_id = 8;
+		//$this->post_page_id = 90;
 
 	}
 
@@ -184,7 +185,8 @@ class Syllabus_Manager_Public {
 	 * 
 	 * @since 0.0.0
 	 */
-	public function display_content_header(){
+	public function display_content_header(){	
+		//include 'partials/syllabus-content-header-search.php';
 		include 'partials/syllabus-content-header.php';
 	}
 	
@@ -209,7 +211,7 @@ class Syllabus_Manager_Public {
 			return;
 		}
 		
-		if ( WP_DEBUG ){ //error_log( print_r($query, true) ); }
+		//if ( WP_DEBUG ){ error_log( print_r($query, true) ); }
 				
 		if ( $query->get_queried_object_id() == $this->post_page_id ){
 			error_log( 'Syllabus Manager changing query for page' );
@@ -232,5 +234,19 @@ class Syllabus_Manager_Public {
 			$query->set( 'posts_per_page', -1 );
 		}
 	}
+	
+	/**
+	 * Filter list of CSS classes added to the body tag
+	 * 
+	 * @param  array $classes
+	 * @return array
+	 * @since 1.0
+	 */
+	function add_body_classes( $classes ){
+		if ( is_post_type_archive( $this->post_type )){			
+			$classes[] = 'page-template-landing-page';
+		}
+		return $classes;
+	}
 }
-}
+

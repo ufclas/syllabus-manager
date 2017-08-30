@@ -15,13 +15,14 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-
 <div class="sm-container">
+	
 <?php 
 	// Set up the default query to display courses
 	
 	if ( have_posts() ): ?>
-	  <table id="sm-archive-table" class="table table-hover table-striped syllabus-table">
+	
+	<table id="sm-archive-table" class="table table-hover syllabus-table">
 		<thead>
 		  <tr>
 			<th class="syllabus-course"><?php _e('Course', 'syllabus-manager'); ?></th>

@@ -1,3 +1,89 @@
-#syllabus-main-wrap .container,#syllabus-main-wrap #main.syllabus-main-content{width:1220px;max-width:1220px}@media screen and (min-width: 768px){#syllabus-main-wrap #main.syllabus-main-content{padding-left:0;padding-right:0}}.syllabus-table .list-inline{margin-bottom:0}.syllabus-table .list-inline li{text-transform:none}.syllabus-table .list-inline li:before{content:none;margin-right:0}@media screen and (max-width: 1219px){.syllabus-table .syllabus-level{display:none}}@media screen and (max-width: 1439px){.syllabus-table .syllabus-dept{display:none}}.syllabus-table .syllabus-semester{display:none}
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+#syllabus-main-wrap .container, #syllabus-main-wrap #main.syllabus-main-content {
+  width: 1220px;
+  max-width: 1220px; }
+
+@media screen and (min-width: 768px) {
+  #syllabus-main-wrap #main.syllabus-main-content {
+    padding-left: 0;
+    padding-right: 0; } }
+
+#syllabus-main-wrap .dataTables_filter {
+  text-align: left; }
+
+#syllabus-main-wrap .dataTables_length {
+  text-align: right; }
+
+#sm-hero {
+  background-color: #4f8fe1;
+  margin-bottom: 0;
+  padding-top: 60px;
+  padding-bottom: 60px; }
+  #sm-hero h1 {
+    text-shadow: none;
+    font-family: "Gentona", sans-serif;
+    font-weight: 100; }
+  #sm-hero .hero-img {
+    height: auto; }
+  #sm-hero .hero-heading {
+    position: relative;
+    top: 0;
+    bottom: auto; }
+  #sm-hero .hero-text {
+    padding-top: 30px;
+    padding-bottom: 0; }
+  #sm-hero .sm-filter {
+    border: 2px solid transparent;
+    font: 500 20px/1 "Gentona","Helvetica Neue",Helvetica,Arial,sans-serif;
+    letter-spacing: 0;
+    padding: 8px 20px;
+    width: 100%; }
+  #sm-hero form .row {
+    margin-bottom: 0; }
+
+#sm-archive-table_paginate .pagination {
+  padding-top: 0;
+  padding-bottom: 0;
+  width: auto;
+  border-top: none; }
+  #sm-archive-table_paginate .pagination li:before {
+    content: none;
+    margin-right: none; }
+
+.syllabus-table .list-inline {
+  margin-bottom: 0; }
+  .syllabus-table .list-inline li {
+    text-transform: none; }
+  .syllabus-table .list-inline li:before {
+    content: none;
+    margin-right: 0; }
+
+@media screen and (min-width: 992px) {
+  .syllabus-table .syllabus-title {
+    width: 35%; } }
+
+@media screen and (max-width: 1219px) {
+  .syllabus-table .syllabus-level {
+    display: none; } }
+
+@media screen and (max-width: 1439px) {
+  .syllabus-table .syllabus-dept {
+    display: none; } }
+
+#sm-hero-wrap .hero-img-half {
+  background-color: #6C9AC3; }
+
+#sm-hero-wrap .gradient-bg:after {
+  display: none; }
+
+@media screen and (min-width: 992px) {
+  #sm-hero-wrap .hero-text {
+    padding-top: 0;
+    padding-bottom: 0; } }
+
+/* something */
 
 /*# sourceMappingURL=syllabus-manager-public.css.map */

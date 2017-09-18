@@ -40,10 +40,40 @@ class Syllabus_Manager_Public {
 	 */
 	private $version;
 	
+	/**
+	 * Template loader
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      Syllabus_Manager_Template_Loader $templates
+	 */
 	public $templates;
 	
+	/**
+	 * Post type name
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      string    $post_type
+	 */
 	public $post_type;
+	
+	/**
+	 * Taxonomies used in this plugin
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      array $taxonomies
+	 */
 	public $taxonomies;
+	
+	/**
+	 * Page ID of page to replace with courses content
+	 *
+	 * @since    0.0.0
+	 * @access   public
+	 * @var      int    $post_page_id
+	 */
 	public $post_page_id;
 
 	/**
@@ -61,7 +91,8 @@ class Syllabus_Manager_Public {
 		
 		$this->post_type = 'syllabus_course';
 		$this->taxonomies = array('syllabus_instructor', 'syllabus_department', 'syllabus_level', 'syllabus_semester');
-		$this->post_page_id = 90;
+		$this->post_page_id = 8;
+		//$this->post_page_id = 90;
 
 	}
 
@@ -84,8 +115,8 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
+		wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-public.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -107,8 +138,12 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
+		wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
-
+		/*wp_localize_script( $this->plugin_name, 'sm_public_data', array(
+			'courses' => $this->get_courses_table(),
+			'ajax_nonce' => wp_create_nonce('sm-get-courses=table')
+		));*/
 	}
 	
 	/**
@@ -120,7 +155,7 @@ class Syllabus_Manager_Public {
 	 */
 	public function set_templates( $template_path ) {
 		
-		/*if ( is_post_type_archive( $this->post_type )){			
+		if ( is_post_type_archive( $this->post_type )){			
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
 		elseif ( is_tax('syllabus_instructor') || is_tax('syllabus_department') || is_tax('syllabus_level') || is_tax('syllabus_semester') ){
@@ -129,36 +164,65 @@ class Syllabus_Manager_Public {
 		elseif (is_singular( $this->post_type )){
 			$template_path = $this->templates->locate_template( 'syllabus-single.php', false );
 		}
-		*/
+		elseif ( is_page( array('departments','instructors','semesters') ) ){
+			$template_path = $this->templates->locate_template( 'syllabus-archive-taxonomy-terms.php', false );
+		}
+		
 		return $template_path;
 	}
 	
+	/**
+	 * Display page content
+	 * 
+	 * @since 0.0.0
+	 */
 	public function display_content(){
 		include 'partials/syllabus-content.php';
 	}
 	
-	public function display_content_header(){
+	/**
+	 * Display page header
+	 * 
+	 * @since 0.0.0
+	 */
+	public function display_content_header(){	
+		//include 'partials/syllabus-content-header-search.php';
 		include 'partials/syllabus-content-header.php';
 	}
 	
+	/**
+	 * Display page footer
+	 * 
+	 * @since 0.0.0
+	 */
 	public function display_content_footer(){
 		include 'partials/syllabus-content-footer.php';
 	}
 	
+	/**
+	 * Allows using a page for displaying courses
+	 * 
+	 * @param WP_Query $query Page query
+	 * @since 0.1.0
+	 * @todo Implement using a user-picked page ID instead of hardcoded one.
+	 */
 	function set_courses_query( $query ) {
 		if ( is_admin() || !$query->is_main_query() ) {
 			return;
 		}
 		
-		if ( $query->get('page_id') == $this->post_page_id ){
+		//if ( WP_DEBUG ){ error_log( print_r($query, true) ); }
+				
+		if ( $query->get_queried_object_id() == $this->post_page_id ){
+			error_log( 'Syllabus Manager changing query for page' );
 			
 			// Reset properties to emulate an archive page
 			$query->set('post_type', 'syllabus_course');
-			$query->set('page_id', '');
-			$query->is_page = 0;
-			$query->is_singular = 0;
-			$query->is_post_type_archive = 1;
-        	$query->is_archive = 1;
+			$query->set('pagename', null);
+			$query->is_page = false;
+			$query->is_singular = false;
+			$query->is_post_type_archive = true;
+        	$query->is_archive = true;
 			
 			$query->set( 'orderby', 'title' );
 			$query->set( 'order', 'ASC' );
@@ -170,4 +234,19 @@ class Syllabus_Manager_Public {
 			$query->set( 'posts_per_page', -1 );
 		}
 	}
+	
+	/**
+	 * Filter list of CSS classes added to the body tag
+	 * 
+	 * @param  array $classes
+	 * @return array
+	 * @since 1.0
+	 */
+	function add_body_classes( $classes ){
+		if ( is_post_type_archive( $this->post_type )){			
+			$classes[] = 'page-template-landing-page';
+		}
+		return $classes;
+	}
 }
+

@@ -1,13 +1,133 @@
 body{
-    background-color: $color_bg_admin !important;
+    background-color: $color_admin_bg !important;
 }
 
-#soc-table {
-	.no-data {
-		font-style: italic;
-		color: #999;
-	}
+#sm-table {
+	
 	.bg-success {
-		background-color: $color_bg_admin;
+		background-color: $color_success_bg;
+	}
+}
+
+#sm-admin {
+	.sm-card {
+		border-radius: 0;
+		border-left: 4px solid $gray;
+	}
+	.sm-content {
+		display: inline-block;
+		min-height: $size_icon;
+		min-width: $size_icon;
+	}
+	.sm-card-icon { 
+		@extend .sm-content;
+		margin-right: $grid_gutter_width/2;
+		width: $size_icon;
+		
+		.glyphicon {
+			background: $gray;
+			border-radius: 100%;
+			text-align: center;
+			line-height: 56px;
+			font-size: 20px;
+			color: white;
+			width: $size_icon;
+			height: $size_icon;
+		}
+	}
+	.sm-card-desc {
+		@extend .sm-content;
+	}
+	
+	.sm-card-title {
+		font-size: 12px;
+		text-transform: uppercase;
+		margin: 0;
+	}
+	.sm-card-info {
+		font-size: 24px;
+		margin: 0;
+	}
+}
+.sm-faux-table {
+	& > div {
+		padding: $grid_gutter_width/2;
+		margin-bottom: $grid_gutter_width/2;
+	}
+	
+	@media screen and (min-width: $screen_md){
+		display: table;
+		border-collapse: collapse;
+		width: 100%;
+
+		& > div {
+			display: table-row;
+			margin-bottom: 0;
+
+			& > div {
+				display: table-cell;
+				padding: $grid_gutter_width/2 $grid_gutter_width/4;
+				border-bottom: 1px solid #ccc;
+			}
+		}
+	}
+}
+
+#sm-courses-group {
+	.panel-title-uparrow, .panel-title-down-arrow {
+		font-family: 'Glyphicons Halflings';
+		position: absolute;
+		left: 0;
+	}
+	.panel-title-uparrow {
+		content:"\e113";
+	}
+	.panel-title-downarrow {
+		content:"\e114";
+	}
+	.panel-title {
+		position: relative;
+	}
+	.panel-title > a {
+		display: block;
+		outline: none;
+		font-weight: bold;
+		padding: $grid_gutter_width/4 0 $grid_gutter_width/4 $grid_gutter_width;
+		color: blue;
+		
+		&:active, &:focus, &:hover {
+			text-decoration: none;
+			box-shadow: none;
+			color: blue;
+		}
+	}
+	
+	.panel-title a[data-toggle="collapse"]::before{
+		@extend .panel-title-uparrow;
+	}
+	.panel-title a.collapsed[data-toggle="collapse"]::before{
+		@extend .panel-title-downarrow;
+	}
+}
+
+.sm-sections {
+	@extend .sm-faux-table;
+	
+	.sm-section {
+		width: calc(100%/8);
+		
+		&.sm-section-coursecode {
+			width: 7.5%;
+		}
+		&.sm-section-coursetitle {
+			width: 22.5%;
+		}
+		&.sm-section-code {
+			width: 7.5%;
+		}
+	}
+	.sm-no-data {
+		font-style: italic;
+		color: $gray;
 	}
 }

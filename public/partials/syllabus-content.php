@@ -15,13 +15,14 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-
-<div class="ufcsm-container">
+<div class="sm-container">
+	
 <?php 
 	// Set up the default query to display courses
 	
 	if ( have_posts() ): ?>
-	  <table class="table table-hover table-striped syllabus-table">
+	
+	<table id="sm-archive-table" class="table table-hover syllabus-table">
 		<thead>
 		  <tr>
 			<th class="syllabus-course"><?php _e('Course', 'syllabus-manager'); ?></th>
@@ -60,7 +61,7 @@
 				foreach ( $syllabus_lists as $key => $term ):
 					$term_class = 'syllabus-' . $key;
 					$term_list = get_the_term_list( $syllabus_id, $term, '<ul class="list-inline"><li>', ',</li><li>', '</li>' );
-					$term_list = ( !is_wp_error( $term_list ) )? $term_list : '';	
+					$term_list = ( !is_wp_error( $term_list ) )? $term_list : '<code>' . print_r($term_list, true) . '</code>';	
 					printf( '<td class="%s">%s</td>', $term_class, $term_list );
 				endforeach;
 			?>

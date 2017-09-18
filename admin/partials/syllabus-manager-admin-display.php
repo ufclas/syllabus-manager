@@ -18,159 +18,124 @@ if ( !current_user_can( 'manage_options' ) )  {
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div id="soc-courses" class="wrap">
+<div id="sm-admin" class="wrap">
 	<h1 class="wp-heading-inline"><?php _e('CLAS Syllabus Manager', 'syllabus-manager'); ?></h1>
 	<hr class="wp-header-end">
-	<br>
-    
-	<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php _e('Course Filters', 'syllabus-manager'); ?></h3>
-			</div>
-			<div class="panel-body">
-			<form id="filter-form" action="" method="post">
-
-			<div class="form-group col-md-4">
-				<label for="filter-dept" class="control-label"><?php _e('Departments', 'syllabus-manager'); ?></label>
-				<?php 
-					wp_dropdown_categories(array(
-						'taxonomy' => 'syllabus_department',
-						'hide_empty' => false,
-						'value_field' => 'slug',
-						'id' => 'filter-dept',
-						'name' => 'filter-dept',
-						'class' => 'form-control',
-						'show_option_none' => __('Select Department', 'syllabus-manager'),
-						'show_option_value' => '',
-						'required' => true,
-                        'v-model' => 'selectedDept'
-					)); 
-				 ?>
-			 </div>
-				
-			<div class="form-group col-md-4">
-				<label for="filter-term" class="control-label"><?php _e('Semester', 'syllabus-manager'); ?></label>
-				<?php 
-					wp_dropdown_categories(array(
-						'taxonomy' => 'syllabus_semester',
-						'hide_empty' => false,
-						'value_field' => 'slug',
-						'id' => 'filter-term',
-						'name' => 'filter-term',
-						'class' => 'form-control',
-						'show_option_none' => __('Select Semester', 'syllabus-manager'),
-						'show_option_value' => '',
-						'required' => true,
-					)); 
-				 ?>
-			</div>
-				
-			<div class="form-group col-md-4">
-				<label for="filter-level" class="control-label"><?php _e('Program Level', 'syllabus-manager'); ?></label>
-				<?php 
-					wp_dropdown_categories(array(
-						'taxonomy' => 'syllabus_level',
-						'hide_empty' => false,
-						'value_field' => 'slug',
-						'id' => 'filter-level',
-						'name' => 'filter-level',
-						'class' => 'form-control',
-						'show_option_none' => __('Select Program Level', 'syllabus-manager'),
-						'show_option_value' => '',
-						'required' => true,
-					)); 
-				 ?>
-			  </div>
-			  <div class="form-group col-md-12">
-					<button type="submit" class="btn btn-default">Apply Filters</button>
-				</div>
-			
-			</form>
-			</div>
-		</div>
-	</div>
-	</div>
-	
+	<div class="notice" :class="notice_class">
+		<transition name="fade">
+			<p v-if="notice_msg">{{notice_msg}}</p>
+		</transition>
+	</div>  
     <div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h3 class="panel-title"><?php _e('Overview', 'syllabus-manager'); ?></h3>
+		<div class="col-md-4">
+		<div class="panel panel-default sm-card">
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Department', 'syllabus-manager'); ?></h3>
 			</div>
 			<div class="panel-body">
-
-			<div class="col-md-4">
-				<span>Department</span>
-				<h1>Biology (0%)</h1>
-			 </div>
-				
-			<div class="col-md-4">
-				<span>Current Semester</span>
-				<h1>Fall 2017 (0%)</h1>
-			</div>
-				
-			<div class="col-md-4">
-				<span>Published Courses</span>
-				<h1>{{publishedCourses}} (0%)</h1>
-			  </div>
-			
+				<div class="sm-card-icon">
+					<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span>
+				</div>
+				<div class="sm-card-desc">
+					<h4 class="sm-card-title">Department</h4>
+					<p class="sm-card-info">Biology <span class="badge">60%</span></p>
+				</div>
 			</div>
 		</div>
+		</div>
+			<div class="col-md-4">
+		<div class="panel panel-default sm-card">
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Semester', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+				
+				<div class="sm-card-icon">
+					<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+				</div>
+				<div class="sm-card-desc">
+					<h4 class="sm-card-title">Current Semester</h4>
+					<p class="sm-card-info">Fall 2017 <span class="badge">60%</span></p>
+				</div>
+			</div>
+		</div>
+		</div>
+		<div class="col-md-4">
+		<div class="panel panel-default sm-card">
+			<div class="panel-heading sr-only">
+				<h3 class="panel-title"><?php _e('Status', 'syllabus-manager'); ?></h3>
+			</div>
+			<div class="panel-body">
+				<div class="sm-card-icon">
+					<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+				</div>
+				<div class="sm-card-desc">
+					<h4 class="sm-card-title">Program Level</h4>
+					<p class="sm-card-info">Undergraduate <span class="badge">60%</span></p>
+			</div>
+		</div>
+		</div>
 	</div>
-	</div>
-    
-	<div class="row">
-		<div class="col-md-12">
-			<div id="soc-courses-panel" class="panel panel-default">
-			  <div class="panel-heading">
-				<h3 class="panel-title">{{panel_title}}</h3>
-			  </div>
-			  <div class="panel-body">
-				<div class="notice" :class="notice_class">
-                    <transition name="fade">
-                        <p v-if="notice_msg">{{notice_msg}}</p>
-                    </transition>
-                </div>  
-                <table id="soc-table" class="table table-striped">
-					<thead>
-						<tr><th>Course</th><th>Section</th><th>Course Title</th><th>Instructor(s)</th><th>Published Status</th><th>Actions</th></tr>
-					</thead>
-					<tbody>
-						<tr v-for="(course, id, index) in courses" :class="{'bg-success': (course.status == 1)}">
-                            <td class="course-code" :class="">{{course.code}}</td>
-                            <td class="section-number" :class="">{{course.section_number}}</td>
-                            <td class="title" :class="">{{course.title}}</td>
-                            
-                            <td class="instructors" :class="">
-                                <span v-if="course.instructors">{{course.instructors}}</span>
-                                <span v-else class="no-data"><?php _e('No instructors listed', 'syllabus_manager'); ?></span>
-                            </td>
-                            
-                            <td class="status" :class="">
-                                <span v-if="course.status"><?php _e('Published', 'syllabus_manager'); ?></span>
-                                <span v-else class="no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
-                            </td>
-                            
-                            <td class="action" :class="">
-                                <button 
+  
+	
+	<div class="col-md-12">
+		<div id="sm-admin-courses" class="panel">
+		  <div class="panel-heading">
+			<h3 class="panel-title">{{panel_title}}</h3>
+		  </div>
+		  <div class="panel-body">
+			  
+			  <div id="sm-courses-group" class="sm-courses panel-group" role="tablist" aria-multiselectable="true">
+			  <div v-for="course in courses" class="sm-course panel panel-default">
+			  	<div v-bind:id="coursePanelTitleID(course)" class="panel-heading" role="tab">
+					<h4 class="panel-title">
+						<a v-bind:href="coursePanelID(course, true)" 
+						   class="collapsed" 
+						   data-toggle="collapse" 
+						   role="button" 
+						   aria-expanded="false" 
+						   aria-controls="coursePanelID(course)">{{coursePanelTitle(course)}}</a>
+					</h4>
+				</div>
+				<div v-bind:id="coursePanelID(course)" 
+					 class="panel-collapse collapse" 
+					 role="tabpanel" 
+					 aria-labelledby="coursePanelTitleID(course)">
+					<div class="panel-body">
+						<div v-for="section in course.sections" class="sm-sections">
+							<div class="sm-section-row">
+							<div class="sm-section-coursecode sm-section">{{course.course_code}}</div>
+							<div class="sm-section-coursetitle sm-section">{{course.course_title}}</div>
+							<div class="sm-section-code sm-section">{{section.section_code}}</div>
+							<div class="sm-section-instruct sm-section">
+								<span v-if="section.instructors[0] != ''">{{section.instructors | join}}</span>
+								<span v-else class="sm-no-data"><?php _e('No instructors', 'syllabus_manager'); ?></span>
+							</div>
+							<div class="sm-section-level sm-section">{{ selected_level | formatTermValue('level') }}</div>
+							<div class="sm-section-semester sm-section">{{ selected_level | formatTermValue('semester') }}</div>
+							<div class="sm-section-status sm-section">
+								<span class="sm-no-data"><?php _e('Not Published', 'syllabus_manager'); ?></span>
+							</div>
+							<div class="sm-section-action sm-section">
+								<button 
 									type="button" 
-									@click="add_syllabus(id, $event)"  
-									class="btn has-spinner" 
-									:class="{'btn-success': course.status, active: -1 == course.status}"
+									@click="add_syllabus(section, $event)" 
+									class="btn btn-primary has-spinner" 
 									autocomplete="off">
-									<span v-if="1 == course.status"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
-									<span v-else-if="-1 == course.status"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
+									<span v-if="false"><?php _e('Remove Syllabus', 'syllabus_manager'); ?></span>
+									<span v-else-if="false"><span class="glyphicon glyphicon-repeat fast-right-spinner"></span> <?php _e('Loading...', 'syllabus_manager'); ?></span>
 									<span v-else><?php _e('Add Syllabus', 'syllabus_manager'); ?></span>									
 								</button>
-                            </td>
-                        </tr>
-					</tbody>
-				</table>
+							</div>
+							</div>
+						</div>
+					</div>	
+				</div>
 			  </div>
-			</div>
+			  </div>
+
+		  </div>
 		</div>
-	</div>	
+	</div>
 
 </div>

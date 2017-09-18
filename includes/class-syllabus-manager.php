@@ -69,7 +69,7 @@ class Syllabus_Manager {
 	public function __construct() {
 
 		$this->plugin_name = 'syllabus-manager';
-		$this->version = '0.0.0';
+		$this->version = '0.1.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -115,6 +115,8 @@ class Syllabus_Manager {
 		
 		/**
 		 * Template loader classes
+		 * 
+		 * @todo Allow for themes to override default templates
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-gamajo-template-loader.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-template-loader.php';
@@ -129,7 +131,8 @@ class Syllabus_Manager {
 		 * Custom Post Types and Taxonomies
 		 */ 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-section.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-course.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-syllabus-manager-post-type.php';
 		
 		
 		$this->loader = new Syllabus_Manager_Loader();
@@ -170,7 +173,9 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'wp_ajax_add_syllabus', $plugin_admin, 'add_syllabus' );
 		$this->loader->add_action( 'wp_ajax_remove_syllabus', $plugin_admin, 'remove_syllabus' );
 		$this->loader->add_action( 'load-syllabus-manager_page_syllabus-manager-import', $plugin_admin, 'import_handler' );
-		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' ); 
+		
+		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' );
+		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'custom_upload_mimes' );
 	}
 
 	/**
@@ -183,17 +188,20 @@ class Syllabus_Manager {
 	private function define_public_hooks() {
 
 		$plugin_public = new Syllabus_Manager_Public( $this->get_plugin_name(), $this->get_version() );
-		$plugin_courses = new Syllabus_Manager_Courses();
+		$plugin_courses = new Syllabus_Manager_Post_Type();
 
 		$this->loader->add_action( 'init', $plugin_courses, 'register_post_type' );
 		$this->loader->add_action( 'init', $plugin_courses, 'register_taxonomies' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_courses_table', $plugin_public, 'get_courses_table' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_public, 'set_courses_query' );
 		$this->loader->add_action( 'template_include', $plugin_public, 'set_templates' );
 		$this->loader->add_action( 'syllabus_manager_content', $plugin_public, 'display_content' );
 		$this->loader->add_action( 'syllabus_manager_content_before', $plugin_public, 'display_content_header' );
 		$this->loader->add_action( 'syllabus_manager_content_after', $plugin_public, 'display_content_footer' );
+		
+		$this->loader->add_filter( 'body_class', $plugin_public, 'add_body_classes' );
 
 	}
 

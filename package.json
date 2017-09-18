@@ -1,6 +1,6 @@
 {
   "name": "ufclas-syllabus-manager",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "Syllabus document manager",
   "main": "index.php",
   "dependencies": {},
@@ -8,14 +8,14 @@
     "autoprefixer": "^6.7.7",
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.3.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-postcss": "^0.8.0"
+    "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^2.0.0"
   },
   "repository": {
-	"type": "git",  
-	"url": "git+https://github.com/ufclas/ufclas-syllabus-manager.git"  
+    "type": "git",
+    "url": "git+https://github.com/ufclas/ufclas-syllabus-manager.git"
   },
   "author": "priscillamc",
   "license": "ISC"

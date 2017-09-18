@@ -1,7 +1,7 @@
-module.exports = function(grunt){
+module.exports = function (grunt) {
 	
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),	
+		pkg: grunt.file.readJSON('package.json'),
 		
 		
 		/**
@@ -13,8 +13,8 @@ module.exports = function(grunt){
 					style: 'compressed'
 				},
 				files: {
-					'public/css/syllabus-manager-public.css' : 'public/sass/syllabus-manager-public.scss',	
-					'admin/css/syllabus-manager-admin.css' : 'admin/sass/syllabus-manager-admin.scss'	
+					'public/css/syllabus-manager-public.css': 'public/sass/syllabus-manager-public.scss',
+					'admin/css/syllabus-manager-admin.css': 'admin/sass/syllabus-manager-admin.scss'	
 				}	
 			}	 
 		 },
@@ -33,7 +33,7 @@ module.exports = function(grunt){
 			},
 			// prefix all css files in the folders
 			dist: {
-				src: ['public/css/*.css','admin/css/*.css']
+				src: ['public/css/syllabus-manager-public.css','admin/css/syllabus-manager-admin.css']
 			}	 
 		 },
 		
@@ -42,13 +42,13 @@ module.exports = function(grunt){
 		 */
 		 watch: {
 			css: {
-				files: ['**/*.scss'],
+				files: ['public/**/*.scss', 'admin/**/*.scss'],
 				tasks: ['sass','postcss']	
 			}
 		 }
 	});
 	
-	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-postcss');
 	grunt.registerTask('default',['watch']);

@@ -75,12 +75,13 @@ body {
   display: block;
   outline: none;
   font-weight: bold;
-  padding: 7.5px 0 7.5px 30px;
-  color: blue; }
+  padding: 7.5px 0 7.5px 30px; }
+  #sm-courses-group .panel-title > a:link, #sm-courses-group .panel-title > a:visited {
+    color: #333; }
   #sm-courses-group .panel-title > a:active, #sm-courses-group .panel-title > a:focus, #sm-courses-group .panel-title > a:hover {
     text-decoration: none;
     box-shadow: none;
-    color: blue; }
+    color: #f37021; }
 
 .sm-sections .sm-section {
   width: calc(100%/8); }

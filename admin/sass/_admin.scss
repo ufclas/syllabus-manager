@@ -93,12 +93,14 @@ body{
 		outline: none;
 		font-weight: bold;
 		padding: $grid_gutter_width/4 0 $grid_gutter_width/4 $grid_gutter_width;
-		color: blue;
 		
+		&:link, &:visited {
+			color: $gray_dk;
+		}
 		&:active, &:focus, &:hover {
 			text-decoration: none;
 			box-shadow: none;
-			color: blue;
+			color: $orange;
 		}
 	}
 	

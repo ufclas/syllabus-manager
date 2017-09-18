@@ -116,9 +116,16 @@ class Syllabus_Manager_Admin {
 		
 		// Only add scripts to the plugin main pages
 		if ( 'toplevel_page_syllabus-manager' == $hook ){
+			
+			// Bootstrap
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'vue-js', plugins_url('includes/vue/vue.min.js', dirname(__FILE__)), array(), null, true);
-            wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
+			
+            // VueJS
+			$js_version = (WP_DEBUG)? 'vue.js' : 'vue.min.js';
+            wp_enqueue_script( 'vue-js', plugins_url('includes/vue/' . $js_version, dirname(__FILE__)), array(), null, true);
+            
+			// Add custom script
+			wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
 				'courses' => Syllabus_Manager_Course::get_courses(),

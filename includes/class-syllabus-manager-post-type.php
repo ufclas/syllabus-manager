@@ -137,7 +137,7 @@ class Syllabus_Manager_Post_Type {
 			'label' => $labels['name'],
 			'labels' => $labels,
 			'public' => true,
-			'hierarchical' => false,
+			'hierarchical' => true,
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
@@ -148,7 +148,7 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
 
 		/**
 		 * Taxonomy: Program Levels.
@@ -165,7 +165,7 @@ class Syllabus_Manager_Post_Type {
 			'label' => $labels['name'],
 			'labels' => $labels,
 			'public' => true,
-			'hierarchical' => false,
+			'hierarchical' => true,
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
@@ -176,7 +176,7 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
 		
 		/**
 		 * Taxonomy: Semester
@@ -193,7 +193,7 @@ class Syllabus_Manager_Post_Type {
 			'label' => $labels['name'],
 			'labels' => $labels,
 			'public' => true,
-			'hierarchical' => false,
+			'hierarchical' => true,
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'show_in_nav_menus' => true,
@@ -204,6 +204,6 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 		);
-		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
 	}
 }

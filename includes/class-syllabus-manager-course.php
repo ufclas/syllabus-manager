@@ -117,7 +117,6 @@ class Syllabus_Manager_Course {
 			E.deptname,
 			A.semester_id,
 			F.semester AS semester_code,
-			G.post_id,
 			'Fall 2017' AS semester
 		 FROM
 			sy_soc_sections AS A 
@@ -126,7 +125,6 @@ class Syllabus_Manager_Course {
 			LEFT JOIN sy_soc_instructors AS D ON C.instructor_id = D.id
 			LEFT JOIN sy_soc_departments AS E ON A.dept_id = E.id
 			LEFT JOIN sy_soc_semesters AS F ON A.semester_id = F.id
-			LEFT JOIN sy_soc_sections_posts AS G ON A.id = G.section_id
 		 WHERE 
 			A.dept_id >= 1 AND
 			A.semester_id = 1 AND
@@ -186,7 +184,7 @@ class Syllabus_Manager_Course {
 				'instructors' => $section->instructor_list,
 				'department' => $section->deptcode,
 				'semester_code' => $section->semester_code,
-				'post_id' => $section->post_id,
+				'post_id' => '',
 			));
 
 			// Add course objects to the array indexed by course_id
@@ -206,7 +204,9 @@ class Syllabus_Manager_Course {
 
 		endforeach;
 		
-		error_log( print_r( $courses, true ) );
+		if ( WP_DEBUG ){ 
+			//error_log( print_r( $courses, true ) ); 
+		}
 		return $courses;
 	}
 }

@@ -201,7 +201,8 @@ class Syllabus_Manager_Section {
 	 * @since 0.1.0
 	 */
 	public function get_post_title(){
-		return wp_strip_all_tags( "{$this->course_code} {$this->section_code} {$this->course_title}" );
+		//return wp_strip_all_tags( "{$this->course_code} {$this->section_code} {$this->course_title}" );
+		return wp_strip_all_tags( "{$this->course_code} {$this->course_title}" );
 	}
 	
 	/**
@@ -216,10 +217,10 @@ class Syllabus_Manager_Section {
 		// Format values for wp_insert_post
 		$post_title = $this->get_post_title();
 		$post_department = $this->get_post_department();
-		$post_instructors = join( ', ', $this->instructors );
+		//$post_instructors = join( ', ', $this->instructors );
+		$post_instructors = '';
 		$post_author = get_current_user_id();
 		$post_type = 'syllabus_course';
-		$post_status = 'publish';
 		$post_status = 'publish';
 		$post_id = ( !empty($this->post_id) )? $this->post_id : null;
 		

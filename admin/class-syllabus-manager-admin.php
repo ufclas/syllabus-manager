@@ -565,20 +565,14 @@ class Syllabus_Manager_Admin {
 		
 		// Get the courses
 		$course_data = Syllabus_Manager_Course::get_courses( $semester, $department, $level );
-		//error_log( print_r($course_data, true) );
 		
 		foreach ( $course_data as $section_id => $course_section ){
-			$section = new Syllabus_Manager_Section( 
-				$course_section['code'],
-				$course_section['title'],
-				$course_section['section_number'],
-				$semester,
-				array($department),
-				$level,
-				explode(', ', $course_section['instructors'])
-			);
+			$section = $course_section->sections[0];
+			
+			//error_log( print_r($section->get_post_args(), true) );
 			
 			// Insert the post into the database
+			
 			$post_id = wp_insert_post( $section->get_post_args() );
 			
 			if ( !is_wp_error( $post_id ) ){
@@ -590,8 +584,7 @@ class Syllabus_Manager_Admin {
 			else {
 				error_log( 'Error inserting post: ' . print_r($post_id, true) );
 			}
-		}			
-		
+		}
 	}
 	
 	

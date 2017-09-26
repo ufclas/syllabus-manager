@@ -80,7 +80,7 @@ class Syllabus_Manager_Post_Type {
 			'hierarchical' => true,
 			'rewrite' => array( 'slug' => $this->post_type_base, 'with_front' => true ),
 			'query_var' => true,
-			'supports' => array( 'title' )
+			'supports' => array( 'title', 'page-attributes' )
 		);
 
 		register_post_type( $this->post_type_name, $post_type_args );

@@ -52,7 +52,7 @@
     <header class="entry-header">
 	<?php 
 	  	if ( is_archive() ){
-			//the_archive_title( '<h1 class="page-title">', '</h1>' );
+			the_archive_title( '<h1 class="page-title">', '</h1>' );
 	  	}
 		else {
 			the_title( '<h1 class="page-title">', '</h1>' );

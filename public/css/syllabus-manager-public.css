@@ -2,14 +2,101 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
-#syllabus-main-wrap .container, #syllabus-main-wrap #main.syllabus-main-content {
-  width: 1220px;
-  max-width: 1220px; }
+@media screen and (min-width: 992px) {
+  .syllabus-landing-page, .tax-syllabus_department {
+    padding-top: 150px; } }
 
-@media screen and (min-width: 768px) {
-  #syllabus-main-wrap #main.syllabus-main-content {
-    padding-left: 0;
-    padding-right: 0; } }
+.gradient-bg::before {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+  bottom: 0;
+  content: '';
+  display: block;
+  height: 70%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: 1; }
+
+.tax-syllabus_department .sm-header {
+  background-color: #00529b;
+  background-repeat: no-repeat;
+  background-image: url("/wp-content/uploads/temp2-1024x683.jpeg");
+  background-image: url("http://languages.ufl.edu/files/hp-05.jpg");
+  background-size: cover;
+  position: relative;
+  margin: 0 0 30px; }
+  @media screen and (min-width: 992px) {
+    .tax-syllabus_department .sm-header {
+      margin: 30px 0; } }
+  @media screen and (min-width: 1220px) {
+    .tax-syllabus_department .sm-header {
+      min-height: 350px; } }
+
+.tax-syllabus_department .sm-header-content {
+  padding: 30px; }
+  @media screen and (min-width: 768px) {
+    .tax-syllabus_department .sm-header-content {
+      padding: 60px; } }
+  .tax-syllabus_department .sm-header-content .breadcrumb-wrap a {
+    color: #fff !important;
+    text-shadow: 0 3px 2px rgba(0, 0, 0, 0.4); }
+  .tax-syllabus_department .sm-header-content .search-form {
+    margin-bottom: 0; }
+  .tax-syllabus_department .sm-header-content input[type='text'] {
+    background-color: rgba(255, 255, 255, 0.9); }
+
+.tax-syllabus_department .sm-header-nav {
+  margin: 0 0 15px; }
+  @media screen and (max-width: 767px) {
+    .tax-syllabus_department .sm-header-nav > li {
+      float: none; } }
+  .tax-syllabus_department .sm-header-nav > li > a {
+    border-radius: 0;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    color: #fff; }
+  .tax-syllabus_department .sm-header-nav li > a:hover {
+    border-color: #a8dcd9;
+    background-color: #337ab7; }
+  .tax-syllabus_department .sm-header-nav li.active > a:before {
+    content: "\e084";
+    font-family: 'Glyphicons Halflings';
+    padding-right: 5px; }
+  @media screen and (min-width: 768px) {
+    .tax-syllabus_department .sm-header-nav li + li {
+      margin-left: 15px; } }
+  .tax-syllabus_department .sm-header-nav li:before {
+    content: none;
+    margin: auto; }
+  @media screen and (min-width: 768px) {
+    .tax-syllabus_department .sm-header-nav li.link {
+      float: right; } }
+  .tax-syllabus_department .sm-header-nav li.link > a:before {
+    content: "\e066";
+    font-family: 'Glyphicons Halflings';
+    padding-right: 5px; }
+
+.tax-syllabus_department h1.page-title {
+  color: #fff;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); }
+
+#syllabus-main-wrap #main.syllabus-main-content {
+  padding-top: 0; }
+  @media screen and (min-width: 768px) {
+    #syllabus-main-wrap #main.syllabus-main-content {
+      padding-left: 0;
+      padding-right: 0; } }
+  @media screen and (min-width: 992px) {
+    #syllabus-main-wrap #main.syllabus-main-content {
+      padding-top: 30px; } }
+  @media screen and (min-width: 1440px) {
+    #syllabus-main-wrap #main.syllabus-main-content {
+      width: 1220px;
+      max-width: 1220px; } }
 
 #syllabus-main-wrap .dataTables_filter {
   text-align: left; }
@@ -43,6 +130,9 @@
     width: 100%; }
   #sm-hero form .row {
     margin-bottom: 0; }
+
+#sm-archive-table a {
+  font-weight: 500; }
 
 #sm-archive-table_paginate .pagination {
   padding-top: 0;

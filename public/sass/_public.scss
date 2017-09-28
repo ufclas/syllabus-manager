@@ -1,15 +1,134 @@
-#syllabus-main-wrap {
-	.container {
-		width: $screen-lg;
-		max-width: $screen-lg;
+.syllabus-landing-page {
+	@media screen and (min-width: $screen-md){
+		padding-top: 150px;			
 	}
+}
+
+.gradient-bg {
+	&::before {
+		background: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.5)), to(transparent));
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+		bottom: 0;
+		content: '';
+		display: block;
+		height: 70%;
+		left: 0;
+		pointer-events: none;
+		position: absolute;
+		width: 100%;
+		z-index: 1;
+	}
+}
+
+.tax-syllabus_department {
+	@extend .syllabus-landing-page;
+	
+	.sm-header {
+		background-color: #00529b;
+		background-repeat: no-repeat;
+		background-image: url('/wp-content/uploads/temp2-1024x683.jpeg');
+		background-image: url('http://languages.ufl.edu/files/hp-05.jpg');
+		background-size: cover;
+		position: relative;
+		margin: 0 0 30px;
+		
+		@media screen and (min-width: $screen-md){
+			margin: 30px 0;
+		}
+		@media screen and (min-width: $screen-lg){
+			min-height: 350px;
+		}
+	}
+	.sm-header-content {
+		padding: 30px;
+		
+		@media screen and (min-width: $screen-sm){
+			padding: 60px;
+		}
+		
+		.breadcrumb-wrap a {
+			color: #fff !important;
+			text-shadow: 0 3px 2px rgba(0, 0, 0, 0.4);
+		}
+		.search-form{
+			margin-bottom: 0;	
+		}
+		input[type='text']{
+			background-color: rgba(255,255,255,0.9);
+		}
+	}
+	.sm-header-nav {
+		margin: 0 0 15px;
+		
+		&>li {
+			@media screen and (max-width: $screen-xs-max){
+				float: none;
+			}
+		}
+		&>li>a {
+			border-radius: 0;
+			font-weight: 500;
+			font-size: 16px;
+			letter-spacing: 1px;
+			//background-color: rgba(168, 220, 217, 0.7);
+			background-color: rgba(0, 0, 0, 0.3);
+			//border: 3px solid rgba(168, 220, 217, 0.7);
+			border: 2px solid rgba(255, 255, 255, 0.8);
+			//color: #444;
+			color: #fff;
+		}
+		li>a:hover {
+			border-color: rgba(168, 220, 217, 1);
+			background-color: #337ab7;
+		}
+		li.active>a:before {
+			content: "\e084";
+			font-family: 'Glyphicons Halflings';
+			padding-right: 5px;
+		}
+		li+li {
+			@media screen and (min-width: $screen-sm){
+				margin-left: 15px;
+			}
+		}
+		li:before {
+			content: none;
+			margin: auto;
+		}
+		
+		li.link {
+			@media screen and (min-width: $screen-sm){
+				float: right;	
+			}
+			
+			&>a:before {
+				content: "\e066";
+				font-family: 'Glyphicons Halflings';
+				padding-right: 5px;
+			}
+		}
+	}
+	h1.page-title {
+		color: $white;
+		text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+	}
+}
+
+#syllabus-main-wrap {
 	
 	#main.syllabus-main-content {
-		@extend .container;
+		padding-top: 0;
 		
-		@media screen and (min-width: $screen-sm-min){ 
+		@media screen and (min-width: $screen-sm){ 
 			padding-left: 0;
 			padding-right: 0;
+		}
+		@media screen and (min-width: $screen-md){ 
+			padding-top: 30px;
+		}
+		@media screen and (min-width: $screen-xl){ 
+			width: $screen-lg;
+			max-width: $screen-lg;
 		}
 	}
 	
@@ -54,6 +173,12 @@
 	}
 	form .row {
 		margin-bottom: 0;
+	}
+}
+
+#sm-archive-table {
+	a {
+		font-weight: 500;
 	}
 }
 

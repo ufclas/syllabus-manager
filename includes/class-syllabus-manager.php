@@ -202,6 +202,7 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'syllabus_manager_content_after', $plugin_public, 'display_content_footer' );
 		
 		$this->loader->add_filter( 'body_class', $plugin_public, 'add_body_classes' );
+		$this->loader->add_filter( 'get_the_archive_title', $plugin_public, 'format_archive_titles' );
 
 	}
 

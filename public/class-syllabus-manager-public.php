@@ -115,7 +115,7 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
+		//wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-public.css', array(), $this->version, 'all' );
 	}
 
@@ -138,8 +138,8 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
+		//wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
+		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
 		/*wp_localize_script( $this->plugin_name, 'sm_public_data', array(
 			'courses' => $this->get_courses_table(),
 			'ajax_nonce' => wp_create_nonce('sm-get-courses=table')
@@ -186,8 +186,13 @@ class Syllabus_Manager_Public {
 	 * @since 0.0.0
 	 */
 	public function display_content_header(){	
-		//include 'partials/syllabus-content-header-search.php';
-		include 'partials/syllabus-content-header.php';
+		
+		if (is_tax('syllabus_department')){
+			include 'partials/syllabus-content-header-department.php';
+		}
+		else {
+			include 'partials/syllabus-content-header.php';	
+		}
 	}
 	
 	/**
@@ -248,5 +253,19 @@ class Syllabus_Manager_Public {
 		}
 		return $classes;
 	}
+	
+	/**
+	 * Filter the syllabus archive titles
+	 * @param  string $title
+	 * @return string
+	 * @since 1.0
+	 */
+	function format_archive_titles( $title ){
+		if ( is_tax() ){
+			$title = single_term_title( '', false );
+		}
+		return $title;
+	}
+	
 }
 

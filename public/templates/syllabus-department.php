@@ -48,7 +48,7 @@ get_header();
 					<span class="sr-only">Search</span>
 					<span class="icon-svg">
 						<svg>
-						<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://syllabus.local/wp-content/themes/ufclas-ufl-2015/img/spritemap.svg#search"></use>
+						<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sites.clas.ufl.edu/wp-content/themes/ufclas-ufl-2015/img/spritemap.svg#search"></use>
 						</svg>
 					</span>
 				</button>     

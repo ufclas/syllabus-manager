@@ -4,6 +4,8 @@
 	$(function () {
 		var table = $('#sm-archive-table').DataTable({
 			"processing": true,
+			"ordering": false,
+			"paging": false,
 			"dom": "<'row'<'col-sm-12'tr>>" +
 					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 		});

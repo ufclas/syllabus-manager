@@ -20,20 +20,38 @@
 	}
 }
 
+.sm-breaker {
+	@media screen and (min-width: $screen-sm){
+		&::before, &::after {
+			position: absolute;
+			width: 100%;
+			z-index: 5;
+			content: '';
+			display: block;
+			left: 0;
+			height: 40px;
+		}
+		&::before {
+			background-image: url('https://sites.clas.ufl.edu/wp-content/themes/ufclas-ufl-2015/img/edge-bottom.png');
+			background-position: top center;
+			bottom: 0;
+		}
+	}
+}
+
 .tax-syllabus_department {
 	@extend .syllabus-landing-page;
 	
 	.sm-header {
 		background-color: #00529b;
 		background-repeat: no-repeat;
-		background-image: url('/wp-content/uploads/temp2-1024x683.jpeg');
-		background-image: url('http://languages.ufl.edu/files/hp-05.jpg');
 		background-size: cover;
 		position: relative;
 		margin: 0 0 30px;
+		@extend .sm-breaker;
 		
 		@media screen and (min-width: $screen-md){
-			margin: 30px 0;
+			margin: 30px 0 0;
 		}
 		@media screen and (min-width: $screen-lg){
 			min-height: 350px;
@@ -43,7 +61,7 @@
 		padding: 30px;
 		
 		@media screen and (min-width: $screen-sm){
-			padding: 60px;
+			padding: 60px 60px 90px;
 		}
 		
 		.breadcrumb-wrap a {
@@ -70,14 +88,11 @@
 			font-weight: 500;
 			font-size: 16px;
 			letter-spacing: 1px;
-			//background-color: rgba(168, 220, 217, 0.7);
-			background-color: rgba(0, 0, 0, 0.3);
-			//border: 3px solid rgba(168, 220, 217, 0.7);
 			border: 2px solid rgba(255, 255, 255, 0.8);
-			//color: #444;
 			color: #fff;
+			background-color: rgba(0, 0, 0, 0.3);
 		}
-		li>a:hover {
+		li>a:hover, li>a:active, li>a:focus {
 			border-color: rgba(168, 220, 217, 1);
 			background-color: #337ab7;
 		}
@@ -177,6 +192,10 @@
 }
 
 #sm-archive-table {
+	@media screen and (min-width: $screen-sm){ 
+		margin-left: 15px;
+		margin-right: 15px;
+	}
 	a {
 		font-weight: 500;
 	}

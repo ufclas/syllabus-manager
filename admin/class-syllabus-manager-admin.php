@@ -603,4 +603,13 @@ class Syllabus_Manager_Admin {
 		// and return the new full result
 		return $existing_mimes;
 	}
+	
+	/**
+	 * Display custom meta on term edit screens
+	 * @param WP_Term $term     Current taxonomy term object
+	 * @param string $taxonomy Current taxonomy slug
+	 */
+	function display_taxonomy_meta_form_fields( $term, $taxonomy ){
+		var_dump( get_term_meta( $term->term_id ) );
+	}
 }

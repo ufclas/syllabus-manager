@@ -115,7 +115,7 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		//wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
+		wp_enqueue_style( $this->plugin_name . '-datatables-css', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.css', array(), $this->version, 'screen' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/syllabus-manager-public.css', array(), $this->version, 'all' );
 	}
 
@@ -138,8 +138,8 @@ class Syllabus_Manager_Public {
 		 * class.
 		 */
 
-		//wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
-		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-datatables-js', plugin_dir_url( dirname(__FILE__) ) . 'includes/dataTables/datatables.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/syllabus-manager-public.js', array( 'jquery' ), $this->version, false );
 		/*wp_localize_script( $this->plugin_name, 'sm_public_data', array(
 			'courses' => $this->get_courses_table(),
 			'ajax_nonce' => wp_create_nonce('sm-get-courses=table')
@@ -158,7 +158,10 @@ class Syllabus_Manager_Public {
 		if ( is_post_type_archive( $this->post_type )){			
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
-		elseif ( is_tax('syllabus_instructor') || is_tax('syllabus_department') || is_tax('syllabus_level') || is_tax('syllabus_semester') ){
+		elseif ( is_tax('syllabus_department') ){
+			$template_path = $this->templates->locate_template( 'syllabus-department.php', false );
+		}
+		elseif ( is_tax('syllabus_instructor') || is_tax('syllabus_level') || is_tax('syllabus_semester') ){
 			$template_path = $this->templates->locate_template( 'syllabus-archive.php', false );
 		}
 		elseif (is_singular( $this->post_type )){
@@ -177,7 +180,7 @@ class Syllabus_Manager_Public {
 	 * @since 0.0.0
 	 */
 	public function display_content(){
-		include 'partials/syllabus-content.php';
+		include 'partials/syllabus-content-header.php';	
 	}
 	
 	/**
@@ -186,13 +189,7 @@ class Syllabus_Manager_Public {
 	 * @since 0.0.0
 	 */
 	public function display_content_header(){	
-		
-		if (is_tax('syllabus_department')){
-			include 'partials/syllabus-content-header-department.php';
-		}
-		else {
-			include 'partials/syllabus-content-header.php';	
-		}
+		include 'partials/syllabus-content-header.php';	
 	}
 	
 	/**

@@ -19,12 +19,12 @@ var vm = new Vue({
 		],
 		departments: [
 			{
-				id: '011690003',
+				id: 'biology',
 				label: 'Biology'
 			},
 			{
-				id: '011606000',
-				label: 'Chemistry'
+				id: 'languages',
+				label: 'Languages'
 			}
 		],
 		levels: [

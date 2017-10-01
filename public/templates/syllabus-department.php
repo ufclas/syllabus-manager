@@ -12,7 +12,6 @@
  * @package Syllabus_Manager
  */
 get_header(); 
-
 ?>
 
 <div id="syllabus-main-wrap">

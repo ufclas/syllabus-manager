@@ -206,4 +206,8 @@ class Syllabus_Manager_Post_Type {
 		);
 		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
 	}
+	
+	function rewrite_rules( $wp_rewrite ) {
+		//add_rewrite_rule( '' );
+	}
 }

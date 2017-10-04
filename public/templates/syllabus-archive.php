@@ -15,7 +15,15 @@ get_header();
 
 do_action( 'syllabus_manager_content_before' );
 
-do_action( 'syllabus_manager_content' );
+?>
+<div id="main" class="container main-content syllabus-main-content">
+<div class="row">
+  	<div class="col-sm-12">
+ 		<?php do_action( 'syllabus_manager_content' ); ?>
+	</div><!-- .col-md-12 -->
+</div><!-- .row -->
+</div><!-- .syllabus-main-content -->
+<?php 
 
 do_action( 'syllabus_manager_content_after' );
 

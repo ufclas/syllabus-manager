@@ -15,9 +15,21 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<div class="sm-container">
-	
+<header class="entry-header">
 <?php 
+	if ( is_archive() ){
+		the_archive_title( '<h1 class="page-title">', '</h1>' );
+	}
+	else {
+		the_title( '<h1 class="page-title">', '</h1>' );
+	}
+?>
+</header>
+<!-- .entry-header --> 
+
+<section class="sm-container">
+<?php 
+	
 	// Set up the default query to display courses
 	
 	if ( have_posts() ): ?>
@@ -78,4 +90,4 @@
 	<?php else: ?>
 		<div><?php _e('No courses found.', 'Syllabus_Manager'); ?></div>
 	<?php endif; ?>
-</div><!-- .ufcsm-container --> 
+</section><!-- .ufcsm-container --> 

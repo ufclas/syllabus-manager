@@ -16,7 +16,7 @@
  * Plugin Name:       UFCLAS Syllabus Manager
  * Plugin URI:        https://it.clas.ufl.edu/
  * Description:       WordPress plugin that manages course syllabi. 
- * Version:           0.1.1
+ * Version:           0.2.0
  * Author:            Priscilla Chapman (CLAS IT)
  * Author URI:        https://it.clas.ufl.edu/
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

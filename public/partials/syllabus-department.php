@@ -12,54 +12,43 @@
  * @package Syllabus_Manager
  */
 get_header(); 
+
+// Get department data
+$term_meta = get_term_meta( get_queried_object_id() );	  	  
+$dept_website = ( isset($term_meta['sm_department_website']) )? esc_url( $term_meta['sm_department_website'][0] ) : '';
+$dept_cover = ( isset($term_meta['sm_department_cover']) )? esc_url( $term_meta['sm_department_cover'][0] ) : '';
+$dept_cover_style = ( !empty($dept_cover) )? sprintf(' style="background-color:transparent;background-image:url(%s);"', $dept_cover) : '';
+
 ?>
 
-<div id="syllabus-main-wrap">
-<div id="main" class="container main-content syllabus-main-content">
-<div class="row">
-  <div class="col-sm-12">
+<header class="entry-header sm-header" <?php echo $dept_cover_style; ?>>
+	<div class="sm-header-content">
+		<ul class="breadcrumb-wrap">
+			<li><a href="/departments">Departments</a></li>
+		</ul>
+		<?php the_archive_title( '<h1 class="page-title">', '</h1>' );	?>
+		<ul class="sm-header-nav nav nav-pills">
+		  <li role="presentation" class="active"><a href="?syllabus_semester=fall-2017">Fall 2017</a></li>
+		  <li role="presentation"><a href="?syllabus_semester=summer-2017">Summer 2017</a></li>
+		  <li role="presentation"><a href="?syllabus_semester=spring-2017">Spring 2017</a></li>
+		  <li role="presentation" class="link"><a href="<?php echo $dept_website; ?>" target="_blank">Website</a></li>
+		</ul>
+		<form class="search-form" role="search" style="width: 100%;">
+			<label for="sm-search-filter" class="visuallyhidden sr-only">Search Courses</label>
+			<input type="text" id="sm-search-filter" name="s" placeholder="Search">
+			<button type="submit" class="btn-search">
+				<span class="sr-only">Search</span>
+				<span class="icon-svg">
+					<svg>
+					<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/wp-content/themes/ufclas-ufl-2015/img/spritemap.svg#search"></use>
+					</svg>
+				</span>
+			</button>     
+		</form>
+	</div>
+</header><!-- .entry-header -->
 	
-	<?php 
-	  // Get department data
-	  $term_meta = get_term_meta( get_queried_object_id() );	  	  
-	  $dept_website = ( isset($term_meta['sm_department_website']) )? esc_url( $term_meta['sm_department_website'][0] ) : '';
-	  $dept_cover = ( isset($term_meta['sm_department_cover']) )? esc_url( $term_meta['sm_department_cover'][0] ) : '';
-	  $dept_cover_style = ( !empty($dept_cover) )? sprintf(' style="background-color:transparent;background-image:url(%s);"', $dept_cover) : '';
-	?>
-	  
-	<header class="entry-header sm-header" <?php echo $dept_cover_style; ?>>
-		<div class="sm-header-content">
-			<ul class="breadcrumb-wrap">
-				<li><a href="/departments">Departments</a></li>
-			</ul>
-			<?php the_archive_title( '<h1 class="page-title">', '</h1>' );	?>
-			
-			<ul class="sm-header-nav nav nav-pills">
-			  <li role="presentation" class="active"><a href="?syllabus_semester=fall-2017">Fall 2017</a></li>
-			  <li role="presentation"><a href="?syllabus_semester=summer-2017">Summer 2017</a></li>
-			  <li role="presentation"><a href="?syllabus_semester=spring-2017">Spring 2017</a></li>
-			  <li role="presentation" class="link"><a href="<?php echo $dept_website; ?>" target="_blank">Website</a></li>
-			</ul>
-			<form class="search-form" role="search" style="width: 100%;">
-				<label for="sm-search-filter" class="visuallyhidden sr-only">Search Courses</label>
-				<input type="text" id="sm-search-filter" name="s" placeholder="Search">
-				<button type="submit" class="btn-search">
-					<span class="sr-only">Search</span>
-					<span class="icon-svg">
-						<svg>
-						<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://sites.clas.ufl.edu/wp-content/themes/ufclas-ufl-2015/img/spritemap.svg#search"></use>
-						</svg>
-					</span>
-				</button>     
-			</form>
-		</div>
-    </header><!-- .entry-header --> 
-  </div>
-</div>
-<div class="row">
-<div class="col-md-12">
-	
-<div class="sm-container">
+<section class="sm-container">
 	
 <?php 
 	// Set up the default query to display courses
@@ -125,11 +114,8 @@ get_header();
 			<?php endwhile; // End of the loop. ?>
 		</tbody>
 		</table>
+	
 	<?php else: ?>
 		<div><?php _e('No courses found.', 'Syllabus_Manager'); ?></div>
 	<?php endif; ?>
-	
-<?php 
-	do_action( 'syllabus_manager_content_after' );
-	
-	get_footer(); ?>
+</section> <!-- .sm-container -->

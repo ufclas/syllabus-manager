@@ -6,18 +6,6 @@
   .syllabus-landing-page, .tax-syllabus_department {
     padding-top: 150px; } }
 
-.gradient-bg::before {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
-  bottom: 0;
-  content: '';
-  display: block;
-  height: 70%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  width: 100%;
-  z-index: 1; }
-
 @media screen and (min-width: 768px) {
   .sm-breaker::before, .tax-syllabus_department .sm-header::before, .sm-breaker::after, .tax-syllabus_department .sm-header::after {
     position: absolute;
@@ -44,6 +32,9 @@
   @media screen and (min-width: 1220px) {
     .tax-syllabus_department .sm-header {
       min-height: 350px; } }
+  .tax-syllabus_department .sm-header h1.page-title {
+    color: #fff;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); }
 
 .tax-syllabus_department .sm-header-content {
   padding: 30px; }
@@ -92,29 +83,23 @@
     font-family: 'Glyphicons Halflings';
     padding-right: 5px; }
 
-.tax-syllabus_department h1.page-title {
-  color: #fff;
-  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4); }
-
-#syllabus-main-wrap #main.syllabus-main-content {
+#main.main-content.syllabus-main-content {
   padding-top: 0; }
   @media screen and (min-width: 768px) {
-    #syllabus-main-wrap #main.syllabus-main-content {
+    #main.main-content.syllabus-main-content {
       padding-left: 0;
       padding-right: 0; } }
   @media screen and (min-width: 992px) {
-    #syllabus-main-wrap #main.syllabus-main-content {
+    #main.main-content.syllabus-main-content {
       padding-top: 30px; } }
   @media screen and (min-width: 1440px) {
-    #syllabus-main-wrap #main.syllabus-main-content {
+    #main.main-content.syllabus-main-content {
       width: 1220px;
       max-width: 1220px; } }
-
-#syllabus-main-wrap .dataTables_filter {
-  text-align: left; }
-
-#syllabus-main-wrap .dataTables_length {
-  text-align: right; }
+  #main.main-content.syllabus-main-content .dataTables_filter {
+    text-align: left; }
+  #main.main-content.syllabus-main-content .dataTables_length {
+    text-align: right; }
 
 #sm-hero {
   background-color: #4f8fe1;

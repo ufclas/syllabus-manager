@@ -23,6 +23,55 @@
 	}
 }
 
+.sm-card {
+	background-color: $white;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+	margin-bottom: 15px;
+	border-left: 5px solid #A8DCD9; 
+	
+	@media screen and (min-width: $screen-sm){
+		//border-left: none;
+		//margin-bottom: 30px;
+		//height: 80px;
+		height: 64px;
+		overflow: hidden;
+	}
+	
+	.sm-card-text {
+		padding: 15px 5px 0;
+	}
+	.subtitle {
+		font-size: 18px;
+		line-height: 22px;
+		
+		a:link, a:visited {
+			color: #4c87b5;
+		}
+		a:hover, a:active {
+			color: #f37021;
+		}
+	}
+	.sm-card-graphic {
+		a:link, a:visited {
+			opacity: 0.75;
+		}
+		a:hover, a:active {
+			opacity: 1;
+		}
+	}
+	.img-thumbnail, .attachment-thumbnail {
+		display: none;
+		
+		@media screen and (min-width: $screen-sm){
+			//display: block;
+			//width: 80px;
+			//height: 80px;
+			//background-color: #A8DCD9;
+		}
+	}
+	
+}
+
 .tax-syllabus_department {
 	@extend .syllabus-landing-page;
 	

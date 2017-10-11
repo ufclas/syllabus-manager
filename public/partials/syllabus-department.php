@@ -16,9 +16,8 @@ get_header();
 // Get department data
 $term_meta = get_term_meta( get_queried_object_id() );	  	  
 $dept_website = ( isset($term_meta['sm_department_website']) )? esc_url( $term_meta['sm_department_website'][0] ) : '';
-$dept_cover = ( isset($term_meta['sm_department_cover']) )? esc_url( $term_meta['sm_department_cover'][0] ) : '';
+$dept_cover = ( isset($term_meta['sm_department_cover']) )? wp_get_attachment_image_url( $term_meta['sm_department_cover'][0], 'large' ) : '';
 $dept_cover_style = ( !empty($dept_cover) )? sprintf(' style="background-color:transparent;background-image:url(%s);"', $dept_cover) : '';
-
 ?>
 
 <header class="entry-header sm-header" <?php echo $dept_cover_style; ?>>

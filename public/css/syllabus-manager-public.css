@@ -20,6 +20,31 @@
     background-position: top center;
     bottom: 0; } }
 
+.sm-card {
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  border-left: 5px solid #A8DCD9; }
+  @media screen and (min-width: 768px) {
+    .sm-card {
+      height: 64px;
+      overflow: hidden; } }
+  .sm-card .sm-card-text {
+    padding: 15px 5px 0; }
+  .sm-card .subtitle {
+    font-size: 18px;
+    line-height: 22px; }
+    .sm-card .subtitle a:link, .sm-card .subtitle a:visited {
+      color: #4c87b5; }
+    .sm-card .subtitle a:hover, .sm-card .subtitle a:active {
+      color: #f37021; }
+  .sm-card .sm-card-graphic a:link, .sm-card .sm-card-graphic a:visited {
+    opacity: 0.75; }
+  .sm-card .sm-card-graphic a:hover, .sm-card .sm-card-graphic a:active {
+    opacity: 1; }
+  .sm-card .img-thumbnail, .sm-card .attachment-thumbnail {
+    display: none; }
+
 .tax-syllabus_department .sm-header {
   background-color: #00529b;
   background-repeat: no-repeat;

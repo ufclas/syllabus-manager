@@ -32,7 +32,7 @@ Term Meta:
 
 - sm_department_id - department code
 - sm_department_cover - cover image url for the department page
-- sm_department_website - url used in the link to the department website
+- sm_department_website - attachment id used for department website
 
 Commands:
 
@@ -42,7 +42,7 @@ Update a department term via WP-CLI
 wp term update syllabus_department <TERM_ID> --slug='<TERM_SLUG>'
 wp term meta add 161 sm_department_id '<DEPT_ID>'
 wp term meta add 161 sm_department_website '<DEPT_WEBSITE>'
-wp term meta add 161 sm_department_cover '<DEPT_COVER>'
+wp term meta add 161 sm_department_cover <DEPT_COVER>
 wp term update syllabus_department 219 --slug='akan' --parent=218 --name='Akan'
 ```
 

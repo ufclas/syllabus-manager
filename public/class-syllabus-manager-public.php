@@ -75,6 +75,15 @@ class Syllabus_Manager_Public {
 	 * @var      int    $post_page_id
 	 */
 	public $post_page_id;
+	
+	/**
+	 * Page slugs to replace with terms
+	 *
+	 * @since    0.3.0
+	 * @access   public
+	 * @var      array  $taxonomy_term_pages
+	 */
+	public $term_pages;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -92,8 +101,7 @@ class Syllabus_Manager_Public {
 		$this->post_type = 'syllabus_course';
 		$this->taxonomies = array('syllabus_instructor', 'syllabus_department', 'syllabus_level', 'syllabus_semester');
 		$this->post_page_id = 8;
-		//$this->post_page_id = 90;
-
+		$this->term_pages = array('departments','instructors','semesters');
 	}
 
 	/**
@@ -164,8 +172,8 @@ class Syllabus_Manager_Public {
 		elseif (is_singular( $this->post_type )){
 			$template_path = $this->templates->locate_template( 'syllabus-single.php', false );
 		}
-		elseif ( is_page( array('departments','instructors','semesters') ) ){
-			//$template_path = $this->templates->locate_template( 'syllabus-archive-taxonomy-terms.php', false );
+		elseif ( is_page( $this->term_pages ) || is_front_page() ){
+			$template_path = $this->templates->locate_template( 'syllabus-archive-terms.php', false );
 		}
 		
 		return $template_path;

@@ -17,6 +17,9 @@ Requirements and Suggested Plugins
 - UFCLAS UFL 2015 Theme (untested with other themes)
 - Advanced Custom Fields - visual interface for custom fields
 
+### Recommended
+- Shibboleth affiliations and groups
+
 ### Supported Plugins
 
 
@@ -62,9 +65,16 @@ wp term update syllabus_department <TERM_ID> --slug='<SLUG>' --parent=<PARENT_TE
 ### External Data
 
 ### User Roles
+The default administrator role has access to all settings.
 
-- __Course Administrator__ - Can view/edit all courses and change settings for any department.
-- __Department Administrator__ - User role that gives access only to the user's department.
+#### Syllabus Administrator
+- Can view/edit courses and upload documents.
+- Can view/edit all instructors, departments, semesters, and program levels 
+- Can import or update courses
+
+#### Syllabus Department Admin
+- Can view/edit courses and upload documents.
+
 
 ### Documents
 

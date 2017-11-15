@@ -12,7 +12,7 @@
  * @subpackage Syllabus_Manager/admin/partials
  */
 
-if ( !current_user_can( 'manage_options' ) )  {
+if ( !current_user_can( 'import_syllabus_manager' ) )  {
 	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 }
 ?>

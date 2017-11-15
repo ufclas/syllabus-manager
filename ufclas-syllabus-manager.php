@@ -22,7 +22,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       syllabus-manager
  * Domain Path:       /languages
- * BuildDate:		  20171011
+ * BuildDate:		  20171114
  */
 
 // If this file is called directly, abort.

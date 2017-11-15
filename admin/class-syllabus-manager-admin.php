@@ -146,13 +146,8 @@ class Syllabus_Manager_Admin {
 	 * @since 0.0.0
 	 */
 	public function add_menu(){
-		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_options', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
-		add_submenu_page('syllabus-manager', 'Import', 'Import', 'manage_options', 'syllabus-manager-import', array( $this, 'display_import_page'));
-		add_submenu_page('syllabus-manager', 'Courses', 'Courses', 'manage_options', 'edit.php?post_type=syllabus_course');
-		add_submenu_page('syllabus-manager', 'Semesters', 'Semesters', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_semester');
-		add_submenu_page('syllabus-manager', 'Departments', 'Departments', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_department');
-		add_submenu_page('syllabus-manager', 'Instructors', 'Instructors', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_instructor');
-		add_submenu_page('syllabus-manager', 'Program Levels', 'Program Levels', 'manage_options', 'edit-tags.php?post_type=syllabus_course&taxonomy=syllabus_level');
+		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_syllabus_manager', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
+		add_submenu_page('syllabus-manager', 'Import', 'Import', 'import_syllabus_manager', 'syllabus-manager-import', array( $this, 'display_import_page'));
 	}
 	
 	/**
@@ -231,7 +226,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
 		
-		if ( !current_user_can( 'manage_options' ) ) {
+		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
 			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
 		}
 		
@@ -276,7 +271,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
 		
-		if ( !current_user_can( 'manage_options' ) ) {
+		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
 			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
 		}
 		
@@ -553,7 +548,7 @@ class Syllabus_Manager_Admin {
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_create_courses', 'sm_create_courses_nonce');
 		
-		if ( !current_user_can( 'manage_options' ) ) {
+		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
 			wp_die( __('You do not have sufficient permissions to access this page.', 'syllabus_manager'));
 		}
 		

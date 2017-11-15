@@ -226,7 +226,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
 		
-		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
+		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
 			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
 		}
 		
@@ -271,7 +271,7 @@ class Syllabus_Manager_Admin {
 		// Verify the request to prevent preocessing external requests
 		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
 		
-		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
+		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
 			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
 		}
 		
@@ -548,7 +548,7 @@ class Syllabus_Manager_Admin {
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_create_courses', 'sm_create_courses_nonce');
 		
-		if ( !current_user_can( 'manage_syllabus_manager' ) ) {
+		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
 			wp_die( __('You do not have sufficient permissions to access this page.', 'syllabus_manager'));
 		}
 		
@@ -610,6 +610,7 @@ class Syllabus_Manager_Admin {
 	
 	function customize_user_profile(){
 		remove_action('admin_color_scheme_picker', 'admin_color_scheme_picker');
+		error_log(print_r($_POST, true));
 	}
 	
 	/**
@@ -644,5 +645,38 @@ class Syllabus_Manager_Admin {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Customize capabilities to access courses
+	 * 
+	 * @param array   $caps    	Returns the user's capabilities
+	 * @param string  $cap      Meta capability name
+	 * @param integer $user_id  The user ID
+	 * @param array   $args     Adds the context to the cap. Typically the object ID
+	 * @since 0.3.0
+	 */
+	function map_capabilities( $caps, $cap, $user_id, $args ){
+		
+		// Only modify syllabus_course meta capabilities
+		if ( 'sm_edit_syllabus_course' == $cap || 'sm_delete_syllabus_course' == $cap || 'sm_read_syllabus_course' == $cap ){
+			/*
+			error_log( print_r($caps, true) );
+			error_log( print_r($cap, true) );
+			error_log( print_r($user_id, true) );
+			error_log( print_r($args, true) );
+			*/
+			
+			// Empty the caps array and get information about the post
+			$caps = array();
+			$post = get_post( $args[0] );
+			$post_type = get_post_type_object( $post->post_type );
+			//error_log( print_r($post, true) );
+			error_log( print_r($post_type, true) );
+		
+		}
+		
+		// Return the capabilities required by the user
+		return $caps;
 	}
 }

@@ -75,11 +75,21 @@ class Syllabus_Manager_Post_Type {
 			'show_in_menu' => true,
 			'exclude_from_search' => false,
 			'capability_type' => 'syllabus_course',
-			'map_meta_cap' => true,
+			'capabilities' => array(
+				'delete_others_posts' => 'sm_delete_others_syllabus_courses',
+				'delete_posts' => 'sm_delete_syllabus_courses',
+				'edit_others_posts' => 'sm_edit_others_syllabus_courses',
+				'edit_posts' => 'sm_edit_syllabus_courses',
+				'publish_posts' => 'sm_publish_syllabus_courses',
+				'read_private_posts' => 'sm_read_private_syllabus_courses',
+				'edit_post' => 'sm_edit_syllabus_course',
+				'delete_post' => 'sm_delete_syllabus_course',
+				'read_post' => 'sm_read_syllabus_course',
+			),
 			'hierarchical' => true,
 			'rewrite' => array( 'slug' => $this->post_type_base, 'with_front' => true ),
 			'query_var' => true,
-			'supports' => array( 'title', 'page-attributes' )
+			'supports' => array( 'title', 'editor', 'page-attributes' )
 		);
 
 		register_post_type( $this->post_type_name, $post_type_args );
@@ -117,10 +127,10 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 			'capabilities' => array(
-				'manage_terms' 	=> 'manage_' . $taxonomy_name,
-				'edit_terms' 	=> 'edit_' . $taxonomy_name,
-				'delete_terms' 	=> 'delete_' . $taxonomy_name,
-				'assign_terms' 	=> 'assign_' . $taxonomy_name,
+				'manage_terms' 	=> 'sm_manage' . $taxonomy_name,
+				'edit_terms' 	=> 'sm_edit' . $taxonomy_name,
+				'delete_terms' 	=> 'sm_delete_' . $taxonomy_name,
+				'assign_terms' 	=> 'sm_assign_' . $taxonomy_name,
 			)
 		);
 		register_taxonomy( $taxonomy_name, array( $this->post_type_name ), $args );
@@ -131,10 +141,10 @@ class Syllabus_Manager_Post_Type {
 		$taxonomy_name = 'syllabus_department';
 		$taxonomy_base = 'departments';
 		$taxonomy_caps = array (
-		  'manage_terms' => "manage_" . $taxonomy_name,
-		  'edit_terms' => "edit_" . $taxonomy_name,
-		  'delete_terms' => "delete_" . $taxonomy_name,
-		  'assign_terms' => "assign_" . $taxonomy_name,
+		  'manage_terms' => 'sm_manage_' . $taxonomy_name,
+		  'edit_terms' => 'sm_edit_' . $taxonomy_name,
+		  'delete_terms' => 'sm_delete_' . $taxonomy_name,
+		  'assign_terms' => 'sm_assign_' . $taxonomy_name,
 		);
 		$labels = array(
 			'name' => __( 'Departments', 'syllabus_manager' ),
@@ -155,10 +165,10 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 			'capabilities' => array(
-				'manage_terms' 	=> 'manage_' . $taxonomy_name,
-				'edit_terms' 	=> 'edit_' . $taxonomy_name,
-				'delete_terms' 	=> 'delete_' . $taxonomy_name,
-				'assign_terms' 	=> 'assign_' . $taxonomy_name,
+				'manage_terms' 	=> 'sm_manage_' . $taxonomy_name,
+				'edit_terms' 	=> 'sm_edit_' . $taxonomy_name,
+				'delete_terms' 	=> 'sm_delete_' . $taxonomy_name,
+				'assign_terms' 	=> 'sm_assign_' . $taxonomy_name,
 			)
 		);
 		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment', 'user' ), $args );
@@ -188,10 +198,10 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 			'capabilities' => array(
-				'manage_terms' 	=> 'manage_' . $taxonomy_name,
-				'edit_terms' 	=> 'edit_' . $taxonomy_name,
-				'delete_terms' 	=> 'delete_' . $taxonomy_name,
-				'assign_terms' 	=> 'assign_' . $taxonomy_name,
+				'manage_terms' 	=> 'sm_manage_' . $taxonomy_name,
+				'edit_terms' 	=> 'sm_edit_' . $taxonomy_name,
+				'delete_terms' 	=> 'sm_delete_' . $taxonomy_name,
+				'assign_terms' 	=> 'sm_assign_' . $taxonomy_name,
 			)
 		);
 		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
@@ -220,10 +230,10 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 			'capabilities' => array(
-				'manage_terms' 	=> 'manage_' . $taxonomy_name,
-				'edit_terms' 	=> 'edit_' . $taxonomy_name,
-				'delete_terms' 	=> 'delete_' . $taxonomy_name,
-				'assign_terms' 	=> 'assign_' . $taxonomy_name,
+				'manage_terms' 	=> 'sm_manage_' . $taxonomy_name,
+				'edit_terms' 	=> 'sm_edit_' . $taxonomy_name,
+				'delete_terms' 	=> 'sm_delete_' . $taxonomy_name,
+				'assign_terms' 	=> 'sm_assign_' . $taxonomy_name,
 			)
 		);
 		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );

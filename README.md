@@ -16,6 +16,7 @@ Requirements and Suggested Plugins
 
 - UFCLAS UFL 2015 Theme (untested with other themes)
 - Advanced Custom Fields - visual interface for custom fields
+- LH User Taxonomies - allows setting departments for users
 
 ### Recommended
 - Shibboleth affiliations and groups
@@ -65,6 +66,7 @@ wp term update syllabus_department <TERM_ID> --slug='<SLUG>' --parent=<PARENT_TE
 ### External Data
 
 ### User Roles
+
 The default administrator role has access to all settings.
 
 #### Syllabus Administrator

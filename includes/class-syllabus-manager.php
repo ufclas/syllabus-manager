@@ -180,6 +180,7 @@ class Syllabus_Manager {
 		
 		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' );
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'custom_upload_mimes' );
+		$this->loader->add_filter( 'map_meta_cap', $plugin_admin, 'map_capabilities', 10, 4 );
 		//$this->loader->add_filter( 'show_password_fields', '__return_false', 10, 2 );
 	}
 

@@ -45,42 +45,38 @@ class Syllabus_Manager_Activator {
 		
 		// Add admin capabilities
 		foreach( array($admin_role, $default_admin_role) as $role ){
-			$role->add_cap( 'manage_syllabus_manager' );
-			$role->add_cap( 'import_syllabus_manager' );
-			$role->add_cap( 'delete_syllabus_department' );
-			$role->add_cap( 'delete_syllabus_instructor' );
-			$role->add_cap( 'delete_syllabus_level' );
-			$role->add_cap( 'delete_syllabus_semester' );
-			$role->add_cap( 'edit_syllabus_department' );
-			$role->add_cap( 'edit_syllabus_instructor' );
-			$role->add_cap( 'edit_syllabus_level' );
-			$role->add_cap( 'edit_syllabus_semester' );
-			$role->add_cap( 'manage_syllabus_department' );
-			$role->add_cap( 'manage_syllabus_instructor' );
-			$role->add_cap( 'manage_syllabus_level' );
-			$role->add_cap( 'manage_syllabus_semester' );
+			$role->add_cap( 'sm_manage_syllabus_manager' );
+			$role->add_cap( 'sm_import_syllabus_manager' );
+			$role->add_cap( 'sm_delete_syllabus_department' );
+			$role->add_cap( 'sm_delete_syllabus_instructor' );
+			$role->add_cap( 'sm_delete_syllabus_level' );
+			$role->add_cap( 'sm_delete_syllabus_semester' );
+			$role->add_cap( 'sm_edit_syllabus_department' );
+			$role->add_cap( 'sm_edit_syllabus_instructor' );
+			$role->add_cap( 'sm_edit_syllabus_level' );
+			$role->add_cap( 'sm_edit_syllabus_semester' );
+			$role->add_cap( 'sm_manage_syllabus_department' );
+			$role->add_cap( 'sm_manage_syllabus_instructor' );
+			$role->add_cap( 'sm_manage_syllabus_level' );
+			$role->add_cap( 'sm_manage_syllabus_semester' );
 		}
 		
 		// Add basic course syllabus editing capabilities
 		foreach( array($admin_role, $dept_role, $default_admin_role) as $role ){
-			$role->add_cap( 'delete_others_syllabus_courses' );
-			$role->add_cap( 'delete_private_syllabus_courses' );
-			$role->add_cap( 'delete_published_syllabus_courses' );
-			$role->add_cap( 'delete_syllabus_course' );
-			$role->add_cap( 'delete_syllabus_courses' );
-			$role->add_cap( 'edit_others_syllabus_courses' );
-			$role->add_cap( 'edit_private_syllabus_courses' );
-			$role->add_cap( 'edit_published_syllabus_courses' );
-			$role->add_cap( 'edit_syllabus_course' );
-			$role->add_cap( 'edit_syllabus_courses' );
-			$role->add_cap( 'edit_syllabus_courses' );
-			$role->add_cap( 'publish_syllabus_courses' );
-			$role->add_cap( 'read_private_syllabus_courses' );
-			$role->add_cap( 'read_syllabus_course' );
-			$role->add_cap( 'assign_syllabus_department' );
-			$role->add_cap( 'assign_syllabus_instructor' );
-			$role->add_cap( 'assign_syllabus_level' );
-			$role->add_cap( 'assign_syllabus_semester' );
+			$role->add_cap( 'sm_delete_others_syllabus_courses' );
+			$role->add_cap( 'sm_delete_private_syllabus_courses' );
+			$role->add_cap( 'sm_delete_published_syllabus_courses' );
+			$role->add_cap( 'sm_delete_syllabus_courses' );
+			$role->add_cap( 'sm_edit_others_syllabus_courses' );
+			$role->add_cap( 'sm_edit_private_syllabus_courses' );
+			$role->add_cap( 'sm_edit_published_syllabus_courses' );
+			$role->add_cap( 'sm_edit_syllabus_courses' );
+			$role->add_cap( 'sm_publish_syllabus_courses' );
+			$role->add_cap( 'sm_read_private_syllabus_courses' );
+			$role->add_cap( 'sm_assign_syllabus_department' );
+			$role->add_cap( 'sm_assign_syllabus_instructor' );
+			$role->add_cap( 'sm_assign_syllabus_level' );
+			$role->add_cap( 'sm_assign_syllabus_semester' );
 		}
 		
 		// Remove access to posts and pages for non-admin role

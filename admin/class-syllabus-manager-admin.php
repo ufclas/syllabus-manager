@@ -607,4 +607,42 @@ class Syllabus_Manager_Admin {
 	function display_taxonomy_meta_form_fields( $term, $taxonomy ){
 		var_dump( get_term_meta( $term->term_id ) );
 	}
+	
+	function customize_user_profile(){
+		remove_action('admin_color_scheme_picker', 'admin_color_scheme_picker');
+	}
+	
+	/**
+	 * Prevent Syllabus Department Admins from viewing other department courses
+	 * 
+	 * @param WP_Query $query
+	 * @since 0.3.0
+	 */
+	function restrict_content( $query ){
+		if ( !is_admin() && !$query->is_main_query() ){
+			return;
+		}
+		
+		$restricted_role = 'sm_admin_dept';
+		$allowed_types = array('syllabus_course', 'attachment');
+		$taxonomy = 'syllabus_department';
+		$allowed_mime = 'application/pdf';
+		
+		$user = wp_get_current_user();
+		
+		if ( in_array( $restricted_role, $user->roles ) && in_array( $query->get('post_type'), $allowed_types) ){
+			
+			$user_terms = wp_get_object_terms( $user->ID, $taxonomy );
+			$term_id_list = array_column($user_terms, 'term_id');
+
+			$query->set('tax_query', array(array(
+				'taxonomy' => $taxonomy, 'field' => 'term_id', 'terms' => $term_id_list,
+			)));
+
+			if ( $query->get('post_type') == 'attachment' ){
+				$query->set('post_mime_type', $allowed_mime);
+			}
+		}
+		
+	}
 }

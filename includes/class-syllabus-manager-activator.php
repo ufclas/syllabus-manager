@@ -45,6 +45,7 @@ class Syllabus_Manager_Activator {
 		
 		// Add admin capabilities
 		foreach( array($admin_role, $default_admin_role) as $role ){
+			$role->add_cap( 'manage_syllabus_manager' );
 			$role->add_cap( 'import_syllabus_manager' );
 			$role->add_cap( 'delete_syllabus_department' );
 			$role->add_cap( 'delete_syllabus_instructor' );
@@ -62,7 +63,6 @@ class Syllabus_Manager_Activator {
 		
 		// Add basic course syllabus editing capabilities
 		foreach( array($admin_role, $dept_role, $default_admin_role) as $role ){
-			$role->add_cap( 'manage_syllabus_manager' );
 			$role->add_cap( 'delete_others_syllabus_courses' );
 			$role->add_cap( 'delete_private_syllabus_courses' );
 			$role->add_cap( 'delete_published_syllabus_courses' );

@@ -161,7 +161,7 @@ class Syllabus_Manager_Post_Type {
 				'assign_terms' 	=> 'assign_' . $taxonomy_name,
 			)
 		);
-		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment' ), $args );
+		register_taxonomy( $taxonomy_name, array( $this->post_type_name, 'attachment', 'user' ), $args );
 
 		/**
 		 * Taxonomy: Program Levels.

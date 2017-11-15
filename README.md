@@ -68,15 +68,18 @@ wp term update syllabus_department <TERM_ID> --slug='<SLUG>' --parent=<PARENT_TE
 The default administrator role has access to all settings.
 
 #### Syllabus Administrator
-- Can view/edit courses and upload documents.
+- Can view/edit all courses
+- Can view/edit all documents
 - Can view/edit all instructors, departments, semesters, and program levels 
-- Can import or update courses
+- Can import or update courses from source
 
 #### Syllabus Department Admin
-- Can view/edit courses and upload documents.
-
+- Can view/edit courses based on department
+- Can view/edit PDF documents based on department
 
 ### Documents
+
+Only supports PDF documents.
 
 ### Reports/Notifications
 

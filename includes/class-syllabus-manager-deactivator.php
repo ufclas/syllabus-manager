@@ -56,17 +56,14 @@ class Syllabus_Manager_Deactivator {
 		$role->remove_cap( 'sm_delete_others_syllabus_courses' );
 		$role->remove_cap( 'sm_delete_private_syllabus_courses' );
 		$role->remove_cap( 'sm_delete_published_syllabus_courses' );
-		$role->remove_cap( 'sm_delete_syllabus_course' );
 		$role->remove_cap( 'sm_delete_syllabus_courses' );
 		$role->remove_cap( 'sm_edit_others_syllabus_courses' );
 		$role->remove_cap( 'sm_edit_private_syllabus_courses' );
 		$role->remove_cap( 'sm_edit_published_syllabus_courses' );
-		$role->remove_cap( 'sm_edit_syllabus_course' );
 		$role->remove_cap( 'sm_edit_syllabus_courses' );
 		$role->remove_cap( 'sm_edit_syllabus_courses' );
 		$role->remove_cap( 'sm_publish_syllabus_courses' );
 		$role->remove_cap( 'sm_read_private_syllabus_courses' );
-		$role->remove_cap( 'sm_read_syllabus_course' );
 		$role->remove_cap( 'sm_assign_syllabus_department' );
 		$role->remove_cap( 'sm_assign_syllabus_instructor' );
 		$role->remove_cap( 'sm_assign_syllabus_level' );

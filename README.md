@@ -13,15 +13,13 @@ Requirements and Suggested Plugins
 -----------------------------------
 
 ### Required
-
 - UFCLAS UFL 2015 Theme (untested with other themes)
-- Advanced Custom Fields - visual interface for custom fields
 - LH User Taxonomies - allows setting departments for users
 
 ### Recommended
-- Shibboleth affiliations and groups
-
-### Supported Plugins
+- Advanced Custom Fields - visual interface for custom fields
+- Admin Columns Pro - allows custom display, advanced filtering of uploads, and inline editing
+- GM Media Tags - adds ability to bulk add taxonomies for multiple documents
 
 
 Documentation

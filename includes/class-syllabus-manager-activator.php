@@ -47,10 +47,6 @@ class Syllabus_Manager_Activator {
 		foreach( array($admin_role, $default_admin_role) as $role ){
 			$role->add_cap( 'sm_manage_syllabus_manager' );
 			$role->add_cap( 'sm_import_syllabus_manager' );
-			$role->add_cap( 'sm_delete_syllabus_department' );
-			$role->add_cap( 'sm_delete_syllabus_instructor' );
-			$role->add_cap( 'sm_delete_syllabus_level' );
-			$role->add_cap( 'sm_delete_syllabus_semester' );
 			$role->add_cap( 'sm_edit_syllabus_department' );
 			$role->add_cap( 'sm_edit_syllabus_instructor' );
 			$role->add_cap( 'sm_edit_syllabus_level' );
@@ -73,10 +69,18 @@ class Syllabus_Manager_Activator {
 			$role->add_cap( 'sm_edit_syllabus_courses' );
 			$role->add_cap( 'sm_publish_syllabus_courses' );
 			$role->add_cap( 'sm_read_private_syllabus_courses' );
+			
+			// Allows users to set taxonomies for courses and media
 			$role->add_cap( 'sm_assign_syllabus_department' );
 			$role->add_cap( 'sm_assign_syllabus_instructor' );
 			$role->add_cap( 'sm_assign_syllabus_level' );
 			$role->add_cap( 'sm_assign_syllabus_semester' );
+			
+			// Allows users to remove taxonomies from courses and media
+			$role->add_cap( 'sm_delete_syllabus_department' );
+			$role->add_cap( 'sm_delete_syllabus_instructor' );
+			$role->add_cap( 'sm_delete_syllabus_level' );
+			$role->add_cap( 'sm_delete_syllabus_semester' );
 		}
 		
 		// Remove access to posts and pages for non-admin role

@@ -610,7 +610,7 @@ class Syllabus_Manager_Admin {
 	
 	function customize_user_profile(){
 		remove_action('admin_color_scheme_picker', 'admin_color_scheme_picker');
-		error_log(print_r($_POST, true));
+		
 	}
 	
 	/**
@@ -658,22 +658,55 @@ class Syllabus_Manager_Admin {
 	 */
 	function map_capabilities( $caps, $cap, $user_id, $args ){
 		
-		// Only modify syllabus_course meta capabilities
-		if ( 'sm_edit_syllabus_course' == $cap || 'sm_delete_syllabus_course' == $cap || 'sm_read_syllabus_course' == $cap ){
-			/*
-			error_log( print_r($caps, true) );
-			error_log( print_r($cap, true) );
-			error_log( print_r($user_id, true) );
-			error_log( print_r($args, true) );
-			*/
-			
-			// Empty the caps array and get information about the post
-			$caps = array();
-			$post = get_post( $args[0] );
-			$post_type = get_post_type_object( $post->post_type );
-			//error_log( print_r($post, true) );
-			error_log( print_r($post_type, true) );
+		//error_log( "Checking $cap for $user_id with args: " . print_r($args, true) . "and caps: " . print_r($args, true) );
 		
+		if ( 'edit_post' == $cap ){
+			if (!empty($args)){
+				$post = get_post( $args[0] );
+				if ( 'attachment' == $post->post_type ){
+					/**
+					 * Checking user department value against attachment value
+					 * 
+					 * For now this allows users to technically edit any media
+					 * 
+					 * @todo Add this back in after uploads default to department
+					 */
+					/*
+					
+					$taxonomy = 'syllabus_department';
+					$user = get_user_by( 'id', $user_id );
+					$user_terms = wp_get_object_terms( $user->ID, $taxonomy, array( 'fields' => 'ids') );
+					
+					//error_log( 'Checking ' . $post->post_title );
+					//error_log( '$user_terms: ' . print_r($user_terms, true) );
+					$post_type = get_post_type_object( $post->post_type );
+					$caps = array();
+					$caps[] = 'sm_edit_syllabus_courses';
+					$caps[] = 'sm_edit_syllabus_courses';
+					$caps[] = 'sm_edit_syllabus_courses';
+					//error_log( '$caps: ' . print_r($caps, true) );
+					*/
+					$post_type = get_post_type_object( 'syllabus_course' );
+					$caps = array( $post_type->cap->edit_posts );
+				} 
+			}
+		}
+		
+		// Get post type information
+		if ( 'sm_edit_syllabus_course' == $cap || 'sm_delete_syllabus_course' == $cap || 'sm_read_syllabus_course' == $cap ) {
+			$post_type = get_post_type_object( 'syllabus_course' );
+		}
+		
+		if ( 'sm_edit_syllabus_course' == $cap ) {
+			$caps = array( $post_type->cap->edit_posts );
+		}
+		
+		if ( 'sm_delete_syllabus_course' == $cap ) {
+			$caps = array( $post_type->cap->delete_posts );
+		}
+		
+		if ( 'sm_read_syllabus_course' == $cap ) {
+			$caps = array( $post_type->cap->read_posts );
 		}
 		
 		// Return the capabilities required by the user

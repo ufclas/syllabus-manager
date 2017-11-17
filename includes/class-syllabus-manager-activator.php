@@ -85,7 +85,6 @@ class Syllabus_Manager_Activator {
 		
 		// Remove access to posts and pages for non-admin role
 		foreach( array($dept_role) as $role ){
-			$role->remove_cap( 'copy_posts' );
 			$role->remove_cap( 'delete_others_pages' );
 			$role->remove_cap( 'delete_others_posts' );
 			$role->remove_cap( 'delete_pages' );

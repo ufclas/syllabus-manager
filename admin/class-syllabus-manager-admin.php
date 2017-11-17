@@ -633,11 +633,10 @@ class Syllabus_Manager_Admin {
 		
 		if ( in_array( $restricted_role, $user->roles ) && in_array( $query->get('post_type'), $allowed_types) ){
 			
-			$user_terms = wp_get_object_terms( $user->ID, $taxonomy );
-			$term_id_list = array_column($user_terms, 'term_id');
+			$user_terms = wp_get_object_terms( $user->ID, $taxonomy, array('fields' => 'ids') );
 
 			$query->set('tax_query', array(array(
-				'taxonomy' => $taxonomy, 'field' => 'term_id', 'terms' => $term_id_list,
+				'taxonomy' => $taxonomy, 'field' => 'term_id', 'terms' => $user_terms,
 			)));
 
 			if ( $query->get('post_type') == 'attachment' ){

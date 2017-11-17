@@ -146,8 +146,8 @@ class Syllabus_Manager_Admin {
 	 * @since 0.0.0
 	 */
 	public function add_menu(){
-		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'manage_syllabus_manager', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
-		add_submenu_page('syllabus-manager', 'Import', 'Import', 'import_syllabus_manager', 'syllabus-manager-import', array( $this, 'display_import_page'));
+		add_menu_page('Syllabus Manager', 'Syllabus Manager', 'sm_manage_syllabus_manager', 'syllabus-manager', array( $this, 'display_admin_page'), 'dashicons-book-alt');
+		add_submenu_page('syllabus-manager', 'Import', 'Import', 'sm_import_syllabus_manager', 'syllabus-manager-import', array( $this, 'display_import_page'));
 	}
 	
 	/**

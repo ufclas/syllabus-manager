@@ -44,9 +44,13 @@ do_action( 'syllabus_manager_content_before' );
 			));
 
 			if ( !is_wp_error( $page_terms ) ):
-
+			
+			/**
+			 * @todo Implement term link override to go to department website instead
+			 */
 			foreach ( $page_terms as $term ): 
 				$term_image_id = get_term_meta($term->term_id, 'sm_department_cover', true);
+				$term_link = get_term_link($term->term_id, $page_taxonomy);
 				$term_link_override = get_term_meta($term->term_id, 'sm_department_override', true);
 				$term_image = (!empty($term_image_id))? wp_get_attachment_image( $term_image_id ) : '<div class="img-thumbnail"></div>';
 			?>

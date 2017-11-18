@@ -8,80 +8,97 @@ Installation
 
 Download and unzip files into a folder named 'ufclas-syllabus-manager' in the plugins directory. Activate plugin in your site.
 
-
-Requirements and Suggested Plugins
------------------------------------
-
 ### Required
-- UFCLAS UFL 2015 Theme (untested with other themes)
-- LH User Taxonomies - allows setting departments for users
+- [LH User Taxonomies](https://wordpress.org/plugins/lh-user-taxonomies/) - allows setting departments for users
 
 ### Recommended
-- Advanced Custom Fields - visual interface for custom fields
-- Admin Columns Pro - allows custom display, advanced filtering of uploads, and inline editing
-- GM Media Tags - adds ability to bulk add taxonomies for multiple documents
-
+- [Admin Columns Pro](https://www.admincolumns.com/) - Custom admin columns. Pro license allows advanced media filtering and inline editing
+- [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) - visual interface for custom fields
+- [GM Media Tags](https://github.com/gmazzap/GMMediaTags) - adds ability to bulk add taxonomies for multiple documents
 
 Documentation
 --------------
 
-### Custom Post Types and Taxonomies
+- [Getting Started](#getting-started)
+- [Importing Course Data from an External Source](#importing-course-data)
+- [Managing User Roles](#managing-user-roles)
+- [Managing Courses](#managing-courses)
+    - [Departments](#departments)
+    - [Semesters](#semesters)
+	- [Program Levels](#program-levels)
+    - [Instructors](#instructors)
+- [Managing Syllabus Documents](#managing-syllabus-documents)
+- [Managing Reports](#managing-reports)
 
-See [Syllabus_Manager_Post_Type](https://github.com/ufclas/ufclas-syllabus-manager/blob/develop/includes/class-syllabus-manager-post-type.php)
+### Getting Started
 
-- Courses (syllabus_course)
-- Instructors (syllabus_instructor)
-- Departments (syllabus_department)
-- Program Levels (syllabus_level)
-- Semesters (syllabus_semesters)
+### Importing Course Data
 
-#### Departments (syllabus_department)
+### Managing User Roles
 
-Term Meta:
+The default administrator role is granted access to all courses and settings on plugin activation.
 
-- sm_department_id - department code
-- sm_department_cover - cover image url for the department page
-- sm_department_website - attachment id used for department website
-
-Commands:
-
-Update a department term via WP-CLI
-
-```
-wp term update syllabus_department <TERM_ID> --slug='<TERM_SLUG>'
-wp term meta add 161 sm_department_id '<DEPT_ID>'
-wp term meta add 161 sm_department_website '<DEPT_WEBSITE>'
-wp term meta add 161 sm_department_cover <DEPT_COVER>
-wp term update syllabus_department 219 --slug='akan' --parent=218 --name='Akan'
-```
-
-Update a sub department via WP-CLI
-
-```
-wp term update syllabus_department <TERM_ID> --slug='<SLUG>' --parent=<PARENT_TERM_ID> --name='<TERM_NAME>'
-```
-
-### External Data
-
-### User Roles
-
-The default administrator role has access to all settings.
-
-#### Syllabus Administrator
+__Syllabus Administrator__ Role that can manage all courses and media, not WordPress settings, plugins, or themes. Based on the administrator role. 
 - Can view/edit all courses
 - Can view/edit all documents
 - Can view/edit all instructors, departments, semesters, and program levels 
 - Can import or update courses from source
 
-#### Syllabus Department Admin
+__Syllabus Department Admin__ Role that can manage courses and media only for a department. Based on the editor role. 
 - Can view/edit courses based on department
 - Can view/edit PDF documents based on department
 
-### Documents
 
-Only supports PDF documents.
+#### Setting User Role and Department
 
-### Reports/Notifications
+Users with the Syllabus Department Admin role must have a department set before they can view any courses or media. 
+
+- Edit the user's profile by going to __Users__ in the dashboard menu.
+- Change the __Role__ to __Syllabus Department Admin__. 
+- In the __Select Department__ section, place a check next to the department name. 
+
+The list of departments comes from the Departments taxonomy. To test that access has been granted correctly, you can use a plugin like [User Switching](https://wordpress.org/plugins/user-switching/).
+
+
+### Managing Courses
+
+Syllabus Manager adds the __Courses__ and __Syllabus Manager__ menu items to the dashboard menu.
+
+Post Type:
+
+- __Courses__ (syllabus_course)
+
+Taxonomies:
+
+- __Departments__: Used to categorize Courses (syllabus_department)
+- __Semesters__ (syllabus_semester)
+- __Instructors__ (syllabus_instructor)
+- __Program Level__ (syllabus_level)
+
+
+### Departments
+
+The Department is a custom taxonomy that can be assigned to Courses or Media post types. Departments can have sub-departments.
+
+Taxonomy (``syllabus_department``):
+- __Name__ - Title displayed in department list page.
+- __Slug__ - Appears in department detail page URL.
+- __Description__ - Appears in department detail page.
+
+Term Meta:
+- __Department Code__: Optional internal code for department (``sm_department_id``)
+- __Website__:  URL to department website (``sm_department_website``)
+- __Cover Image__:  ID of uploaded image for department detail page. (``sm_department_cover``)
+
+### Semesters
+
+### Program Levels
+
+### Instructors
+
+### Managing Syllabus Documents
+
+### Managing Reports
 
 Changelog
 ---------

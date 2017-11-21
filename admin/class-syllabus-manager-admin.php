@@ -27,7 +27,7 @@ class Syllabus_Manager_Admin {
 	 *
 	 * @since    0.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string    $plugin_name
 	 */
 	private $plugin_name;
 
@@ -36,7 +36,7 @@ class Syllabus_Manager_Admin {
 	 *
 	 * @since    0.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string    $version
 	 */
 	private $version;
 	
@@ -45,10 +45,19 @@ class Syllabus_Manager_Admin {
 	 *
 	 * @since    0.0.0
 	 * @access   private
-	 * @var      string    $plugin_pages    The current version of this plugin.
+	 * @var      string    $plugin_pages
 	 */
 	private $plugin_pages;
-
+	
+	/**
+	 * Message to display in admin notices
+	 *
+	 * @since    0.4.0
+	 * @access   private
+	 * @var      WP_Error|string    $admin_notice
+	 */
+	private $admin_notice;
+	
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -121,22 +130,25 @@ class Syllabus_Manager_Admin {
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
 			
             // VueJS
-			$js_version = (WP_DEBUG)? 'vue.js' : 'vue.min.js';
-            wp_enqueue_script( 'vue-js', plugins_url('includes/vue/' . $js_version, dirname(__FILE__)), array(), null, true);
+			//$js_version = (WP_DEBUG)? 'vue.js' : 'vue.min.js';
+            //wp_enqueue_script( 'vue-js', plugins_url('includes/vue/' . $js_version, dirname(__FILE__)), array(), null, true);
             
 			// Add custom script
+			/*
 			wp_enqueue_script( $this->plugin_name, plugins_url('js/syllabus-manager-admin.js', __FILE__), array( 'vue-js' ), $this->version, true );
 			wp_localize_script( $this->plugin_name, 'syllabus_manager_data', array(
 				'panel_title' => __('Courses', 'syllabus_manager'),
 				'courses' => Syllabus_Manager_Course::get_courses(),
                 'ajax_nonce' => wp_create_nonce('syllabus-manager-add-syllabus')
 			));
+			*/
 		}
 		
 		if ( 'syllabus-manager_page_syllabus-manager-import' == $hook ){
 			wp_enqueue_script( 'bootstrap', plugins_url('includes/bootstrap/js/bootstrap.min.js', dirname(__FILE__)), array( 'jquery' ), $this->version, true );
-			wp_enqueue_script( 'vue-js', plugins_url('includes/vue/vue.min.js', dirname(__FILE__)), array(), null, true);
-			wp_enqueue_script( 'vue-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'vue-js' ), $this->version, true );
+			wp_enqueue_script( 'syllabus-manager-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'jquery' ), $this->version, true );
+			//wp_enqueue_script( 'vue-js', plugins_url('includes/vue/vue.min.js', dirname(__FILE__)), array(), null, true);
+			//wp_enqueue_script( 'vue-import', plugins_url('js/syllabus-manager-admin-import.js', __FILE__), array( 'vue-js' ), $this->version, true );
 		}
 	}
 	
@@ -355,15 +367,16 @@ class Syllabus_Manager_Admin {
 	 * @since 0.1.0
 	 */
 	public function import_handler(){
+		if ( WP_DEBUG ){error_log('$_POST: ' . print_r($_POST, true));}
+		
 		if ( !isset($_POST['action']) ){
 			return;
 		}
-		
-		error_log(print_r($_POST, true));
-		
+				
+		// Process the import
 		switch ( $_POST['action'] ){
 			case 'import_filters':
-				$this->import_filters();
+				$this->admin_notice = $this->import_filters();
 				break;
 			case 'update':
 				$this->update_courses();
@@ -372,14 +385,152 @@ class Syllabus_Manager_Admin {
 				$this->create_courses();
 				break;
 		}
+		
+		// Display admin notice, if necessary
+		add_action( 'admin_notices', array($this, 'admin_notice') );
 	}
 	
 	/**
-	 * Import taxonomy terms from downloaded filters.json data
+	 * Import taxonomy terms from uploaded data
 	 * 
+	 * @return string|WP_Error Admin notice
 	 * @since 0.1.0
 	 */
 	public function import_filters(){
+		// Test whether the request includes a valid nonce
+		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
+		
+		$import_source = sanitize_text_field( $_POST['import-source'] );
+		$import_taxonomy = sanitize_text_field( $_POST['import-taxonomy'] );
+		
+		
+		// Check if form is valid
+		if (empty($import_source) || empty($import_taxonomy)){
+			return new WP_Error('import', __("Error: Missing required fields.", 'syllabus-manager'));
+		}
+		
+		// Check if correct value is selected
+		if ('uf-soc' != $import_source){
+			return new WP_Error('import', __("Sorry! This feature has not been implemented.", 'syllabus-manager'));
+		}
+		
+		// Get the terms to import
+		$import_terms = $this->get_api_terms( $import_taxonomy );
+		error_log(print_r($import_terms, true));
+		
+		$notice_message = array(sprintf('%s %s...', __('Importing', 'syllabus_manager'), $import_taxonomy));
+		
+		if ( is_wp_error($import_terms) ){
+			return $import_terms;
+		}
+		
+		// Insert or update the new terms
+		foreach( $import_terms as $term ):
+			
+			if ( term_exists( $term['name'], $import_taxonomy ) ){
+				$import_term = wp_update_term( $term['name'], $import_taxonomy, array('description' => $term['desc'] ));
+			}
+			else {
+				$import_term = wp_insert_term( $term['name'], $import_taxonomy, array('description' => $term['desc'] ));
+			}
+
+			// Check whether update/insert was successful
+			if ( is_wp_error( $import_term ) ){
+				$message = $import_term->get_error_message();
+				$class = 'text-danger';
+			}
+			else {
+				$message = __('Updated term', 'syllabus_manager');
+				$class = 'text-success';
+
+				// If there's meta, add it to the term
+				if ( isset( $term['meta'] ) ){
+					foreach ( $term['meta'] as $meta_key => $meta_value ){
+						update_term_meta( $import_term['term_id'], $meta_key, $meta_value );
+					}
+				}
+			}
+
+			// Add the admin notice array
+			$notice_message[] = sprintf('<strong class="%s">%s</strong> %s', $class, $message, $term['name'] );
+		endforeach;
+		
+		return $notice_message;
+	}
+	
+	
+	public function get_api_terms( $taxonomy ){
+		
+		// Get JSON data from transient, if it exists
+		if ( false === ( $response = get_transient('syllabus-manager-import-uf-soc') ) ){
+			$request_url = 'https://one.uf.edu/apix/soc/filters/';
+			$response = wp_remote_get( $request_url );
+
+			set_transient( 'syllabus-manager-import-uf-soc', $response, 24 * HOUR_IN_SECONDS );
+		}
+
+		if ( is_wp_error($response) ){
+			return $response;
+		}
+
+		// Get JSON objects as array
+		$json = ( isset($response['body']) )? $response['body'] : null;
+		$response_data = json_decode( $json, true );
+
+		if ( empty($response_data) ){
+			return new WP_Error('import', __("Error: API response data not found.", 'syllabus-manager'));
+		}
+
+		// Get correct selected values from JSON, need to match form value to JSON array key
+		$filters = array(
+			'syllabus_department' 	=> 'departments',
+			'syllabus_semester' 	=> 'terms',
+			'syllabus_level' 		=> 'progLevels',
+		);
+		
+		$term_data_key = $filters[$taxonomy];
+		$term_data = $response_data[$term_data_key];
+		$terms = array();
+		
+		foreach ( $term_data as $data ):
+			$term_name = $data['DESC'];
+			$term_slug = null; // Use default from sanitize_title()
+			$term_desc = '';
+			$term_meta = array( 'sm_import_code' => $data['CODE'] );	
+
+			if ( 'syllabus_department' == $taxonomy ){
+				//$include_departments = array('11662001', '11650000', '11686003', '11686004', '11602000', '11686005', '11629000', '11690003', '11606000', '11686006', '11607000', '11692003', '11686007', '11686008', '11643001', '11608000', '11637000', '11686009', '11609000', '11610000', '11686010', '11607001', '11686011', '11686012', '11612000', '11686014', '11686015', '11653000', '11686001', '11607003', '11654000', '11613000', '11680000', '11615000', '11616003', '11686017', '11617000', '11688005', '11618000', '11619002', '11686018', '11692005', '11688003', '11623000', '11686020', '11686022', '11686023', '11657006', '15862001', '11626000', '11686025');
+				
+				// Change Department names
+				$term_name = str_replace('AFRICAN AMERICAN STUDIES', 'African-American Studies', $term_name);
+				$term_name = str_replace('LANGUAGES LIT/CULTURE', 'Languages Literatures and Cultures', $term_name);
+				$term_name = str_replace('SPANISH/PORTUGUESE STUDIES-PORTUG', 'Spanish and Portuguese Studies-Portuguese', $term_name);
+				$term_name = str_replace('SPANISH/PORTUGUESE STUDIES-SPANIS', 'Spanish and Portuguese Studies-Spanish', $term_name);
+				$term_name = str_replace('SOCIOLOGY/CRIMINOLOGY/LAW-CRIMINO', 'Sociology Criminology and Law-Criminology', $term_name);
+				$term_name = str_replace('SOCIOLOGY/CRIMINOLOGY/LAW-SOCIOLO', 'Sociology Criminology and Law-Sociology', $term_name);
+
+				// Change Format to title case
+				$ugly_terms = explode( '-', $term_name );
+				$pretty_terms = array();
+				foreach( $ugly_terms as $ugly_title ){
+					$pretty_terms[] = ucwords(strtolower(trim($ugly_title)));
+				}
+				$term_name = implode('-', $pretty_terms);
+
+				// Final formatting
+				$term_name = str_replace('&', 'and', $term_name);
+				$term_name = str_replace('And', 'and', $term_name);
+				$term_name = str_replace(',', ' ', $term_name);
+			}
+
+			$terms[] = array( 'name' => $term_name, 'slug' => $term_slug, 'desc' => '', 'meta' => $term_meta );
+		endforeach;
+
+		return $terms;
+	}
+	
+
+	public function ximport_filters(){
 		if ( empty($_FILES) ){
 			return;
 		}
@@ -387,7 +538,8 @@ class Syllabus_Manager_Admin {
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
 		
-		$filter_name = sanitize_text_field( $_POST['import-name'] );
+		
+		$filter_name = sanitize_text_field( $_POST['import-taxonomy'] );
 		$uploaded_file = $_FILES['import-filter-file'];
 		
 		/** Include admin functions to get access to wp_handle_upload() */
@@ -710,5 +862,37 @@ class Syllabus_Manager_Admin {
 		
 		// Return the capabilities required by the user
 		return $caps;
+	}
+	
+	
+	/**
+	 * Add an admin notice as a result of action taken
+	 *
+	 * @since 0.4.0
+	 */
+	function admin_notice(){
+		if ( !$this->admin_notice && !empty($this->admin_notice) ) {
+			return;
+		}
+				
+		// Set notice message and type
+		if ( is_wp_error( $this->admin_notice ) ){
+			$notice_message = $this->admin_notice->get_error_message();
+			$notice_type = 'error';
+		}
+		else {
+			$notice_message = $this->admin_notice;
+			$notice_type = 'success';
+		}
+		
+		// Handle arrays of notices
+		$notice_message = ( is_array($notice_message) )? join('<br>', $notice_message) : $notice_message;
+		
+		// Display notice
+		?>
+		<div class="notice notice-<?php echo $notice_type; ?>">
+			<p><?php echo $notice_message; ?></p>
+		</div>
+		<?php
 	}
 }

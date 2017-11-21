@@ -23,45 +23,6 @@ if ( !current_user_can( 'sm_import_syllabus_manager' ) )  {
 	<hr class="wp-header-end">
 	<br>
 	
-	<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">
-			<?php _e('Import Filters', 'syllabus-manager'); ?></h3>
-		</div>
-		<div class="panel-body">
-		<div class="ow">
-		<div class="col-md-6 col-sm-12">
-		
-		<form id="filters-upload" method="post" enctype="multipart/form-data" action="">
-			<div class="form-group">
-				<label class="sr-only" for="import-name"><?php _e( 'Filter Name: ', 'syllabus_manager' ); ?></label>
-				<select id="import-name" name="import-name" class="form-control" required>
-					<option value="departments"><?php _e( 'Departments', 'syllabus_manager' ); ?></option>
-					<option value="terms"><?php _e( 'Terms', 'syllabus_manager' ); ?></option>
-					<option value="progLevels"><?php _e( 'Program Levels', 'syllabus_manager' ); ?></option>
-				</select>
-			</div>
-			
-			<div class="form-group">
-				<label for="import-filter-file" class="sr-only"><?php _e( 'Choose a .json file:', 'syllabus_manager' ); ?></label><br />
-				<input type="file" id="import-filter-file" name="import-filter-file" accept=".json" required />
-			</div>
-			
-			<input type="hidden" name="action" value="filter" />
-			<?php wp_nonce_field('sm_import_filters', 'sm_import_filters_nonce'); ?>
-			<?php submit_button( __( 'Import File', 'syllabus-manager' ), 'primary', 'submit', false); ?>
-		</form>
-		</div>
-		</div>
-
-		</div>
-		</div>
-	</div>
-	</div>
-	
-	
 	<div id="create-courses-row" class="row">
 	<div class="col-md-12">
 		<div class="panel panel-default">
@@ -102,6 +63,53 @@ if ( !current_user_can( 'sm_import_syllabus_manager' ) )  {
 		</form>
 		</div><!-- .panel-body -->
 		</div><!-- .panel -->
+	</div>
+	</div>
+	
+	<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+			<?php _e('Import Course Categories', 'syllabus-manager'); ?></h3>
+		</div>
+		<div class="panel-body">
+		<div class="col-md-6 col-sm-12">
+			
+		<form id="filters-upload" method="post" enctype="multipart/form-data" action="">
+			<div class="form-group">
+				<label class="sr-only" for="import-source"><?php _e( 'Select Import Source: ', 'syllabus_manager' ); ?></label>
+				<select id="import-source" name="import-source" class="form-control" aria-describedby="help-block-import-source" required>
+					<option value=""><?php _e( 'Select Import Source', 'syllabus_manager' ); ?></option>
+					<option value="uf-soc"><?php _e( 'UF Schedule of Courses', 'syllabus_manager' ); ?></option>
+					<option value="csv" class="text-muted"><?php _e( 'CSV', 'syllabus_manager' ); ?></option>
+				</select>
+				<span id="help-block-import-source" class="help-block"></span>
+			</div>
+			<div class="form-group">
+				<label class="sr-only" for="import-taxonomy"><?php _e( 'Filter Name: ', 'syllabus_manager' ); ?></label>
+				<select id="import-taxonomy" name="import-taxonomy" class="form-control" aria-describedby="help-block-import-taxonomy" required>
+					<option value="syllabus_department"><?php _e( 'Departments', 'syllabus_manager' ); ?></option>
+					<option value="syllabus_semester"><?php _e( 'Semesters', 'syllabus_manager' ); ?></option>
+					<option value="syllabus_level"><?php _e( 'Program Levels', 'syllabus_manager' ); ?></option>
+				</select>
+				<span id="help-block-import-taxonomy" class="help-block"></span>
+			</div>
+			
+			<div class="form-group">
+				<label for="import-filter-file" class="sr-only"><?php _e( 'Choose a file:', 'syllabus_manager' ); ?></label><br />
+				<input type="file" id="import-filter-file" name="import-filter-file" accept=".json, .csv" aria-describedby="help-block-import-filter-file" />
+				<span id="help-block-import-filter-file" class="help-block"></span>
+			</div>
+			
+			<input type="hidden" name="action" value="import_filters" />
+			<?php wp_nonce_field('sm_import_filters', 'sm_import_filters_nonce'); ?>
+			<?php submit_button( __( 'Import', 'syllabus-manager' ), 'primary', 'submit', false); ?>
+		</form>
+		</div>
+
+		</div>
+		</div>
 	</div>
 	</div>
 	

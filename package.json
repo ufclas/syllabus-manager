@@ -1,6 +1,6 @@
 {
   "name": "ufclas-syllabus-manager",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Syllabus document manager",
   "main": "index.php",
   "dependencies": {},

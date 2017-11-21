@@ -69,7 +69,7 @@ class Syllabus_Manager {
 	public function __construct() {
 
 		$this->plugin_name = 'syllabus-manager';
-		$this->version = '0.3.0';
+		$this->version = '0.4.0';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -174,7 +174,8 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'wp_ajax_remove_syllabus', $plugin_admin, 'remove_syllabus' );
 		$this->loader->add_action( 'load-syllabus-manager_page_syllabus-manager-import', $plugin_admin, 'import_handler' );
 		$this->loader->add_action( 'syllabus_department_edit_form', $plugin_admin, 'display_taxonomy_meta_form_fields', 10, 2 );
-		$this->loader->add_action( 'syllabus_department_edit_form', $plugin_admin, 'display_taxonomy_meta_form_fields', 10, 2 );
+		$this->loader->add_action( 'syllabus_level_edit_form', $plugin_admin, 'display_taxonomy_meta_form_fields', 10, 2 );
+		$this->loader->add_action( 'syllabus_semester_edit_form', $plugin_admin, 'display_taxonomy_meta_form_fields', 10, 2 );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin, 'restrict_content' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'customize_user_profile' );
 		

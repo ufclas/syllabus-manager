@@ -404,6 +404,7 @@ class Syllabus_Manager_Admin {
 		$import_source = sanitize_text_field( $_POST['import-source'] );
 		$import_taxonomy = sanitize_text_field( $_POST['import-taxonomy'] );
 		$import_update = ( isset($_POST['import-update']) && intval($_POST['import-update']) );
+		$notice_messages = array();
 		
 		// Check if form is valid
 		if (empty($import_source) || empty($import_taxonomy)){
@@ -415,40 +416,42 @@ class Syllabus_Manager_Admin {
 			return new WP_Error('import_not_implemented', __("Sorry! This feature has not been implemented.", 'syllabus-manager'));
 		}
 		
-		// Get the terms to import
-		$import_terms = $this->get_import_api_terms( $import_taxonomy );
-		$notice_messages = array();
+		// Get the terms to import, import code is key for both arrays
+		$source_terms = $this->get_import_api_terms( $import_taxonomy );
 		
-		if ( is_wp_error($import_terms) ){
-			return $import_terms;
+		if ( is_wp_error( $source_terms ) ){
+			return $source_terms;
 		}
 		
+		// Add term_ids or exclude already imported terms
+		$import_terms = $this->get_imported_terms( $source_terms, $import_taxonomy, $import_update );
+		//error_log('$source_terms: ' . print_r($source_terms, true));
+		//error_log('$import_terms: ' . print_r($import_terms, true));
+		
+		if ( empty($import_terms) ){
+			return new WP_Error('import_no_terms', __("No terms to import.", 'syllabus-manager'));
+		}
+				
 		/**
 		 * Update or Add New Terms from Import Source
 		 * 
 		 * Loop over source values and update/insert terms
 		 */
-		foreach( $import_terms as $import_term ):
+		foreach( $import_terms as $import_code => $import_term ):
+			// Get existing term_id if it exists
+			$found_term_id = ( isset($import_term['term_id']) )? $import_term['term_id'] : false;
 			
-			$found_term = get_term_by( 'name', $import_term['name'], $import_taxonomy );
-			
-		
-			if ( false === $found_term ){
+			// Import/update
+			if ( !$found_term_id ){
 				$action = 'insert';
 				$term = wp_insert_term( $import_term['name'], $import_taxonomy, array('description' => $import_term['description'] ));
 			}
-			elseif ( $import_update ){
-				$action = 'update';
-				$term = wp_update_term( $found_term->term_id, $import_taxonomy, array(
-					'name' => $import_term['name'], 
-					'description' => $import_term['description'],
-					'meta' => $import_term['meta']
-				));
-			}
 			else {
-				$action = 'skipped';
-				$term = new WP_Error('import_skipped', __('Skipped existing term', 'syllabus-manager'));
-				
+				// Only update the term title and the meta values
+				$action = 'update';
+				$term = wp_update_term( $found_term_id, $import_taxonomy, array(
+					'name' => $import_term['name']
+				));
 			}
 			
 			// If import/update successful, update term meta
@@ -474,6 +477,41 @@ class Syllabus_Manager_Admin {
 		endforeach;
 		
 		return $notice_messages;
+	}
+	
+	/**
+	 * Get an array of terms that have import code metadata
+	 * 
+	 * @param  string $taxonomy [[Description]]
+	 * @return array Array of terms sm_import_code/WP_Term
+	 */
+	function get_imported_terms( $source_terms, $taxonomy, $include_existing = true ){
+		$terms = $source_terms;
+		$import_key = 'sm_import_code';
+		$existing_terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => false,	'meta_key' => $import_key ));
+		
+		// Create an array of existing terms import code/term data
+		if ( !empty($existing_terms) ){
+			foreach( $existing_terms as $term ){
+				$term_code = get_term_meta( $term->term_id, $import_key, true );
+				
+				if ( !empty($term_code) ){
+					$existing_terms[$term_code] = array( 'term_id' => $term->term_id );
+				}
+			}
+			
+			// Add or remove existing items
+			if ( !$include_existing ) {
+				$terms = array_diff_key( $terms, $existing_terms );
+			}
+			else {
+				foreach( $terms as $import_code => $term ){
+					$terms[$import_code] = array_merge( $term, $existing_terms[$import_code] );
+				}
+			}
+		}
+		
+		return $terms;
 	}
 	
 	/**
@@ -519,10 +557,14 @@ class Syllabus_Manager_Admin {
 			$term_name = $data['DESC'];
 			$term_slug = null; // Use default from sanitize_title()
 			$term_desc = '';
-			$term_meta = array( 'sm_import_code' => $data['CODE'] );	
+			$term_import_code = $data['CODE'];
+			$term_meta = array( 
+				'sm_import_code' => $term_import_code, 
+				'sm_import_date' => current_time('mysql')
+			);		
 
 			if ( 'syllabus_department' == $taxonomy ){
-				//$include_departments = array('11662001', '11650000', '11686003', '11686004', '11602000', '11686005', '11629000', '11690003', '11606000', '11686006', '11607000', '11692003', '11686007', '11686008', '11643001', '11608000', '11637000', '11686009', '11609000', '11610000', '11686010', '11607001', '11686011', '11686012', '11612000', '11686014', '11686015', '11653000', '11686001', '11607003', '11654000', '11613000', '11680000', '11615000', '11616003', '11686017', '11617000', '11688005', '11618000', '11619002', '11686018', '11692005', '11688003', '11623000', '11686020', '11686022', '11686023', '11657006', '15862001', '11626000', '11686025');
+				$include_departments = array('11662001', '11650000', '11686003', '11686004', '11602000', '11686005', '11629000', '11690003', '11606000', '11686006', '11607000', '11692003', '11686007', '11686008', '11643001', '11608000', '11637000', '11686009', '11609000', '11610000', '11686010', '11607001', '11686011', '11686012', '11612000', '11686014', '11686015', '11653000', '11686001', '11607003', '11654000', '11613000', '11680000', '11615000', '11616003', '11686017', '11617000', '11688005', '11618000', '11619002', '11686018', '11692005', '11688003', '11623000', '11686020', '11686022', '11686023', '11657006', '15862001', '11626000', '11686025');
 				
 				// Change Department names
 				$term_name = str_replace('AFRICAN AMERICAN STUDIES', 'African-American Studies', $term_name);
@@ -546,7 +588,7 @@ class Syllabus_Manager_Admin {
 				$term_name = str_replace(',', ' ', $term_name);
 			}
 
-			$terms[] = array( 'name' => $term_name, 'slug' => $term_slug, 'description' => '', 'meta' => $term_meta );
+			$terms[$term_import_code] = array( 'name' => $term_name, 'slug' => $term_slug, 'description' => '', 'meta' => $term_meta );
 		endforeach;
 
 		return $terms;
@@ -752,13 +794,13 @@ class Syllabus_Manager_Admin {
 			$post_id = wp_insert_post( $section->get_post_args() );
 			
 			if ( !is_wp_error( $post_id ) ){
-				error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );
+				//error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );
 				add_post_meta( $post_id, 'sm_course_code', $section->course_code );
 				add_post_meta( $post_id, 'sm_course_title', $section->course_title );
 				add_post_meta( $post_id, 'sm_section_number', $section->section_code );
 			}
 			else {
-				error_log( 'Error inserting post: ' . print_r($post_id, true) );
+				//error_log( 'Error inserting post: ' . print_r($post_id, true) );
 			}
 		}
 	}

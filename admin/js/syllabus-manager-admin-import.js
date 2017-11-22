@@ -32,4 +32,5 @@ jQuery(function($){
 	// Check upload field when page loads
 	$importUploadField.hide();
 	$importSourceField.trigger('change');
+	
 });

@@ -367,7 +367,7 @@ class Syllabus_Manager_Admin {
 	 * @since 0.1.0
 	 */
 	public function import_handler(){
-		if ( WP_DEBUG ){error_log('$_POST: ' . print_r($_POST, true));}
+		//error_log('$_POST: ' . print_r($_POST, true));
 		
 		if ( !isset($_POST['action']) ){
 			return;
@@ -375,8 +375,8 @@ class Syllabus_Manager_Admin {
 				
 		// Process the import
 		switch ( $_POST['action'] ){
-			case 'import_filters':
-				$this->admin_notice = $this->import_filters();
+			case 'import_taxonomies':
+				$this->admin_notice = $this->import_taxonomy_terms();
 				break;
 			case 'update':
 				$this->update_courses();
@@ -391,75 +391,98 @@ class Syllabus_Manager_Admin {
 	}
 	
 	/**
-	 * Import taxonomy terms from uploaded data
+	 * Import taxonomy terms from source data
 	 * 
-	 * @return string|WP_Error Admin notice
-	 * @since 0.1.0
+	 * @return array Admin notices in string or WP_Error format
+	 * @since 0.4.0
 	 */
-	public function import_filters(){
+	public function import_taxonomy_terms(){
 		// Test whether the request includes a valid nonce
-		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
+		check_admin_referer('sm_import_taxonomies', 'sm_import_taxonomies_nonce');
+		//error_log('$_POST: ' . print_r($_POST, true));
 		
 		$import_source = sanitize_text_field( $_POST['import-source'] );
 		$import_taxonomy = sanitize_text_field( $_POST['import-taxonomy'] );
-		
+		$import_update = ( isset($_POST['import-update']) && intval($_POST['import-update']) );
 		
 		// Check if form is valid
 		if (empty($import_source) || empty($import_taxonomy)){
-			return new WP_Error('import', __("Error: Missing required fields.", 'syllabus-manager'));
+			return new WP_Error('import_invalid_fields', __("Error: Missing required fields.", 'syllabus-manager'));
 		}
 		
 		// Check if correct value is selected
 		if ('uf-soc' != $import_source){
-			return new WP_Error('import', __("Sorry! This feature has not been implemented.", 'syllabus-manager'));
+			return new WP_Error('import_not_implemented', __("Sorry! This feature has not been implemented.", 'syllabus-manager'));
 		}
 		
 		// Get the terms to import
-		$import_terms = $this->get_api_terms( $import_taxonomy );
-		error_log(print_r($import_terms, true));
-		
-		$notice_message = array(sprintf('%s %s...', __('Importing', 'syllabus_manager'), $import_taxonomy));
+		$import_terms = $this->get_import_api_terms( $import_taxonomy );
+		$notice_messages = array();
 		
 		if ( is_wp_error($import_terms) ){
 			return $import_terms;
 		}
 		
-		// Insert or update the new terms
-		foreach( $import_terms as $term ):
+		/**
+		 * Update or Add New Terms from Import Source
+		 * 
+		 * Loop over source values and update/insert terms
+		 */
+		foreach( $import_terms as $import_term ):
 			
-			if ( term_exists( $term['name'], $import_taxonomy ) ){
-				$import_term = wp_update_term( $term['name'], $import_taxonomy, array('description' => $term['desc'] ));
+			$found_term = get_term_by( 'name', $import_term['name'], $import_taxonomy );
+			
+		
+			if ( false === $found_term ){
+				$action = 'insert';
+				$term = wp_insert_term( $import_term['name'], $import_taxonomy, array('description' => $import_term['description'] ));
+			}
+			elseif ( $import_update ){
+				$action = 'update';
+				$term = wp_update_term( $found_term->term_id, $import_taxonomy, array(
+					'name' => $import_term['name'], 
+					'description' => $import_term['description'],
+					'meta' => $import_term['meta']
+				));
 			}
 			else {
-				$import_term = wp_insert_term( $term['name'], $import_taxonomy, array('description' => $term['desc'] ));
+				$action = 'skipped';
+				$term = new WP_Error('import_skipped', __('Skipped existing term', 'syllabus-manager'));
+				
 			}
-
-			// Check whether update/insert was successful
-			if ( is_wp_error( $import_term ) ){
-				$message = $import_term->get_error_message();
-				$class = 'text-danger';
-			}
-			else {
-				$message = __('Updated term', 'syllabus_manager');
-				$class = 'text-success';
-
-				// If there's meta, add it to the term
-				if ( isset( $term['meta'] ) ){
-					foreach ( $term['meta'] as $meta_key => $meta_value ){
-						update_term_meta( $import_term['term_id'], $meta_key, $meta_value );
+			
+			// If import/update successful, update term meta
+			if ( !is_wp_error( $term ) ) {
+				if ( isset( $import_term['meta'] ) && !empty( $import_term['meta'] ) ){
+					foreach ( $import_term['meta'] as $meta_key => $meta_value ){
+						update_term_meta( $term['term_id'], $meta_key, $meta_value );
 					}
 				}
 			}
-
-			// Add the admin notice array
-			$notice_message[] = sprintf('<strong class="%s">%s</strong> %s', $class, $message, $term['name'] );
+			
+			// Set the notice and display based on action
+			switch ( $action ){
+				case 'insert':
+					$notice_messages[] = sprintf('<strong class="text-success">%s</strong> %s', __('Imported term', 'syllabus-manager'), $import_term['name'] );
+					break;
+				case 'update':
+					$notice_messages[] = sprintf('<strong class="text-success">%s</strong> %s', __('Updated term', 'syllabus-manager'), $import_term['name'] );
+					break;
+				default:
+					$notice_messages[] = sprintf('<strong class="text-info">%s</strong> %s', $term->get_error_message(), $import_term['name'] );
+			}
 		endforeach;
 		
-		return $notice_message;
+		return $notice_messages;
 	}
 	
-	
-	public function get_api_terms( $taxonomy ){
+	/**
+	 * Get terms from the UF SOC API, used to import taxonomies
+	 * 
+	 * @param  string $taxonomy Taxonomomy for new/existing terms
+	 * @return array Term data as an associative array
+	 */
+	public function get_import_api_terms( $taxonomy ){
 		
 		// Get JSON data from transient, if it exists
 		if ( false === ( $response = get_transient('syllabus-manager-import-uf-soc') ) ){
@@ -523,20 +546,26 @@ class Syllabus_Manager_Admin {
 				$term_name = str_replace(',', ' ', $term_name);
 			}
 
-			$terms[] = array( 'name' => $term_name, 'slug' => $term_slug, 'desc' => '', 'meta' => $term_meta );
+			$terms[] = array( 'name' => $term_name, 'slug' => $term_slug, 'description' => '', 'meta' => $term_meta );
 		endforeach;
 
 		return $terms;
 	}
 	
-
-	public function ximport_filters(){
+	/**
+	 * Get terms from uploaded file, used to import taxonomies
+	 * 
+	 * @param  string $taxonomy Taxonomomy for new/existing terms
+	 * @return array Term data as an associative array
+	 * @todo Implement this for CSV file import
+	 */
+	public function get_import_upload_terms( $taxonomy ){
 		if ( empty($_FILES) ){
 			return;
 		}
 		
 		// Test whether the request includes a valid nonce
-		check_admin_referer('sm_import_filters', 'sm_import_filters_nonce');
+		check_admin_referer('sm_import_taxonomies', 'sm_import_taxonomies_nonce');
 		
 		
 		$filter_name = sanitize_text_field( $_POST['import-taxonomy'] );

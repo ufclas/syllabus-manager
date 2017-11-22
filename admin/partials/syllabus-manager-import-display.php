@@ -80,9 +80,9 @@ if ( !current_user_can( 'sm_import_syllabus_manager' ) )  {
 			<div class="form-group">
 				<label class="sr-only" for="import-source"><?php _e( 'Select Import Source: ', 'syllabus_manager' ); ?></label>
 				<select id="import-source" name="import-source" class="form-control" aria-describedby="help-block-import-source" required>
-					<option value=""><?php _e( 'Select Import Source', 'syllabus_manager' ); ?></option>
+					<!-- <option value=""><?php _e( 'Select Import Source', 'syllabus_manager' ); ?></option> -->
 					<option value="uf-soc"><?php _e( 'UF Schedule of Courses', 'syllabus_manager' ); ?></option>
-					<option value="csv" class="text-muted"><?php _e( 'CSV', 'syllabus_manager' ); ?></option>
+					<!--<option value="csv" class="text-muted"><?php _e( 'CSV', 'syllabus_manager' ); ?></option> -->
 				</select>
 				<span id="help-block-import-source" class="help-block"></span>
 			</div>
@@ -94,16 +94,23 @@ if ( !current_user_can( 'sm_import_syllabus_manager' ) )  {
 					<option value="syllabus_level"><?php _e( 'Program Levels', 'syllabus_manager' ); ?></option>
 				</select>
 				<span id="help-block-import-taxonomy" class="help-block"></span>
+				
 			</div>
-			
+			<!--
 			<div class="form-group">
 				<label for="import-filter-file" class="sr-only"><?php _e( 'Choose a file:', 'syllabus_manager' ); ?></label><br />
 				<input type="file" id="import-filter-file" name="import-filter-file" accept=".json, .csv" aria-describedby="help-block-import-filter-file" />
 				<span id="help-block-import-filter-file" class="help-block"></span>
 			</div>
+			-->
+			<div class="form-group">
+			<div class="checkbox">
+				<label><input type="checkbox" id="import_update" name="import-update" value="1" /> Update existing terms</label>
+			</div>
+			</div>
 			
-			<input type="hidden" name="action" value="import_filters" />
-			<?php wp_nonce_field('sm_import_filters', 'sm_import_filters_nonce'); ?>
+			<input type="hidden" name="action" value="import_taxonomies" />
+			<?php wp_nonce_field('sm_import_taxonomies', 'sm_import_taxonomies_nonce'); ?>
 			<?php submit_button( __( 'Import', 'syllabus-manager' ), 'primary', 'submit', false); ?>
 		</form>
 		</div>

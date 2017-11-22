@@ -333,14 +333,14 @@ class Syllabus_Manager_Admin {
 		if ( WP_DEBUG ) {error_log('Creating courses...'); }
 		
 		$source = sanitize_text_field( $_POST['import-course-source'] );
-		$semester = sanitize_text_field( $_POST['import-course-semester'] );
-		$department = sanitize_text_field( $_POST['import-course-department'] );
-		$level = sanitize_text_field( $_POST['import-course-level'] );
+		$semester_id = sanitize_text_field( $_POST['import-course-semester'] );
+		$department_id = sanitize_text_field( $_POST['import-course-department'] );
+		$level_id = sanitize_text_field( $_POST['import-course-level'] );
 		$update = ( isset($_POST['import-course-update']) && intval($_POST['import-course-update']) );
 		$notice_messages = array();
 		
 		// Check if form is valid
-		if ( empty($source) || empty($semester) || empty($department) || empty($level)){
+		if ( empty($source) || empty($semester_id) || empty($department_id) || empty($level_id)){
 			return new WP_Error('import_invalid_fields', __("Error: Missing required fields.", 'syllabus-manager'));
 		}
 		
@@ -350,9 +350,19 @@ class Syllabus_Manager_Admin {
 		}
 		
 		// Get the terms to import, import code is key for both arrays
-		$source_courses = $this->get_import_api_courses( $semester, $department, $level );
+		$source_courses = Syllabus_Manager_Course::get_courses_from_api( $semester_id, $department_id, $level_id );
 		error_log('$source_courses: ' . print_r($source_courses, true));
 		
+		if ( is_wp_error($source_courses) ){
+			return $source_courses;
+		}
+		
+		foreach( $source_courses as $import_code => $course ){
+			$notice_messages[] = $this->get_import_message( 'import', $course->course_title );
+		}
+		
+		return $notice_messages;
+		//$import_courses = $this->get_imported_( $source_terms, $import_taxonomy, $import_update );
 		/*
 		foreach ( $course_data as $section_id => $course_section ){
 			$section = $course_section->sections[0];
@@ -450,18 +460,11 @@ class Syllabus_Manager_Admin {
 					}
 				}
 			}
-			
-			// Set the notice and display based on action
-			switch ( $action ){
-				case 'insert':
-					$notice_messages[] = sprintf('<strong class="text-success">%s</strong> %s', __('Imported term', 'syllabus-manager'), $import_term['name'] );
-					break;
-				case 'update':
-					$notice_messages[] = sprintf('<strong class="text-success">%s</strong> %s', __('Updated term', 'syllabus-manager'), $import_term['name'] );
-					break;
-				default:
-					$notice_messages[] = sprintf('<strong class="text-info">%s</strong> %s', $term->get_error_message(), $import_term['name'] );
+			else {
+				$action = $term->get_error_message();
 			}
+			
+			$notice_messages[] = $this->get_import_message( $action, $import['name'] );
 		endforeach;
 		
 		return $notice_messages;
@@ -502,48 +505,7 @@ class Syllabus_Manager_Admin {
 		return $terms;
 	}
 	
-	/**
-	 * Get terms from the UF SOC API, used to import taxonomies
-	 * 
-	 * @param  string $taxonomy Taxonomomy for new/existing terms
-	 * @return array Term data as an associative array
-	 */
-	public function get_import_api_courses( $semester, $department, $level ){
 		
-		$import_key = 'sm_import_code';
-		$taxonomy_terms = array(
-			'syllabus_semester' => $semester,
-			'syllabus_department' => $department,
-			'syllabus_level' => $level,
-		);
-		
-		$args = array(
-			'term' => get_term_meta( $semester, $import_key, true ),
-			'dept' => get_term_meta( $department, $import_key, true ),
-			'prog-level' => get_term_meta( $level, $import_key, true ),
-		);
-		
-		$response = Syllabus_Manager_Course::request_courses( $args );
-		error_log('$response: ' . print_r($response, true));
-		
-		if ( is_wp_error($response) ){
-			return $response;
-		}
-
-		if ( empty($response) ){
-			return new WP_Error('import', __("Error: API response data not found.", 'syllabus-manager'));
-		}
-
-		$courses = array();
-		
-		foreach ( $response as $course_args ):
-			$course = new Syllabus_Manager_Course( $course_args );
-			$courses[$course->import_code] = array( 'name' => $course->course_title, 'slug' => $course->import_code );
-		endforeach;
-
-		return $courses;
-	}
-	
 	/**
 	 * Get terms from the UF SOC API, used to import taxonomies
 	 * 
@@ -952,5 +914,30 @@ class Syllabus_Manager_Admin {
 			<p><?php echo $notice_message; ?></p>
 		</div>
 		<?php
+	}
+	
+	/**
+	 * Format admin notice message for imported courses or terms based on action
+	 * 
+	 * @param  string $action
+	 * @param  string $name
+	 * @return string Message to display for the imported item
+	 * @since 0.4.0
+	 */
+	function get_import_message( $action, $name ){
+		
+		// Set the notice and display based on action
+		switch ( $action ){
+			case 'insert':
+				$notice_message = sprintf('<strong class="text-success">%s</strong> %s', __('Imported', 'syllabus-manager'), $name );
+				break;
+			case 'update':
+				$notice_message = sprintf('<strong class="text-success">%s</strong> %s', __('Updated', 'syllabus-manager'), $name );
+				break;
+			default:
+				$notice_message = sprintf('<strong class="text-info">%s</strong> %s', $action, $name );
+		}
+		
+		return $notice_message;
 	}
 }

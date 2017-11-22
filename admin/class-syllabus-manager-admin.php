@@ -291,83 +291,13 @@ class Syllabus_Manager_Admin {
 	}
 	
 	
-	
-	/**
-	 * Get course array from external source
-	 * 
-	 * @param  array $query_args Query to get data from external source
-	 * @return array|false JSON array of course objects
-	 *                              
-	 * @since 0.0.1
-	 */
-	public function fetch_courses( $query_args = array() ){
-		$defaults = array(
-			'category' => 'RES',
-			'course-code' => '',
-			'course-title' => '',
-			'cred-srch' => '',
-			'credits' => '',
-			'day-f' => '',
-			'day-m' => '',
-			'day-r' => '',
-			'day-s' => '',
-			'day-t' => '',
-			'day-w' => '',
-			'days' => 'false',
-			'dept' => '',
-			'eep' => '',
-			'fitsSchedule' => 'false',
-			'ge' => '',
-			'ge-b' => '',
-			'ge-c' => '',
-			'ge-h' => '',
-			'ge-m' => '',
-			'ge-n' => '',
-			'ge-p' => '',
-			'ge-s' => '',
-			'instructor' => '',
-			'last-row' => '0',
-			'level-max' => '--',
-			'level-min' => '--',
-			'no-open-seats' => 'false',
-			'online-a' => '',
-			'online-c' => '',
-			'online-h' => '',
-			'online-p' => '',
-			'online-b' => '',
-			'online-e' => '',
-			'prog-level' => '', 
-			'term' => '',
-			'var-cred' => 'true',
-			'writing' => '',
-		);
-		$args = array_merge($defaults, $query_args);
-		
-		// Get external data
-		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
-		$request_url = $api_url . http_build_query( $args );
-		if ( false ) { error_log( 'request_url: ' . $request_url ); }
-								  
-		$response = wp_remote_get( $request_url );
-		
-		// Valid response
-		if ( ! is_wp_error($response) && is_array($response) ){
-			$headers = $response['headers'];
-			$body = $response['body'];
-			$response_data = json_decode($body);
-			
-			return $response_data[0]->COURSES;
-		}
-		return false;
-	}
-	
 	/**
 	 * Handle forms on the Import screen depending on action
 	 * 
 	 * @since 0.1.0
 	 */
 	public function import_handler(){
-		//error_log('$_POST: ' . print_r($_POST, true));
+		error_log('$_POST: ' . print_r($_POST, true));
 		
 		if ( !isset($_POST['action']) ){
 			return;
@@ -378,16 +308,71 @@ class Syllabus_Manager_Admin {
 			case 'import_taxonomies':
 				$this->admin_notice = $this->import_taxonomy_terms();
 				break;
-			case 'update':
-				$this->update_courses();
-				break;
-			case 'create':
-				$this->create_courses();
+			case 'import_courses':
+				$this->admin_notice = $this->import_courses();
 				break;
 		}
 		
 		// Display admin notice, if necessary
 		add_action( 'admin_notices', array($this, 'admin_notice') );
+	}
+	
+	/**
+	 * Inserts a new WP course post into the database
+	 * 
+	 * @since 0.4.0
+	 */
+	public function import_courses(){
+		// Test whether the request includes a valid nonce
+		check_admin_referer('sm_import_courses', 'sm_import_courses_nonce');
+		
+		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
+			wp_die( __('You do not have sufficient permissions to access this feature.', 'syllabus_manager'));
+		}
+		
+		if ( WP_DEBUG ) {error_log('Creating courses...'); }
+		
+		$source = sanitize_text_field( $_POST['import-course-source'] );
+		$semester = sanitize_text_field( $_POST['import-course-semester'] );
+		$department = sanitize_text_field( $_POST['import-course-department'] );
+		$level = sanitize_text_field( $_POST['import-course-level'] );
+		$update = ( isset($_POST['import-course-update']) && intval($_POST['import-course-update']) );
+		$notice_messages = array();
+		
+		// Check if form is valid
+		if ( empty($source) || empty($semester) || empty($department) || empty($level)){
+			return new WP_Error('import_invalid_fields', __("Error: Missing required fields.", 'syllabus-manager'));
+		}
+		
+		// Check if correct value is selected
+		if ('uf-soc' != $source){
+			return new WP_Error('import_not_implemented', __("Sorry! This feature has not been implemented.", 'syllabus-manager'));
+		}
+		
+		// Get the terms to import, import code is key for both arrays
+		$source_courses = $this->get_import_api_courses( $semester, $department, $level );
+		error_log('$source_courses: ' . print_r($source_courses, true));
+		
+		/*
+		foreach ( $course_data as $section_id => $course_section ){
+			$section = $course_section->sections[0];
+			
+			//error_log( print_r($section->get_post_args(), true) );
+			
+			// Insert the post into the database
+			
+			$post_id = wp_insert_post( $section->get_post_args() );
+			
+			if ( !is_wp_error( $post_id ) ){
+				//error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );
+				add_post_meta( $post_id, 'sm_course_code', $section->course_code );
+				add_post_meta( $post_id, 'sm_course_title', $section->course_title );
+				add_post_meta( $post_id, 'sm_section_number', $section->section_code );
+			}
+			else {
+				//error_log( 'Error inserting post: ' . print_r($post_id, true) );
+			}
+		}*/
 	}
 	
 	/**
@@ -399,7 +384,10 @@ class Syllabus_Manager_Admin {
 	public function import_taxonomy_terms(){
 		// Test whether the request includes a valid nonce
 		check_admin_referer('sm_import_taxonomies', 'sm_import_taxonomies_nonce');
-		//error_log('$_POST: ' . print_r($_POST, true));
+		
+		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
+			wp_die( __('You do not have sufficient permissions to access this feature.', 'syllabus_manager'));
+		}
 		
 		$import_source = sanitize_text_field( $_POST['import-source'] );
 		$import_taxonomy = sanitize_text_field( $_POST['import-taxonomy'] );
@@ -512,6 +500,48 @@ class Syllabus_Manager_Admin {
 		}
 		
 		return $terms;
+	}
+	
+	/**
+	 * Get terms from the UF SOC API, used to import taxonomies
+	 * 
+	 * @param  string $taxonomy Taxonomomy for new/existing terms
+	 * @return array Term data as an associative array
+	 */
+	public function get_import_api_courses( $semester, $department, $level ){
+		
+		$import_key = 'sm_import_code';
+		$taxonomy_terms = array(
+			'syllabus_semester' => $semester,
+			'syllabus_department' => $department,
+			'syllabus_level' => $level,
+		);
+		
+		$args = array(
+			'term' => get_term_meta( $semester, $import_key, true ),
+			'dept' => get_term_meta( $department, $import_key, true ),
+			'prog-level' => get_term_meta( $level, $import_key, true ),
+		);
+		
+		$response = Syllabus_Manager_Course::request_courses( $args );
+		error_log('$response: ' . print_r($response, true));
+		
+		if ( is_wp_error($response) ){
+			return $response;
+		}
+
+		if ( empty($response) ){
+			return new WP_Error('import', __("Error: API response data not found.", 'syllabus-manager'));
+		}
+
+		$courses = array();
+		
+		foreach ( $response as $course_args ):
+			$course = new Syllabus_Manager_Course( $course_args );
+			$courses[$course->import_code] = array( 'name' => $course->course_title, 'slug' => $course->import_code );
+		endforeach;
+
+		return $courses;
 	}
 	
 	/**
@@ -760,49 +790,6 @@ class Syllabus_Manager_Admin {
 		
 		// Get the list of course posts that exist in the course data
 		return array_intersect_key($current_courses, $new_course_data);
-	}
-	
-	/**
-	 * Inserts a new WP course post into the database
-	 * 
-	 * @since 0.1.0
-	 */
-	public function create_courses(){
-		// Test whether the request includes a valid nonce
-		check_admin_referer('sm_create_courses', 'sm_create_courses_nonce');
-		
-		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
-			wp_die( __('You do not have sufficient permissions to access this page.', 'syllabus_manager'));
-		}
-		
-		if ( WP_DEBUG ) {error_log('Creating courses...'); }
-		
-		$semester = $_POST['semester'];
-		$department = $_POST['department'];
-		$level = $_POST['level'];
-		
-		// Get the courses
-		$course_data = Syllabus_Manager_Course::get_courses( $semester, $department, $level );
-		
-		foreach ( $course_data as $section_id => $course_section ){
-			$section = $course_section->sections[0];
-			
-			//error_log( print_r($section->get_post_args(), true) );
-			
-			// Insert the post into the database
-			
-			$post_id = wp_insert_post( $section->get_post_args() );
-			
-			if ( !is_wp_error( $post_id ) ){
-				//error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );
-				add_post_meta( $post_id, 'sm_course_code', $section->course_code );
-				add_post_meta( $post_id, 'sm_course_title', $section->course_title );
-				add_post_meta( $post_id, 'sm_section_number', $section->section_code );
-			}
-			else {
-				//error_log( 'Error inserting post: ' . print_r($post_id, true) );
-			}
-		}
 	}
 	
 	

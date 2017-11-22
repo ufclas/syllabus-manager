@@ -36,6 +36,7 @@ class Syllabus_Manager_Course {
 	 * @var      string    $course_code
 	 */
 	public $course_code;
+	public $import_code;
 	
 	/**
 	 * Course title
@@ -69,21 +70,91 @@ class Syllabus_Manager_Course {
 	 *
 	 * @since    0.0.0
 	 */
-	public function __construct( $section_args = array() ) {
+	public function __construct( $course_args = array() ) {
 		$defaults = array(
-			'course_id' => null,
-			'course_code' => null,
-			'course_title' => null,
-			'semester' => null,
+			'code' => null,
+			'name' => null,
 			'sections' => array(),
 		);
-		$args = array_merge( $defaults, $section_args );
+		$args = array_merge( $defaults, $course_args );
 		
-		$this->course_id 	= $args['course_id'];
-		$this->course_code 	= $args['course_code'];
-		$this->course_title = $args['course_title'];
-		$this->sections 	= $args['sections'];
-		$this->semester		= $args['semester'];
+		$this->course_code 	= $args['code'];
+		$this->import_code 	= $args['code'];
+		$this->course_title = $args['name'];
+	}
+	
+	
+	/**
+	 * Get course array from external source
+	 * 
+	 * @param  array $query_args Query to get data from external source
+	 * @return array|false JSON array of course objects
+	 *                              
+	 * @since 0.0.1
+	 */
+	public static function request_courses( $query_args = array() ){
+		$defaults = array(
+			'category' => 'RES',
+			'course-code' => '',
+			'course-title' => '',
+			'cred-srch' => '',
+			'credits' => '',
+			'day-f' => '',
+			'day-m' => '',
+			'day-r' => '',
+			'day-s' => '',
+			'day-t' => '',
+			'day-w' => '',
+			'days' => 'false',
+			'dept' => '',
+			'eep' => '',
+			'fitsSchedule' => 'false',
+			'ge' => '',
+			'ge-b' => '',
+			'ge-c' => '',
+			'ge-h' => '',
+			'ge-m' => '',
+			'ge-n' => '',
+			'ge-p' => '',
+			'ge-s' => '',
+			'instructor' => '',
+			'last-row' => '0',
+			'level-max' => '--',
+			'level-min' => '--',
+			'no-open-seats' => 'false',
+			'online-a' => '',
+			'online-c' => '',
+			'online-h' => '',
+			'online-p' => '',
+			'online-b' => '',
+			'online-e' => '',
+			'prog-level' => '', 
+			'term' => '',
+			'var-cred' => 'true',
+			'writing' => '',
+		);
+		$args = array_merge($defaults, $query_args);
+		
+		// Get external data
+		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
+		$request_url = $api_url . http_build_query( $args );
+		$response = wp_remote_get( $request_url );
+		
+		if ( is_wp_error($response) ){
+			return $response;
+		}
+		
+		// Get JSON objects as array
+		$json = ( isset($response['body']) )? $response['body'] : null;
+		$response_data = json_decode( $json, true );
+
+		if ( empty($response_data) ){
+			return new WP_Error('import', __("Error: API response data not found.", 'syllabus-manager'));
+		}
+		
+		// Valid response
+		return $response_data[0]['COURSES'];
+		
 	}
 	
 	/**

@@ -464,7 +464,7 @@ class Syllabus_Manager_Admin {
 				$action = $term->get_error_message();
 			}
 			
-			$notice_messages[] = $this->get_import_message( $action, $import['name'] );
+			$notice_messages[] = $this->get_import_message( $action, $import_term['name'] );
 		endforeach;
 		
 		return $notice_messages;

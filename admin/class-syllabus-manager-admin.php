@@ -358,7 +358,9 @@ class Syllabus_Manager_Admin {
 		}
 		
 		foreach( $source_courses as $import_code => $course ){
-			$notice_messages[] = $this->get_import_message( 'import', $course->course_title );
+			
+            
+            $notice_messages[] = $this->get_import_message( 'insert', $course->course_title );
 		}
 		
 		return $notice_messages;

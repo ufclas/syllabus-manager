@@ -144,6 +144,7 @@ class Syllabus_Manager_Course {
 			return new WP_Error('import_no_data', __("Error: API response data not found.", 'syllabus-manager'));
 		}
 		if ( !isset($response_data[0]['COURSES']) ){
+			if ( WP_DEBUG ){ error_log( '$response_data:' . print_r($response_data, true) ); }
 			return new WP_Error('import_invalid_format', __("Error: API format not valid.", 'syllabus-manager'));
 		}
 		

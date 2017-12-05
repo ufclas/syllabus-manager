@@ -34,6 +34,77 @@ Documentation
 
 ### Importing Course Data
 
+```
+[0] => Array
+(
+    [code] => AFS2002
+    [name] => Course Title
+    [sections] => Array
+        (
+        [0] => Array
+            (
+            [number] => 109B
+            [display] => 109B
+            [credits] => 3
+            [genEd] => Array
+            (
+                [0] => N
+                [1] => S
+            )
+            [sectWeb] => C
+            [rotateTitle] => 
+            [deptCode] => 011650000
+            [deptName] => AFRICAN STUDIES
+            [finalExam] => 15B
+            [grWriting] => 
+            [courseFee] => 0
+            [EEP] => Y
+            [LMS] => CANVAS
+            [instructors] => Array
+            (
+                [0] => Array
+                (
+                    [name] => Last, First
+                )
+            )
+            [meetTimes] => Array
+            (
+                [0] => Array
+                (
+                    [meetNo] => 1
+                    [meetDays] => Array
+                    (
+                        [0] => T
+                    )
+                    [meetTimeBegin] => 11:45 AM
+                    [meetTimeEnd] => 12:35 PM
+                    [meetPeriodBegin] => 5
+                    [meetPeriodEnd] => 5
+                    [meetBuilding] => MAT
+                    [meetBldgCode] => 0406
+                    [meetRoom] => 0102 
+                )
+                [1] => Array
+                (
+                    [meetNo] => 2
+                    [meetDays] => Array
+                    (
+                        [0] => R
+                    )
+                    [meetTimeBegin] => 11:45 AM
+                    [meetTimeEnd] => 1:40 PM
+                    [meetPeriodBegin] => 5
+                    [meetPeriodEnd] => 6
+                    [meetBuilding] => NRN
+                    [meetBldgCode] => 0101
+                    [meetRoom] => 0184 
+                )
+            )
+        )
+    )
+)
+```
+
 ### Managing User Roles
 
 The default administrator role is granted access to all courses and settings on plugin activation.

@@ -78,7 +78,7 @@ class Syllabus_Manager_Course {
 	 *
 	 * @since    0.0.0
 	 */
-	public function __construct( $course_args = array() ) {
+	public function __construct( $args = array() ) {
 		$defaults = array(
 			'course_id' => null,
 			'import_code' => null,
@@ -87,11 +87,17 @@ class Syllabus_Manager_Course {
 			'semester_code' => null,
 			'sections' => array(),
 		);
-		$args = array_merge( $defaults, $course_args );
+		$args = array_merge( $defaults, $args );
 		
 		$this->course_code 	= $args['code'];
 		$this->import_code 	= $args['code'];
 		$this->course_title = $args['name'];
+        
+        if ( !empty($args['sections']) ){
+            foreach ( $args['sections'] as $section ){
+                $this->sections[] = new Syllabus_Manager_Course_Section( $section );
+            }
+        }
 	}
 	
 	/**
@@ -138,18 +144,20 @@ class Syllabus_Manager_Course {
 			return new WP_Error('import_no_data', __("Error: API response data not found.", 'syllabus-manager'));
 		}
 		if ( !isset($response_data[0]['COURSES']) ){
+			if ( WP_DEBUG ){ error_log( '$response_data:' . print_r($response_data, true) ); }
 			return new WP_Error('import_invalid_format', __("Error: API format not valid.", 'syllabus-manager'));
 		}
 		
 		$response_data = $response_data[0]['COURSES'];
-				
+        error_log('$response_data: ' . print_r($response_data, true));
+
 		foreach ( $response_data as $course_args ):
 			// Add semester import code to the args
 			$course_args['semester'] = $request_args['term'];
 		
 			// Process course arguments
 			$course = new Syllabus_Manager_Course( $course_args );
-			
+        
 			// Add data to be used for inserting/updating course post
 			$courses = array_merge( $courses, array( $course->import_code => $course ) );
 		endforeach;
@@ -343,4 +351,46 @@ class Syllabus_Manager_Course {
 		}
 		return $courses;
 	}
+}
+
+class Syllabus_Manager_Course_Section {
+    public $import_code;
+    public $section_number;
+    public $section_display;
+    public $dept_code;
+    public $dept_name;
+    public $instructors = array();
+    
+    public function __construct( $args ){
+        $this->section_number = $args['number'];
+        $this->section_display = $args['display'];
+        $this->dept_code = $args['deptCode'];
+        $this->dept_name = $args['deptName'];
+        $this->instructors = $this->set_instructors( $args['instructors'] );
+    }
+    
+    /**
+     * Formats instructor array from api
+     * 
+     * @param  array $instructors
+     * @return array
+     */
+    public function set_instructors( $instructors ){
+        if ( empty($instructors) ){
+            return array();
+        }
+        
+        $instructor_names = array();
+        foreach ( $instructors as $instructor ){
+            $name = $instructor['name'];
+
+            // Change to firstname lastname format, ignore middle name
+            if ( false !== strpos( $name, ',' ) ){
+                $name = preg_replace("/(.*),\s?(\S*)(.*)/", "$2 $1", $name);
+            }
+            
+            $instructor_names[] = $name;
+        }
+        return $instructor_names;
+    }
 }

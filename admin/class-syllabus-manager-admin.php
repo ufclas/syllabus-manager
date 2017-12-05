@@ -940,4 +940,26 @@ class Syllabus_Manager_Admin {
 		
 		return $notice_message;
 	}
+	
+	/**
+	 * Add department to uploaded documents based on user
+	 * 
+	 * @param integer $post_ID
+	 */
+	function add_attachment_department( $post_ID ){
+		$taxonomy = 'syllabus_department';
+		
+		// Get array of department IDs from the user
+		$user = wp_get_current_user();
+		$user_terms = wp_get_object_terms( $user->ID, $taxonomy, array('fields' => 'ids') );
+		
+		// If terms exist, assign them to the uploaded document
+		if ( !empty($user_terms) ){
+			$taxonomy_obj = get_taxonomy( $taxonomy ); 
+			
+			if ( current_user_can($taxonomy_obj->cap->assign_terms) ){
+				wp_set_post_terms( $post_ID, $user_terms, $taxonomy );	
+			}
+		}
+	}
 }

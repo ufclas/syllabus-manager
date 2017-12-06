@@ -65,13 +65,23 @@ class Syllabus_Manager_Course {
 	public $sections;
 	
 	/**
-	 * Course prefix and number
+	 * Department term IDs
 	 *
-	 * @since    0.0.0
+	 * @since    0.4.1
 	 * @access   public
-	 * @var      string    $semester_code
+	 * @var      array    $departments
 	 */
-	public $semester_code;
+	public $departments;
+	
+	/**
+	 * Instructor terms
+	 *
+	 * @since    0.4.1
+	 * @access   public
+	 * @var      array    $departments
+	 */
+	public $instructors;
+	
 	
 	/** 
 	 * Define a course section from $_POST or DB data
@@ -80,37 +90,97 @@ class Syllabus_Manager_Course {
 	 */
 	public function __construct( $args = array() ) {
 		$defaults = array(
-			'course_id' => null,
-			'import_code' => null,
-			'code' => null,
-			'name' => null,
-			'semester_code' => null,
+			'course_id' => '',
+			'import_code' => '',
+			'code' => '',
+			'name' => '',
 			'sections' => array(),
+			'semester_code' => '',
+			'departments' => array(),
+			'instructors' => array(),
 		);
 		$args = array_merge( $defaults, $args );
 		
 		$this->course_code 	= $args['code'];
-		$this->import_code 	= $args['code'];
-		$this->course_title = $args['name'];
+		$this->departments = $args['departments'];
+		$this->set_course_title = $args['name'];
+		$this->set_import_code( $args['semester_code'] );
         
         if ( !empty($args['sections']) ){
-            foreach ( $args['sections'] as $section ){
-                $this->sections[] = new Syllabus_Manager_Course_Section( $section );
+            foreach ( $args['sections'] as $section_args ){
+                $section_args['course_code'] = $this->import_code;
+				$section = new Syllabus_Manager_Course_Section( $section_args );
+				
+				// Add section instructors to the course instructors list
+				array_push( $this->instructors, $section->instructors );
+				
+				// Add section
+				$this->sections[] = $section;
             }
         }
+	}
+	
+	/**
+	 * Adds semester code to the end of course code to form a unique id
+	 * 
+	 * @param string $semester_code
+	 * @since 0.4.1
+	 */
+	public function set_import_code( $semester_code ){
+		$this->import_code = $this->course_code;
+		
+		if ( !empty( $semester_code ) ){
+			$this->import_code .= '-' . $semester_code;
+		}
+	}
+	
+	/**
+	 * Set course title to course_code course_name
+	 * 
+	 * @param string $title
+	 * @since 0.4.1
+	 */
+	public function set_course_title( $title ){
+		$this->course_title = wp_strip_all_tags( "{$this->course_code} {$title}" );
 	}
 	
 	/**
 	 * Get arguments that can be used for insert/update course posts
 	 * 
 	 * @return array Array with import code as the key and post args as value
-	 * @since 0.4.0
+	 * @since 0.4.1
 	 */
-	public function get_post_args(){
-		return array( $this->import_code => array(
-			'name' => $this->course_title, 
-			'slug' => $this->import_code
-		));
+	public function get_post_args( $semester, $departments, $level ){
+		
+		$post_author = ;
+		$post_type = 'syllabus_course';
+		$post_status = 'publish';
+		$post_id = ( !empty($this->post_id) )? $this->post_id : null;
+		
+		$post_instructors = array();
+		foreach( $this->sections as $section ){
+			$post_instructors = array_merge( $post_instructors, $section->instructors );
+		}
+		
+		return array(
+			'ID' => $post_id,
+			'post_title' => $this->course_title,
+			'post_name' => $this->section_id,
+			'post_content' => '',
+			'post_status' => 'publish',
+			'post_author' => get_current_user_id(),
+			'post_type' => 'syllabus_course',
+			'tax_input' => array(
+				'syllabus_department' => $departments,
+				'syllabus_level' => $level,
+				'syllabus_semester' => $semester,
+				'syllabus_instructor' => join( ', ', $post_instructors)
+			),
+			'meta_input' => array(
+				'sm_import_code' => $this->import_code,
+				'sm_sections' => json_encode($this->sections),
+			)
+		);
 	}
 	
 	/**
@@ -120,8 +190,7 @@ class Syllabus_Manager_Course {
 	 * @return array|WP_Error Term data as an associative array or error
 	 */
 	public static function get_courses_from_api( $semester_id, $department_id, $level_id ){
-		$courses = array();
-		
+				
 		$request_args = array(
 			'term' => get_term_meta( $semester_id, 'sm_import_code', true ),
 			'dept' => get_term_meta( $department_id, 'sm_import_code', true ),
@@ -149,11 +218,14 @@ class Syllabus_Manager_Course {
 		}
 		
 		$response_data = $response_data[0]['COURSES'];
-        error_log('$response_data: ' . print_r($response_data, true));
-
+        //error_log('$response_data: ' . print_r($response_data, true));
+		
+		$courses = array();
+		
 		foreach ( $response_data as $course_args ):
 			// Add semester import code to the args
-			$course_args['semester'] = $request_args['term'];
+			$course_args['semester_code'] = $request_args['term'];
+			error_log('$course_args: ' . print_r($course_args, true));
 		
 			// Process course arguments
 			$course = new Syllabus_Manager_Course( $course_args );
@@ -221,6 +293,8 @@ class Syllabus_Manager_Course {
 		$api_url = 'https://one.uf.edu/apix/soc/schedule/?';
 		$request_url = $api_url . http_build_query( $args );
 		$response = wp_remote_get( $request_url );
+		
+		if ( WP_DEBUG ){ error_log( '$request_url: ' . $request_url ); }
 		
 		if ( empty($response) ){
 			return new WP_Error('import_request_error', __("Error: API response data not found.", 'syllabus-manager'));
@@ -353,31 +427,67 @@ class Syllabus_Manager_Course {
 	}
 }
 
+/**
+ * Class for course sections
+ *
+ * @link       https://it.clas.ufl.edu/
+ * @since      0.4.1
+ *
+ * @package    Syllabus_Manager
+ * @subpackage Syllabus_Manager/admin
+ */
 class Syllabus_Manager_Course_Section {
     public $import_code;
     public $section_number;
     public $section_display;
     public $dept_code;
     public $dept_name;
-    public $instructors = array();
+    public $instructors;
     
     public function __construct( $args ){
-        $this->section_number = $args['number'];
+    	$defaults = array(
+			'import_code' => '',
+			'section_number' => '',
+			'section_display' => '',
+			'dept_code' => '',
+			'dept_name' => '',
+			'instructors' => array(),
+			'course_code' => '',
+		);
+		$args = array_merge( $defaults, $args );
+		
+		$this->section_number = $args['number'];
         $this->section_display = $args['display'];
         $this->dept_code = $args['deptCode'];
         $this->dept_name = $args['deptName'];
-        $this->instructors = $this->set_instructors( $args['instructors'] );
+        
+		$this->set_import_code( $args['course_code'] );
+        $this->set_instructors( $args['instructors'] );
     }
+	
+	/**
+	 * Creates a unique section code using the course import code and section number
+	 * 
+	 * @param string $course_code
+	 * @since 0.4.1
+	 */
+	public function set_import_code( $course_code ){
+		$this->import_code = $this->section_number;
+		
+		if ( !empty($course_code) ){
+			$this->import_code = $course_code . '-' . $this->import_code;
+		}
+	}
     
     /**
      * Formats instructor array from api
      * 
      * @param  array $instructors
-     * @return array
+	 8 @since 0.4.0
      */
     public function set_instructors( $instructors ){
         if ( empty($instructors) ){
-            return array();
+            $this->instructors = array();
         }
         
         $instructor_names = array();
@@ -391,6 +501,6 @@ class Syllabus_Manager_Course_Section {
             
             $instructor_names[] = $name;
         }
-        return $instructor_names;
+        $this->instructors = $instructor_names;
     }
 }

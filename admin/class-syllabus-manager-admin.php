@@ -357,9 +357,17 @@ class Syllabus_Manager_Admin {
 			return $source_courses;
 		}
 		
+		// Insert the post into the database
 		foreach( $source_courses as $import_code => $course ){
 			
+			//$post_id = wp_insert_post( $course->get_post_args() );
             
+			// Check if correct value is selected
+			/*
+			if ( is_wp_error($post_id) ){
+				$notice_messages[] - ;
+			}
+			*/
             $notice_messages[] = $this->get_import_message( 'insert', $course->course_title );
 		}
 		
@@ -371,9 +379,9 @@ class Syllabus_Manager_Admin {
 			
 			//error_log( print_r($section->get_post_args(), true) );
 			
-			// Insert the post into the database
 			
-			$post_id = wp_insert_post( $section->get_post_args() );
+			
+			
 			
 			if ( !is_wp_error( $post_id ) ){
 				//error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section_id );

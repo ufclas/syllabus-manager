@@ -103,7 +103,7 @@ class Syllabus_Manager_Course {
 		
 		$this->course_code 	= $args['code'];
 		$this->departments = $args['departments'];
-		$this->set_course_title = $args['name'];
+		$this->set_course_title( $args['name'] );
 		$this->set_import_code( $args['semester_code'] );
         
         if ( !empty($args['sections']) ){
@@ -147,10 +147,13 @@ class Syllabus_Manager_Course {
 	/**
 	 * Get arguments that can be used for insert/update course posts
 	 * 
+	 * @param int $semester
+	 * @param int $department
+	 * @param int $level
 	 * @return array Array with import code as the key and post args as value
 	 * @since 0.4.1
 	 */
-	public function get_post_args( $semester, $departments, $level ){
+	public function get_post_args( $semester, $department, $level ){
 		
 		$post_author = get_current_user_id();
 		$post_type = 'syllabus_course';
@@ -172,7 +175,7 @@ class Syllabus_Manager_Course {
 			'post_author' => $post_author,
 			'post_type' => $post_type,
 			'tax_input' => array(
-				'syllabus_department' => $departments,
+				'syllabus_department' => $department,
 				'syllabus_level' => $level,
 				'syllabus_semester' => $semester,
 				'syllabus_instructor' => join( ', ', $post_instructors)
@@ -183,7 +186,6 @@ class Syllabus_Manager_Course {
 			)
 		);
 		error_log('$args: ' . print_r($args, true));
-		
 		return $args;
 	}
 	

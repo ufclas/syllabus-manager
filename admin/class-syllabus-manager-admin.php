@@ -318,7 +318,7 @@ class Syllabus_Manager_Admin {
 		 * Create a new course post
 		 */
 		foreach( $source_courses as $import_code => $course ){
-			$post_id = wp_insert_post( $course->get_post_args() );
+			$post_id = wp_insert_post( $course->get_post_args( $semester_id, $department_id, $level_id ) );
             
 			if ( is_wp_error( $post_id ) ){
 				return $post_id;
@@ -786,23 +786,6 @@ class Syllabus_Manager_Admin {
 					$caps = array( $post_type->cap->edit_posts );
 				} 
 			}
-		}
-		
-		// Get post type information
-		if ( 'sm_edit_syllabus_course' == $cap || 'sm_delete_syllabus_course' == $cap || 'sm_read_syllabus_course' == $cap ) {
-			$post_type = get_post_type_object( 'syllabus_course' );
-		}
-		
-		if ( 'sm_edit_syllabus_course' == $cap ) {
-			$caps = array( $post_type->cap->edit_posts );
-		}
-		
-		if ( 'sm_delete_syllabus_course' == $cap ) {
-			$caps = array( $post_type->cap->delete_posts );
-		}
-		
-		if ( 'sm_read_syllabus_course' == $cap ) {
-			$caps = array( $post_type->cap->read_posts );
 		}
 		
 		// Return the capabilities required by the user

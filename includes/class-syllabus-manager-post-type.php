@@ -127,8 +127,8 @@ class Syllabus_Manager_Post_Type {
 			'rest_base' => $taxonomy_base,
 			'show_in_quick_edit' => true,
 			'capabilities' => array(
-				'manage_terms' 	=> 'sm_manage' . $taxonomy_name,
-				'edit_terms' 	=> 'sm_edit' . $taxonomy_name,
+				'manage_terms' 	=> 'sm_manage_' . $taxonomy_name,
+				'edit_terms' 	=> 'sm_edit_' . $taxonomy_name,
 				'delete_terms' 	=> 'sm_delete_' . $taxonomy_name,
 				'assign_terms' 	=> 'sm_assign_' . $taxonomy_name,
 			)

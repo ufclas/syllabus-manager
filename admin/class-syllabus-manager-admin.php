@@ -229,49 +229,6 @@ class Syllabus_Manager_Admin {
 		wp_die(); // Required to terminate immediately and return a proper response
 	}
     
-    /**
-	 * Gets data for the Schedule of Courses DataTable
-	 * 
-	 * @since 0.0.0
-	 */
-	public function add_syllabus(){
-		// Verify the request to prevent preocessing external requests
-		check_ajax_referer( 'syllabus-manager-add-syllabus', 'ajax_nonce' );
-		
-		if ( !current_user_can( 'sm_manage_syllabus_manager' ) ) {
-			wp_send_json_error( array('msg' => __('You do not have sufficient permissions to access this page.', 'syllabus_manager')) );
-		}
-		
-		// Merge post values into one array
-		$post_data = $_POST['course_data'];
-		
-		if ( false ) {error_log(print_r($post_data, true));}
-		
-		$section = new Syllabus_Manager_Section( 
-			$post_data['code'],
-			$post_data['title'],
-			$post_data['section_number'],
-			$post_data['semester'],
-			array($post_data['department']),
-			$post_data['level'],
-			explode(', ', $post_data['instructors'])
-		);
-		
-		// Insert the post into the database
-		$post_id = wp_insert_post( $section->get_post_args() );
-		
-		if ( !is_wp_error( $post_id ) ){
-			error_log( 'Successfully inserted post: ' . $post_id . ' for ' . $section->section_id );
-			add_post_meta( $post_id, 'sm_course_code', $section->course_code );
-			add_post_meta( $post_id, 'sm_course_title', $section->course_title );
-			add_post_meta( $post_id, 'sm_section_number', $section->section_code );
-			wp_send_json_success( array('msg' => 'Added course: '. $section->section_id) );	
-		}
-		else {
-			error_log( 'Error inserting post: ' . print_r($post_id, true) );
-			wp_send_json_error( array('msg' => $post_id->get_error_message()) );
-		}
-	}
 	
 	/**
 	 * Removes document from course
@@ -357,18 +314,22 @@ class Syllabus_Manager_Admin {
 			return $source_courses;
 		}
 		
-		// Insert the post into the database
+		/**
+		 * Create a new course post
+		 */
 		foreach( $source_courses as $import_code => $course ){
-			
-			//$post_id = wp_insert_post( $course->get_post_args() );
+			$post_id = wp_insert_post( $course->get_post_args() );
             
-			// Check if correct value is selected
-			/*
-			if ( is_wp_error($post_id) ){
-				$notice_messages[] - ;
+			if ( is_wp_error( $post_id ) ){
+				return $post_id;
 			}
-			*/
-            $notice_messages[] = $this->get_import_message( 'insert', $course->course_title );
+			else {
+				// Successfully added course
+				add_post_meta( $post_id, 'sm_import_code', $course->course_code );
+				add_post_meta( $post_id, 'sm_import_data', current_time('mysql') );
+					
+				$notice_messages[] = $this->get_admin_notice_message( 'insert', $course->course_title );
+			}
 		}
 		
 		return $notice_messages;
@@ -474,7 +435,7 @@ class Syllabus_Manager_Admin {
 				$action = $term->get_error_message();
 			}
 			
-			$notice_messages[] = $this->get_import_message( $action, $import_term['name'] );
+			$notice_messages[] = $this->get_admin_notice_message( $action, $import_term['name'] );
 		endforeach;
 		
 		return $notice_messages;
@@ -670,52 +631,6 @@ class Syllabus_Manager_Admin {
 		
 		// Clean up files
 		wp_delete_attachment( $file_id );
-	}
-	
-	/**
-	 * Updates WP course post attributes from the external source data
-	 * 
-	 * @since 0.1.0
-	 */
-	public function update_courses(){
-		// Test whether the request includes a valid nonce
-		check_admin_referer('sm_update_courses', 'sm_update_courses_nonce');
-		
-		if ( WP_DEBUG ) {error_log('Updating courses...'); }
-		
-		$semester = $_POST['semester'];
-		$department = $_POST['department'];
-		$level = $_POST['level'];
-		
-		// Get the courses
-		$course_data = Syllabus_Manager_Course::get_courses( $semester, $department, $level );
-		
-		$matched_courses = $this->get_matched_courses( $semester, $department, $level, $course_data );
-		if ( WP_DEBUG ){ error_log( print_r($matched_courses, true) ); }
-		
-		foreach ( $matched_courses as $section_id => $post_id ){
-			
-			$section = new Syllabus_Manager_Section( 
-				$course_data[$section_id]['code'],
-				$course_data[$section_id]['title'],
-				$course_data[$section_id]['section_number'],
-				$semester,
-				array($department),
-				$level,
-				explode(', ', $course_data[$section_id]['instructors']),
-				$post_id
-			);
-						
-			$post_id = wp_update_post( $section->get_post_args() );
-			
-			if ( !is_wp_error($post_id) ){
-				error_log( 'Successfully updated post: ' . $post_id . ' for ' . $section_id );
-				update_post_meta( $post_id, 'sm_course_code', $course_data[$section_id]['code'] );
-				update_post_meta( $post_id, 'sm_course_title', $course_data[$section_id]['title'] );
-				update_post_meta( $post_id, 'sm_section_number', $course_data[$section_id]['section_number'] );
-			}
-			
-		}
 	}
 	
 	/**
@@ -934,7 +849,7 @@ class Syllabus_Manager_Admin {
 	 * @return string Message to display for the imported item
 	 * @since 0.4.0
 	 */
-	function get_import_message( $action, $name ){
+	function get_admin_notice_message( $action, $name ){
 		
 		// Set the notice and display based on action
 		switch ( $action ){

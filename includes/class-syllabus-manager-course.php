@@ -152,24 +152,25 @@ class Syllabus_Manager_Course {
 	 */
 	public function get_post_args( $semester, $departments, $level ){
 		
-		$post_author = ;
+		$post_author = get_current_user_id();
 		$post_type = 'syllabus_course';
 		$post_status = 'publish';
 		$post_id = ( !empty($this->post_id) )? $this->post_id : null;
 		
+		// Merge section instructors into a single array
 		$post_instructors = array();
 		foreach( $this->sections as $section ){
 			$post_instructors = array_merge( $post_instructors, $section->instructors );
 		}
 		
-		return array(
+		$args = array(
 			'ID' => $post_id,
 			'post_title' => $this->course_title,
-			'post_name' => $this->section_id,
+			'post_name' => $this->import_code,
 			'post_content' => '',
-			'post_status' => 'publish',
-			'post_author' => get_current_user_id(),
-			'post_type' => 'syllabus_course',
+			'post_status' => $post_status,
+			'post_author' => $post_author,
+			'post_type' => $post_type,
 			'tax_input' => array(
 				'syllabus_department' => $departments,
 				'syllabus_level' => $level,
@@ -181,6 +182,9 @@ class Syllabus_Manager_Course {
 				'sm_sections' => json_encode($this->sections),
 			)
 		);
+		error_log('$args: ' . print_r($args, true));
+		
+		return $args;
 	}
 	
 	/**

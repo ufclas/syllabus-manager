@@ -179,6 +179,7 @@ class Syllabus_Manager {
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin, 'restrict_content' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'customize_user_profile' );
 		$this->loader->add_action( 'add_attachment', $plugin_admin, 'add_attachment_department' );
+		$this->loader->add_action( 'acf/init', $plugin_admin, 'add_course_sections_groups' );
 		
 		$this->loader->add_filter( 'parent_file', $plugin_admin, 'menu_highlight' );
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'custom_upload_mimes' );

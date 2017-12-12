@@ -326,7 +326,7 @@ class Syllabus_Manager_Admin {
 			else {
 				// Successfully added course
 				add_post_meta( $post_id, 'sm_import_code', $course->course_code );
-				add_post_meta( $post_id, 'sm_import_data', current_time('mysql') );
+				add_post_meta( $post_id, 'sm_import_date', current_time('mysql') );
 					
 				$notice_messages[] = $this->get_admin_notice_message( 'insert', $course->course_title );
 			}
@@ -753,42 +753,39 @@ class Syllabus_Manager_Admin {
 	 * @since 0.3.0
 	 */
 	function map_capabilities( $caps, $cap, $user_id, $args ){
-		
 		//error_log( "Checking $cap for $user_id with args: " . print_r($args, true) . "and caps: " . print_r($args, true) );
 		
+		/**
+		 * Restrict media to user's department
+		 */
 		if ( 'edit_post' == $cap ){
 			if (!empty($args)){
 				$post = get_post( $args[0] );
 				if ( 'attachment' == $post->post_type ){
-					/**
-					 * Checking user department value against attachment value
-					 * 
-					 * For now this allows users to technically edit any media
-					 * 
-					 * @todo Add this back in after uploads default to department
-					 */
-					/*
-					
-					$taxonomy = 'syllabus_department';
-					$user = get_user_by( 'id', $user_id );
-					$user_terms = wp_get_object_terms( $user->ID, $taxonomy, array( 'fields' => 'ids') );
-					
-					//error_log( 'Checking ' . $post->post_title );
-					//error_log( '$user_terms: ' . print_r($user_terms, true) );
-					$post_type = get_post_type_object( $post->post_type );
-					$caps = array();
-					$caps[] = 'sm_edit_syllabus_courses';
-					$caps[] = 'sm_edit_syllabus_courses';
-					$caps[] = 'sm_edit_syllabus_courses';
-					//error_log( '$caps: ' . print_r($caps, true) );
-					*/
 					$post_type = get_post_type_object( 'syllabus_course' );
 					$caps = array( $post_type->cap->edit_posts );
 				} 
 			}
 		}
 		
-		// Return the capabilities required by the user
+		/**
+		 * Allow editing and deleting courses
+		 */
+		$course_caps = array( 'sm_edit_syllabus_course', 'sm_delete_syllabus_course' );
+		
+		if ( in_array( $cap, $course_caps ) ) {
+			$post_type = get_post_type_object( 'syllabus_course' );
+			
+			switch ( $cap ) {
+				case 'sm_edit_syllabus_course':
+					$caps = array( $post_type->cap->edit_posts );
+					break;
+				case 'sm_delete_syllabus_course':
+					$caps = array( $post_type->cap->delete_posts );
+					break;
+			}
+		}
+		
 		return $caps;
 	}
 	
@@ -869,5 +866,28 @@ class Syllabus_Manager_Admin {
 				wp_set_post_terms( $post_ID, $user_terms, $taxonomy );	
 			}
 		}
+	}
+	
+	/**
+	 * Dynamically add fields to the metaboxes
+	 */
+	function add_course_sections_groups(){
+		register_field_group(array(
+			'id' => 'sm_course_section_group',
+			'title' => 'Course Sections',
+			'fields' => array(
+				array(
+					'key' => 'sm_course_section_import_code',
+					'label' => 'Import Code',
+					'name' => 'sm_import_code',
+					'type' => 'text',
+				),
+			),
+			'location' => array(array(array(
+				'param' => 'post_type',
+				'operator' => '==',
+				'value' => 'syllabus_course',
+			)))
+		));
 	}
 }

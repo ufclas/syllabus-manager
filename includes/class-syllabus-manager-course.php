@@ -112,7 +112,9 @@ class Syllabus_Manager_Course {
 				$section = new Syllabus_Manager_Course_Section( $section_args );
 				
 				// Add section instructors to the course instructors list
-				array_push( $this->instructors, $section->instructors );
+				if ( is_array($this->instructors) && is_array($section->instructors) ){
+					array_push( $this->instructors, $section->instructors );	
+				}
 				
 				// Add section
 				$this->sections[] = $section;
@@ -182,10 +184,12 @@ class Syllabus_Manager_Course {
 			),
 			'meta_input' => array(
 				'sm_import_code' => $this->import_code,
+				'sm_import_date' => current_time('mysql'),
 				'sm_sections' => json_encode($this->sections),
 			)
 		);
-		error_log('$args: ' . print_r($args, true));
+		
+		//error_log('$args: ' . print_r($args, true));
 		return $args;
 	}
 	
